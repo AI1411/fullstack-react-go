@@ -1,5 +1,6 @@
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
+import { DemoComponent } from "@/components/demo-component"
 
 export default function Home() {
   return (
@@ -100,6 +101,11 @@ export default function Home() {
         </a>
         <Button>Click me</Button>
       </footer>
+
+      <div className="fixed bottom-4 right-4 p-4 bg-white dark:bg-gray-900 shadow-lg rounded-lg max-w-md w-full">
+        <h2 className="text-2xl font-bold mb-4">Zustand & TanStack Query Demo</h2>
+        <DemoComponent />
+      </div>
     </div>
   )
 }
