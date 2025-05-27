@@ -1,0 +1,63 @@
+services:
+  gen-api:
+    container_name: gen-api
+    build:
+      context: ./backend
+      dockerfile: build/api/Dockerfile-dev
+    command: air -c .air.toml
+    ports:
+      - "8080:8080"
+      - "2345:2345"
+    depends_on:
+      - db
+      - db-test
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=gen
+    volumes:
+      - ./backend:/go/src/
+    networks:
+      - gen-network
+    restart: unless-stopped
+  db:
+    image: postgres:17-alpine
+    container_name: db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=gen
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - gen-network
+    restart: unless-stopped
+  db-test:
+    image: postgres:15-alpine
+    container_name: db-test
+    ports:
+      - "15432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=gen_test
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    networks:
+      - gen-network
+    restart: unless-stopped
+
+networks:
+  gen-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    # 既存のボリュームを削除して新たに作成する場合は、以下のコマンドを実行：
+    # docker-compose down -v
+    # docker-compose up -d
+  postgres_test_data:

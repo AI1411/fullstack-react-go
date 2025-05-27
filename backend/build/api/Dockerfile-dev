@@ -1,0 +1,8 @@
+## Dockerfile for development
+FROM golang:1.24
+
+WORKDIR /go/src/
+RUN go install github.com/cosmtrek/air@v1.49.0 && go install github.com/swaggo/swag/cmd/swag@latest
+CMD ["air", "-c", ".air.toml"]
+
+EXPOSE 8080
