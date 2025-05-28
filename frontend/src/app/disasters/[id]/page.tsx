@@ -1,5 +1,5 @@
-import Header from "@/components/layout/header/page"
 import Footer from "@/components/layout/footer/page"
+import Header from "@/components/layout/header/page"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
@@ -36,7 +36,200 @@ const disasterDetailsData: { [key: string]: any } = {
       },
     ],
   },
-  // 他のIDのデータもここに追加...
+  "2": {
+    id: "2023-002",
+    name: "Osaka Flooding",
+    date: "July 10, 2024",
+    type: "Flood",
+    location: "Osaka Prefecture",
+    affectedArea: "120 hectares",
+    estimatedDamage: "350 million yen",
+    damageSummary: {
+      total: 95,
+      farmlands: 65,
+      facilities: 30,
+    },
+    documents: [
+      {
+        name: "Damage Report 2023-002",
+        type: "Report",
+        uploaded: "July 11, 2024",
+      },
+      {
+        name: "Application Form 2023-002",
+        type: "Form",
+        uploaded: "July 12, 2024",
+      },
+    ],
+  },
+  "3": {
+    id: "2023-003",
+    name: "Hyogo Hailstorm",
+    date: "July 5, 2024",
+    type: "Hailstorm",
+    location: "Hyogo Prefecture",
+    affectedArea: "85 hectares",
+    estimatedDamage: "220 million yen",
+    damageSummary: {
+      total: 70,
+      farmlands: 55,
+      facilities: 15,
+    },
+    documents: [
+      {
+        name: "Damage Report 2023-003",
+        type: "Report",
+        uploaded: "July 6, 2024",
+      },
+    ],
+  },
+  "4": {
+    id: "2023-004",
+    name: "Nara Drought",
+    date: "June 28, 2024",
+    type: "Drought",
+    location: "Nara Prefecture",
+    affectedArea: "200 hectares",
+    estimatedDamage: "400 million yen",
+    damageSummary: {
+      total: 110,
+      farmlands: 95,
+      facilities: 15,
+    },
+    documents: [
+      {
+        name: "Damage Report 2023-004",
+        type: "Report",
+        uploaded: "June 29, 2024",
+      },
+    ],
+  },
+  "5": {
+    id: "2023-005",
+    name: "Shiga Windstorm",
+    date: "June 20, 2024",
+    type: "Windstorm",
+    location: "Shiga Prefecture",
+    affectedArea: "70 hectares",
+    estimatedDamage: "180 million yen",
+    damageSummary: {
+      total: 60,
+      farmlands: 35,
+      facilities: 25,
+    },
+    documents: [
+      {
+        name: "Damage Report 2023-005",
+        type: "Report",
+        uploaded: "June 21, 2024",
+      },
+    ],
+  },
+  "6": {
+    id: "2023-006",
+    name: "Wakayama Floods",
+    date: "June 12, 2024",
+    type: "Flood",
+    location: "Wakayama Prefecture",
+    affectedArea: "110 hectares",
+    estimatedDamage: "280 million yen",
+    damageSummary: {
+      total: 85,
+      farmlands: 65,
+      facilities: 20,
+    },
+    documents: [
+      {
+        name: "Damage Report 2023-006",
+        type: "Report",
+        uploaded: "June 13, 2024",
+      },
+    ],
+  },
+  "7": {
+    id: "2023-007",
+    name: "Mie Landslide",
+    date: "June 5, 2024",
+    type: "Landslide",
+    location: "Mie Prefecture",
+    affectedArea: "60 hectares",
+    estimatedDamage: "150 million yen",
+    damageSummary: {
+      total: 45,
+      farmlands: 30,
+      facilities: 15,
+    },
+    documents: [
+      {
+        name: "Damage Report 2023-007",
+        type: "Report",
+        uploaded: "June 6, 2024",
+      },
+    ],
+  },
+  "8": {
+    id: "2023-008",
+    name: "Aichi Hailstorm",
+    date: "May 28, 2024",
+    type: "Hailstorm",
+    location: "Aichi Prefecture",
+    affectedArea: "75 hectares",
+    estimatedDamage: "190 million yen",
+    damageSummary: {
+      total: 65,
+      farmlands: 50,
+      facilities: 15,
+    },
+    documents: [
+      {
+        name: "Damage Report 2023-008",
+        type: "Report",
+        uploaded: "May 29, 2024",
+      },
+    ],
+  },
+  "9": {
+    id: "2023-009",
+    name: "Gifu Drought",
+    date: "May 20, 2024",
+    type: "Drought",
+    location: "Gifu Prefecture",
+    affectedArea: "180 hectares",
+    estimatedDamage: "320 million yen",
+    damageSummary: {
+      total: 90,
+      farmlands: 75,
+      facilities: 15,
+    },
+    documents: [
+      {
+        name: "Damage Report 2023-009",
+        type: "Report",
+        uploaded: "May 21, 2024",
+      },
+    ],
+  },
+  "10": {
+    id: "2023-010",
+    name: "Shizuoka Windstorm",
+    date: "May 12, 2024",
+    type: "Windstorm",
+    location: "Shizuoka Prefecture",
+    affectedArea: "65 hectares",
+    estimatedDamage: "170 million yen",
+    damageSummary: {
+      total: 55,
+      farmlands: 40,
+      facilities: 15,
+    },
+    documents: [
+      {
+        name: "Damage Report 2023-010",
+        type: "Report",
+        uploaded: "May 13, 2024",
+      },
+    ],
+  },
 }
 
 const getDisasterById = (id: string) => {
@@ -98,8 +291,6 @@ export default function DisasterDetailPage({ params }: Props) {
             </div>
           </div>
 
-          {/* Tab Navigation */}
-          {/* TODO: タブの動的切り替えには 'use client' と useState が必要です */}
           <div className="pb-3">
             <div className="flex border-b border-[#dce0e5] px-4 gap-8">
               <Link

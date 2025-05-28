@@ -1,113 +1,213 @@
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { DemoComponent } from "@/components/demo-component"
+import Header from "@/components/layout/header/page"
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="layout-container flex h-full grow flex-col">
+      <Header />
+      <main className="px-40 flex flex-1 justify-center py-5">
+        <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
+          <div className="flex flex-wrap justify-between gap-3 p-4">
+            <div className="flex min-w-72 flex-col gap-3">
+              <p className="text-[#111418] tracking-light text-[32px] font-bold leading-tight">
+                Dashboard
+              </p>
+              <p className="text-[#637588] text-sm font-normal leading-normal">
+                Welcome back, Ms. Tanaka! Here's an overview of your tasks and
+                system status.
+              </p>
+            </div>
+          </div>
+          <h2 className="text-[#111418] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">
+            System Overview
+          </h2>
+          <div className="flex flex-wrap gap-4 p-4">
+            <div className="flex min-w-[158px] flex-1 flex-col gap-2 rounded-lg p-6 border border-[#dce0e5]">
+              <p className="text-[#111418] text-base font-medium leading-normal">
+                Total Applications
+              </p>
+              <p className="text-[#111418] tracking-light text-2xl font-bold leading-tight">
+                1,250
+              </p>
+            </div>
+            <div className="flex min-w-[158px] flex-1 flex-col gap-2 rounded-lg p-6 border border-[#dce0e5]">
+              <p className="text-[#111418] text-base font-medium leading-normal">
+                Pending Approvals
+              </p>
+              <p className="text-[#111418] tracking-light text-2xl font-bold leading-tight">
+                320
+              </p>
+            </div>
+            <div className="flex min-w-[158px] flex-1 flex-col gap-2 rounded-lg p-6 border border-[#dce0e5]">
+              <p className="text-[#111418] text-base font-medium leading-normal">
+                Active Users
+              </p>
+              <p className="text-[#111418] tracking-light text-2xl font-bold leading-tight">
+                150
+              </p>
+            </div>
+          </div>
+          <h2 className="text-[#111418] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">
+            Latest Disaster Information
+          </h2>
+          <div className="p-4">
+            <div className="flex items-stretch justify-between gap-4 rounded-lg">
+              <div className="flex flex-col gap-1 flex-[2_2_0px]">
+                <p className="text-[#111418] text-base font-bold leading-tight">
+                  Typhoon No. 10 Impact Assessment
+                </p>
+                <p className="text-[#637588] text-sm font-normal leading-normal">
+                  Detailed report on the agricultural damage caused by Typhoon
+                  No. 10, including affected areas and estimated recovery costs.
+                </p>
+              </div>
+              <div
+                className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg flex-1"
+                style={{
+                  backgroundImage:
+                    'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAwL6_AdRbGqk3fz9oAyKgApsJ5lzCZr323vDQidQ9sUfYW8fL05o-F1utFzuhac0AdevlWakVlW9vzMCRB7o_50MQ7boxvgVAkfcpYppzmOj0ApvLQc-dIfIhILwFZEzbaAXyFtfO4opsZF3lJTppgRsbw5Bs-DkYdzhVUAOh0Azxj54F00OhUq-XNDvnuNK5PCypb7MbFNqq1njXjjA8Mze_JUSLaovZSz4hDcO_wGxaoLBjVYxHtVpnfSQdmZDYXQmn10XKZ7kY")',
+                }}
+              ></div>
+            </div>
+          </div>
+          <h2 className="text-[#111418] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">
+            Application Status
+          </h2>
+          <div className="px-4 py-3 @container">
+            <div className="flex overflow-hidden rounded-lg border border-[#dce0e5] bg-white">
+              <table className="flex-1">
+                <thead>
+                  <tr className="bg-white">
+                    <th className="table-column-120 px-4 py-3 text-left text-[#111418] w-[400px] text-sm font-medium leading-normal">
+                      Application ID
+                    </th>
+                    <th className="table-column-240 px-4 py-3 text-left text-[#111418] w-[400px] text-sm font-medium leading-normal">
+                      Applicant Name
+                    </th>
+                    <th className="table-column-360 px-4 py-3 text-left text-[#111418] w-60 text-sm font-medium leading-normal">
+                      Damage Type
+                    </th>
+                    <th className="table-column-480 px-4 py-3 text-left text-[#111418] w-60 text-sm font-medium leading-normal">
+                      Status
+                    </th>
+                    <th className="table-column-600 px-4 py-3 text-left text-[#111418] w-[400px] text-sm font-medium leading-normal">
+                      Submission Date
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Table rows data */}
+                  <tr className="border-t border-t-[#dce0e5]">
+                    <td className="table-column-120 h-[72px] px-4 py-2 w-[400px] text-[#111418] text-sm font-normal leading-normal">
+                      APP2023-001
+                    </td>
+                    <td className="table-column-240 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
+                      Mr. Sato
+                    </td>
+                    <td className="table-column-360 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
+                      <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal w-full">
+                        <span className="truncate">Crop Damage</span>
+                      </button>
+                    </td>
+                    <td className="table-column-480 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
+                      <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal w-full">
+                        <span className="truncate">Pending</span>
+                      </button>
+                    </td>
+                    <td className="table-column-600 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
+                      2023-08-15
+                    </td>
+                  </tr>
+                  {/* ... other rows ... */}
+                  <tr className="border-t border-t-[#dce0e5]">
+                    <td className="table-column-120 h-[72px] px-4 py-2 w-[400px] text-[#111418] text-sm font-normal leading-normal">
+                      APP2023-002
+                    </td>
+                    <td className="table-column-240 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
+                      Ms. Suzuki
+                    </td>
+                    <td className="table-column-360 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
+                      <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal w-full">
+                        <span className="truncate">Facility Damage</span>
+                      </button>
+                    </td>
+                    <td className="table-column-480 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
+                      <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal w-full">
+                        <span className="truncate">Approved</span>
+                      </button>
+                    </td>
+                    <td className="table-column-600 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
+                      2023-08-16
+                    </td>
+                  </tr>
+                  <tr className="border-t border-t-[#dce0e5]">
+                    <td className="table-column-120 h-[72px] px-4 py-2 w-[400px] text-[#111418] text-sm font-normal leading-normal">
+                      APP2023-003
+                    </td>
+                    <td className="table-column-240 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
+                      Mr. Takahashi
+                    </td>
+                    <td className="table-column-360 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
+                      <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal w-full">
+                        <span className="truncate">Livestock Loss</span>
+                      </button>
+                    </td>
+                    <td className="table-column-480 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
+                      <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal w-full">
+                        <span className="truncate">Rejected</span>
+                      </button>
+                    </td>
+                    <td className="table-column-600 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
+                      2023-08-17
+                    </td>
+                  </tr>
+                  <tr className="border-t border-t-[#dce0e5]">
+                    <td className="table-column-120 h-[72px] px-4 py-2 w-[400px] text-[#111418] text-sm font-normal leading-normal">
+                      APP2023-004
+                    </td>
+                    <td className="table-column-240 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
+                      Ms. Ito
+                    </td>
+                    <td className="table-column-360 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
+                      <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal w-full">
+                        <span className="truncate">Crop Damage</span>
+                      </button>
+                    </td>
+                    <td className="table-column-480 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
+                      <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal w-full">
+                        <span className="truncate">Pending</span>
+                      </button>
+                    </td>
+                    <td className="table-column-600 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
+                      2023-08-18
+                    </td>
+                  </tr>
+                  <tr className="border-t border-t-[#dce0e5]">
+                    <td className="table-column-120 h-[72px] px-4 py-2 w-[400px] text-[#111418] text-sm font-normal leading-normal">
+                      APP2023-005
+                    </td>
+                    <td className="table-column-240 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
+                      Mr. Watanabe
+                    </td>
+                    <td className="table-column-360 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
+                      <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal w-full">
+                        <span className="truncate">Facility Damage</span>
+                      </button>
+                    </td>
+                    <td className="table-column-480 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
+                      <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal w-full">
+                        <span className="truncate">Approved</span>
+                      </button>
+                    </td>
+                    <td className="table-column-600 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
+                      2023-08-19
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-        <Button>Click me</Button>
-      </footer>
-
-      <div className="fixed bottom-4 right-4 p-4 bg-white dark:bg-gray-900 shadow-lg rounded-lg max-w-md w-full">
-        <h2 className="text-2xl font-bold mb-4">
-          Zustand & TanStack Query Demo
-        </h2>
-        <DemoComponent />
-      </div>
     </div>
   )
 }

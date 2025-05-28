@@ -26,7 +26,7 @@ const Header = () => {
         <div className="flex items-center gap-9">
           <Link
             className="text-[#111418] text-sm font-medium leading-normal"
-            href="#"
+            href="/"
           >
             Home
           </Link>
