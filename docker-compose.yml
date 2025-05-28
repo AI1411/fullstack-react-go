@@ -11,12 +11,8 @@ services:
     depends_on:
       - db
       - db-test
-    environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=gen
+    env_file:
+      - .env
     volumes:
       - ./backend:/go/src/
     networks:

@@ -1,8 +1,9 @@
--- ENUM型の定義
-CREATE TYPE disaster_status AS ENUM ('PENDING', 'UNDER_REVIEW', 'IN_PROGRESS', 'COMPLETED');
+-- 既存のENUM型を削除して再作成
+DROP TYPE IF EXISTS disaster_status CASCADE;
+CREATE TYPE disaster_status AS ENUM ('pending', 'under_review', 'in_progress', 'completed');
 
 -- 既存テーブルを削除して再作成
-DROP TABLE IF EXISTS disasters;
+DROP TABLE IF EXISTS disasters CASCADE;
 CREATE TABLE IF NOT EXISTS disasters
 (
     id                      UUID PRIMARY KEY                  DEFAULT gen_random_uuid(),
@@ -12,7 +13,7 @@ CREATE TABLE IF NOT EXISTS disasters
     occurred_at             TIMESTAMP WITH TIME ZONE NOT NULL,
     summary                 TEXT                     NOT NULL,
     disaster_type           VARCHAR(30)              NOT NULL,
-    status                  disaster_status          NOT NULL DEFAULT 'PENDING',
+    status                  disaster_status          NOT NULL DEFAULT 'pending',
     impact_level            VARCHAR(20)              NOT NULL,
     affected_area_size      DECIMAL(10, 2),
     estimated_damage_amount DECIMAL(15, 2),

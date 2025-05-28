@@ -4,7 +4,7 @@ import (
 	"gorm.io/gen"
 	"gorm.io/gen/field"
 
-	"github.com/AI1411/gen/internal/model"
+	"github.com/AI1411/fullstack-react-go/internal/domain/model"
 )
 
 func main() {

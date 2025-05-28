@@ -1,62 +1,67 @@
 package main
 
 import (
-	"fmt"
-	"log"
+	"context"
 	"net/http"
 
-	"github.com/AI1411/gen/internal/infra/database"
-	"github.com/AI1411/gen/internal/model"
+	"github.com/gin-gonic/gin"
+
+	"github.com/AI1411/fullstack-react-go/internal/handler"
+	"github.com/AI1411/fullstack-react-go/internal/infra/datastore"
+	"github.com/AI1411/fullstack-react-go/internal/infra/db"
+	"github.com/AI1411/fullstack-react-go/internal/infra/logger"
+	"github.com/AI1411/fullstack-react-go/internal/middleware"
+	"github.com/AI1411/fullstack-react-go/internal/usecase"
 )
 
 func main() {
+	ctx := context.Background()
+	l := logger.New(logger.DefaultConfig())
 	// データベース接続
-	db, err := database.NewDatabaseConnection()
+	dbClient, err := db.NewSqlHandler(db.DefaultDatabaseConfig(), l)
 	if err != nil {
-		log.Fatalf("データベース接続エラー: %v", err)
+		l.Error("failed to connect to database", "error", err)
 	}
 
-	// テストユーザー作成
-	testUser := model.User{
-		Name:     "テストユーザー",
-		Email:    "test@example.com",
-		Password: "password123",
-	}
+	// Ginの初期化
+	r := gin.Default()
 
-	// ユーザーが存在しない場合のみ作成
-	var count int64
-	db.Model(&model.User{}).Where("email = ?", testUser.Email).Count(&count)
-	if count == 0 {
-		result := db.Create(&testUser)
-		if result.Error != nil {
-			log.Printf("テストユーザー作成エラー: %v", result.Error)
-		} else {
-			log.Println("テストユーザーを作成しました")
-		}
-	}
+	// ミドルウェアの設定
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
+	r.Use(middleware.NewLogging(l))
+	r.Use(middleware.CORSMiddleware())
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Go言語、GORM、PostgreSQLを使ったAPIサーバーです")
-	})
+	// repository
+	disasterRepo := datastore.NewDisasterRepository(ctx, dbClient)
 
-	// ユーザー一覧を表示するハンドラー
-	http.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
-		var users []model.User
-		result := db.Find(&users)
-		if result.Error != nil {
-			http.Error(w, "ユーザーの取得に失敗しました", http.StatusInternalServerError)
+	// usecase
+	disasterUsecase := usecase.NewDisasterUseCase(disasterRepo)
+
+	// handler
+	disasterHandler := handler.NewDisasterHandler(disasterUsecase)
+
+	// ヘルスチェックエンドポイント
+	r.GET("/health", func(c *gin.Context) {
+		if err := dbClient.Ping(ctx); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"status": "unhealthy",
+				"error":  "database ping failed",
+			})
 			return
 		}
 
-		fmt.Fprintf(w, "ユーザー一覧（%d人）:\n", len(users))
-		for _, user := range users {
-			fmt.Fprintf(w, "ID: %d, 名前: %s, メール: %s\n", user.ID, user.Name, user.Email)
-		}
+		c.JSON(http.StatusOK, gin.H{
+			"status":   "healthy",
+			"database": "connected",
+		})
 	})
 
+	r.GET("/disasters", disasterHandler.ListDisasters)
+
 	// サーバー起動
-	log.Println("サーバーを起動しています。ポート: 8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		log.Fatalf("サーバー起動エラー: %v", err)
+	l.Info("Starting server on :8080")
+	if err := r.Run(":8080"); err != nil {
+		l.Error("Failed to start server", "error", err)
 	}
 }
