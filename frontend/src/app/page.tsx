@@ -103,7 +103,9 @@ export default function Home() {
       </footer>
 
       <div className="fixed bottom-4 right-4 p-4 bg-white dark:bg-gray-900 shadow-lg rounded-lg max-w-md w-full">
-        <h2 className="text-2xl font-bold mb-4">Zustand & TanStack Query Demo</h2>
+        <h2 className="text-2xl font-bold mb-4">
+          Zustand & TanStack Query Demo
+        </h2>
         <DemoComponent />
       </div>
     </div>

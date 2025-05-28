@@ -1,30 +1,40 @@
-'use client';
+"use client"
 
-import { useQuery } from '@tanstack/react-query';
-import { fetchTodos } from '@/lib/api';
-import { useCounterStore } from '@/lib/store';
-import { Button } from '@/components/ui/button';
+import { useQuery } from "@tanstack/react-query"
+import { fetchTodos } from "@/lib/api"
+import { useCounterStore } from "@/lib/store"
+import { Button } from "@/components/ui/button"
 
 export function DemoComponent() {
   // Use zustand store
-  const { count, increment, decrement, reset } = useCounterStore();
+  const { count, increment, decrement, reset } = useCounterStore()
 
   // Use TanStack Query
-  const { data: todos, isLoading, isError } = useQuery({
-    queryKey: ['todos'],
+  const {
+    data: todos,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["todos"],
     queryFn: fetchTodos,
-  });
+  })
 
   return (
     <div className="space-y-8">
       <div className="p-6 bg-gray-100 dark:bg-gray-800 rounded-lg">
         <h2 className="text-xl font-bold mb-4">Zustand State Management</h2>
         <div className="flex items-center gap-4 mb-4">
-          <Button onClick={decrement} variant="outline">-</Button>
+          <Button onClick={decrement} variant="outline">
+            -
+          </Button>
           <span className="text-2xl font-bold">{count}</span>
-          <Button onClick={increment} variant="outline">+</Button>
+          <Button onClick={increment} variant="outline">
+            +
+          </Button>
         </div>
-        <Button onClick={reset} variant="secondary">Reset</Button>
+        <Button onClick={reset} variant="secondary">
+          Reset
+        </Button>
       </div>
 
       <div className="p-6 bg-gray-100 dark:bg-gray-800 rounded-lg">
@@ -49,5 +59,5 @@ export function DemoComponent() {
         )}
       </div>
     </div>
-  );
+  )
 }
