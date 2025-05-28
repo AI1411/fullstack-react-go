@@ -3,4 +3,4 @@
  * Do not edit manually.
  */
 
-export * from "./handlerListDisastersResponse";
+export * from "./handlerListDisastersResponse"
