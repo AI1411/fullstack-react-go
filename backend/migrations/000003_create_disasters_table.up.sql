@@ -1,3 +1,7 @@
+-- ENUM型の定義
+CREATE TYPE disaster_status AS ENUM ('PENDING', 'UNDER_REVIEW', 'IN_PROGRESS', 'COMPLETED');
+
+-- 既存テーブルを削除して再作成
 DROP TABLE IF EXISTS disasters;
 CREATE TABLE IF NOT EXISTS disasters
 (
@@ -8,7 +12,7 @@ CREATE TABLE IF NOT EXISTS disasters
     occurred_at             TIMESTAMP WITH TIME ZONE NOT NULL,
     summary                 TEXT                     NOT NULL,
     disaster_type           VARCHAR(30)              NOT NULL,
-    status                  VARCHAR(20)              NOT NULL,
+    status                  disaster_status          NOT NULL DEFAULT 'PENDING',
     impact_level            VARCHAR(20)              NOT NULL,
     affected_area_size      DECIMAL(10, 2),
     estimated_damage_amount DECIMAL(15, 2),
@@ -31,7 +35,7 @@ COMMENT ON COLUMN disasters.prefecture_id IS '都道府県ID - 災害が発生�
 COMMENT ON COLUMN disasters.occurred_at IS '発生日時 - 災害が発生した日時';
 COMMENT ON COLUMN disasters.summary IS '被害概要 - 災害による被害の詳細説明';
 COMMENT ON COLUMN disasters.disaster_type IS '災害種別 - 洪水, 地滑り, 雹害, 干ばつ, 風害, 地震, 霜害, 病害虫など';
-COMMENT ON COLUMN disasters.status IS '状態 - 審査中, 対応中, 査定完了, 完了などの現在の状況';
+COMMENT ON COLUMN disasters.status IS '状態 - pending(未着手), under_review(審査中), in_progress(対応中), completed(完了)のいずれか';
 COMMENT ON COLUMN disasters.impact_level IS '被害レベル - 軽微, 中程度, 深刻, 甚大などの被害度合い';
 COMMENT ON COLUMN disasters.affected_area_size IS '被害面積 - ヘクタール (ha) 単位での被害エリアの広さ';
 COMMENT ON COLUMN disasters.estimated_damage_amount IS '被害推定金額 - 円単位での被害総額';
