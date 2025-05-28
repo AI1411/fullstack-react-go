@@ -10,23 +10,23 @@ const Footer = () => {
               className="text-[#637588] text-base font-normal leading-normal min-w-40"
               href="#"
             >
-              Terms of Service
+              利用規約
             </Link>
             <Link
               className="text-[#637588] text-base font-normal leading-normal min-w-40"
               href="#"
             >
-              Privacy Policy
+              プライバシーポリシー
             </Link>
             <Link
               className="text-[#637588] text-base font-normal leading-normal min-w-40"
               href="#"
             >
-              Contact Us
+              お問い合わせ
             </Link>
           </div>
           <p className="text-[#637588] text-base font-normal leading-normal">
-            @2024 AgriSupport. All rights reserved.
+            @2024 アグリサポート. All rights reserved.
           </p>
         </div>
       </div>

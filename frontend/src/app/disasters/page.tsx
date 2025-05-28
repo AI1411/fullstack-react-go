@@ -7,72 +7,72 @@ const disasterData = [
   {
     id: "1", // 各アイテムに一意のIDを追加 (例)
     date: "2024-07-15",
-    region: "Kyoto Prefecture",
-    summary: "Extensive crop damage due to flooding",
-    status: "Pending",
+    region: "京都府",
+    summary: "洪水による広範囲な農作物被害",
+    status: "審査中",
   },
   {
     id: "2",
     date: "2024-07-10",
-    region: "Osaka Prefecture",
-    summary: "Landslide impacting irrigation systems",
-    status: "In Progress",
+    region: "大阪府",
+    summary: "地滑りによる灌漑システムへの影響",
+    status: "対応中",
   },
   {
     id: "3",
     date: "2024-07-05",
-    region: "Hyogo Prefecture",
-    summary: "Severe hail damage to orchards",
-    status: "Completed",
+    region: "兵庫県",
+    summary: "果樹園への深刻な雹害",
+    status: "完了",
   },
   {
     id: "4",
     date: "2024-06-28",
-    region: "Nara Prefecture",
-    summary: "Drought affecting rice paddies",
-    status: "Pending",
+    region: "奈良県",
+    summary: "水田に影響を与える干ばつ",
+    status: "審査中",
   },
   {
     id: "5",
     date: "2024-06-20",
-    region: "Shiga Prefecture",
-    summary: "Wind damage to greenhouses",
-    status: "In Progress",
+    region: "滋賀県",
+    summary: "温室への風害",
+    status: "対応中",
   },
   {
     id: "6",
     date: "2024-06-12",
-    region: "Wakayama Prefecture",
-    summary: "Flooding of agricultural lands",
-    status: "Completed",
+    region: "和歌山県",
+    summary: "農地の冠水被害",
+    status: "完了",
   },
   {
     id: "7",
     date: "2024-06-05",
-    region: "Mie Prefecture",
-    summary: "Landslide impacting access roads",
-    status: "Pending",
+    region: "三重県",
+    summary: "アクセス道路への地滑り被害",
+    status: "審査中",
   },
   {
     id: "8",
     date: "2024-05-28",
-    region: "Aichi Prefecture",
-    summary: "Hail damage to vegetable crops",
-    status: "In Progress",
+    region: "愛知県",
+    summary: "野菜作物への雹害",
+    status: "対応中",
   },
   {
     id: "9",
     date: "2024-05-20",
-    region: "Gifu Prefecture",
-    summary: "Drought conditions affecting livestock",
-    status: "Completed",
+    region: "岐阜県",
+    summary: "家畜に影響を与える干ばつ状況",
+    status: "完了",
   },
   {
     id: "10",
     date: "2024-05-12",
-    region: "Shizuoka Prefecture",
-    summary: "Wind damage to fruit trees",
-    status: "Pending",
+    region: "静岡県",
+    summary: "果樹への風害",
+    status: "審査中",
   },
 ]
 
@@ -85,12 +85,11 @@ export default function DisasterInfoPage() {
           <div className="flex flex-wrap justify-between gap-3 p-4">
             <div className="flex min-w-72 flex-col gap-3">
               <p className="text-[#111418] tracking-light text-[32px] font-bold leading-tight">
-                Disaster Information List
+                災害情報リスト
               </p>
               <p className="text-[#637588] text-sm font-normal leading-normal">
-                View and manage all reported agricultural disaster events. Each
-                entry provides details on the event's date, affected area, and a
-                summary of damages.
+                報告されたすべての農業災害イベントを閲覧・管理できます。各項目には、
+                発生日、被災地域、被害の概要に関する詳細情報が記載されています。
               </p>
             </div>
           </div>
@@ -100,19 +99,19 @@ export default function DisasterInfoPage() {
                 <thead>
                   <tr className="bg-white">
                     <th className="table-column-120 px-4 py-3 text-left text-[#111418] w-[400px] text-sm font-medium leading-normal">
-                      Date of Occurrence
+                      発生日
                     </th>
                     <th className="table-column-240 px-4 py-3 text-left text-[#111418] w-[400px] text-sm font-medium leading-normal">
-                      Region
+                      地域
                     </th>
                     <th className="table-column-360 px-4 py-3 text-left text-[#111418] w-[400px] text-sm font-medium leading-normal">
-                      Damage Summary
+                      被害概要
                     </th>
                     <th className="table-column-480 px-4 py-3 text-left text-[#111418] w-60 text-sm font-medium leading-normal">
-                      Status
+                      ステータス
                     </th>
                     <th className="table-column-600 px-4 py-3 text-left text-[#111418] w-60 text-[#637588] text-sm font-medium leading-normal">
-                      Actions
+                      アクション
                     </th>
                   </tr>
                 </thead>
@@ -144,7 +143,7 @@ export default function DisasterInfoPage() {
                             href={`/disasters/${item.id}`}
                             className="text-[#007bff] hover:underline"
                           >
-                            View Details
+                            詳細を表示
                           </Link>
                         </td>
                       </tr>
