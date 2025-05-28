@@ -59,6 +59,12 @@ func main() {
 
 	r.GET("/disasters", disasterHandler.ListDisasters)
 
+	// Swagger JSON エンドポイント
+	r.GET("/docs", func(c *gin.Context) {
+		c.Header("Content-Type", "application/json")
+		c.File("./docs/swagger.json")
+	})
+
 	// サーバー起動
 	l.Info("Starting server on :8080")
 	if err := r.Run(":8080"); err != nil {
