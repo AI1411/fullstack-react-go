@@ -9,5 +9,5 @@ CREATE TABLE IF NOT EXISTS users
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
-CREATE INDEX idx_users_email ON users (email);
-CREATE INDEX idx_users_deleted_at ON users (deleted_at);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users (email);
+CREATE INDEX IF NOT EXISTS idx_users_deleted_at ON users (deleted_at);

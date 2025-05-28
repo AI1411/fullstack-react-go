@@ -50,3 +50,11 @@ logs:
 generate-models:
 	@cd backend && rm -rf ./internal/domain/query/*.gen.go ./internal/domain/model/*.gen.go
 	@cd backend && go run ./cmd/gormgen/generate_all/main.go
+
+exec-schema: ## sqlファイルをコンテナに流す
+	cat ./backend/migrations/*.up.sql > ./backend/migrations/schema.sql
+	docker cp backend/migrations/schema.sql db:/schema.sql
+	docker cp backend/migrations/schema.sql db-test:/schema.sql
+	docker exec -it db psql -U postgres -d gen -f /schema.sql
+	docker exec -it db-test psql -U postgres -d gen_test -f /schema.sql
+	rm ./backend/migrations/schema.sql

@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS regions;
+DROP TABLE IF EXISTS prefectures;
