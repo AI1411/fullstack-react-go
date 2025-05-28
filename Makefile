@@ -63,3 +63,4 @@ exec-schema: ## sqlファイルをコンテナに流す
 .PHONY: swag
 swag: ## swagger更新
 	@docker compose exec gen-api swag init -g ./cmd/api/main.go
+	@cd frontend && pnpm generate
