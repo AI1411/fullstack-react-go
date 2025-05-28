@@ -1,8 +1,8 @@
 module.exports = {
-  petstore: {
+  backend: {
     output: {
       mode: "split",
-      target: "src/api/api.ts",
+      target: "src/api/client.ts",
       schemas: "src/api/model",
       client: "react-query",
       mock: true,
