@@ -38,13 +38,13 @@ const Header = () => {
           </Link>
           <Link
             className="text-[#111418] text-sm font-medium leading-normal"
-            href="#"
+            href="/application"
           >
             申請
           </Link>
           <Link
             className="text-[#111418] text-sm font-medium leading-normal"
-            href="#"
+            href="/application"
           >
             評価
           </Link>
