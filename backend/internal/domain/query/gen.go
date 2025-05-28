@@ -16,34 +16,49 @@ import (
 )
 
 var (
-	Q    = new(Query)
-	User *user
+	Q          = new(Query)
+	Disaster   *disaster
+	Prefecture *prefecture
+	Region     *region
+	User       *user
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
+	Disaster = &Q.Disaster
+	Prefecture = &Q.Prefecture
+	Region = &Q.Region
 	User = &Q.User
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:   db,
-		User: newUser(db, opts...),
+		db:         db,
+		Disaster:   newDisaster(db, opts...),
+		Prefecture: newPrefecture(db, opts...),
+		Region:     newRegion(db, opts...),
+		User:       newUser(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	User user
+	Disaster   disaster
+	Prefecture prefecture
+	Region     region
+	User       user
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:   db,
-		User: q.User.clone(db),
+		db:         db,
+		Disaster:   q.Disaster.clone(db),
+		Prefecture: q.Prefecture.clone(db),
+		Region:     q.Region.clone(db),
+		User:       q.User.clone(db),
 	}
 }
 
@@ -57,18 +72,27 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:   db,
-		User: q.User.replaceDB(db),
+		db:         db,
+		Disaster:   q.Disaster.replaceDB(db),
+		Prefecture: q.Prefecture.replaceDB(db),
+		Region:     q.Region.replaceDB(db),
+		User:       q.User.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	User IUserDo
+	Disaster   IDisasterDo
+	Prefecture IPrefectureDo
+	Region     IRegionDo
+	User       IUserDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		User: q.User.WithContext(ctx),
+		Disaster:   q.Disaster.WithContext(ctx),
+		Prefecture: q.Prefecture.WithContext(ctx),
+		Region:     q.Region.WithContext(ctx),
+		User:       q.User.WithContext(ctx),
 	}
 }
 
