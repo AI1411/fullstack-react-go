@@ -108,9 +108,6 @@ func (h *disasterHandler) ListDisasters(c *gin.Context) {
 			Name:         disaster.Name,
 			Prefecture: PrefectureItem{
 				Name: disaster.Prefecture.Name,
-				Region: RegionItem{
-					Name: disaster.Prefecture.Region.Name,
-				},
 			},
 			OccurredAt:            disaster.OccurredAt.Format(time.DateTime),
 			Summary:               disaster.Summary,
