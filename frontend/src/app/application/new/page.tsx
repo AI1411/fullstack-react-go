@@ -3,35 +3,59 @@
 import Footer from "@/components/layout/footer/page"
 import Header from "@/components/layout/header/page"
 import React, { useState } from "react"
+import { useCreateSupportApplication } from "@/api/client"
+import { HandlerCreateSupportApplicationRequest } from "@/api/model"
+import { useRouter } from "next/navigation"
 
-const ReportGenerationPage: React.FC = () => {
-  const [formData, setFormData] = useState({
-    reportType: "",
-    project: "",
-    affectedArea: "",
-    damageType: "",
-    damageSeverity: "",
-    reportDate: "",
-    additionalNotes: "",
+const SupportApplicationCreatePage: React.FC = () => {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const createSupportApplicationMutation = useCreateSupportApplication({
+    onSuccess: () => {
+      setIsSubmitting(false);
+      // 成功したら一覧ページに戻る
+      router.push("/application");
+    },
+    onError: (error) => {
+      setIsSubmitting(false);
+      setError("申請の作成に失敗しました。入力内容を確認してください。");
+      console.error("Error creating support application:", error);
+    }
+  });
+
+  const [formData, setFormData] = useState<HandlerCreateSupportApplicationRequest>({
+    application_id: "",
+    application_date: new Date().toISOString().split('T')[0], // 今日の日付をデフォルト値に
+    applicant_name: "",
+    disaster_name: "",
+    requested_amount: 0,
+    status: "審査中", // デフォルト値
+    notes: "",
   })
 
-  const handleSelectChange = (field: string, value: string) => {
+  const handleInputChange = (field: keyof HandlerCreateSupportApplicationRequest, value: string | number) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }))
   }
 
-  const handleTextareaChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      additionalNotes: value,
-    }))
-  }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
 
-  const handleGenerateReport = () => {
-    console.log("Generating report with data:", formData)
-    // ここにレポート生成のロジックを実装
+    // バリデーション
+    if (!formData.application_id || !formData.applicant_name || !formData.disaster_name || !formData.requested_amount) {
+      setError("必須項目を入力してください");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // APIを呼び出して申請を作成
+    createSupportApplicationMutation.mutate(formData);
   }
 
   return (
@@ -51,166 +75,147 @@ const ReportGenerationPage: React.FC = () => {
           <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
             <div className="flex flex-wrap justify-between gap-3 p-4">
               <p className="text-[#111418] tracking-light text-[32px] font-bold leading-tight min-w-72">
-                レポート生成
+                支援申請作成
               </p>
             </div>
 
-            <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-              <label className="flex flex-col min-w-40 flex-1">
-                <p className="text-[#111418] text-base font-medium leading-normal pb-2">
-                  レポート種別
-                </p>
-                <select
-                  value={formData.reportType}
-                  onChange={(e) =>
-                    handleSelectChange("reportType", e.target.value)
-                  }
-                  className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 bg-[image:--select-button-svg] placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
+            {error && (
+              <div className="mx-4 mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="flex flex-col">
+              <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                <label className="flex flex-col min-w-40 flex-1">
+                  <p className="text-[#111418] text-base font-medium leading-normal pb-2">
+                    申請ID <span className="text-red-500">*</span>
+                  </p>
+                  <input
+                    type="text"
+                    value={formData.application_id}
+                    onChange={(e) => handleInputChange("application_id", e.target.value)}
+                    placeholder="例: A001"
+                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
+                    required
+                  />
+                </label>
+              </div>
+
+              <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                <label className="flex flex-col min-w-40 flex-1">
+                  <p className="text-[#111418] text-base font-medium leading-normal pb-2">
+                    申請日 <span className="text-red-500">*</span>
+                  </p>
+                  <input
+                    type="date"
+                    value={formData.application_date}
+                    onChange={(e) => handleInputChange("application_date", e.target.value)}
+                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
+                    required
+                  />
+                </label>
+              </div>
+
+              <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                <label className="flex flex-col min-w-40 flex-1">
+                  <p className="text-[#111418] text-base font-medium leading-normal pb-2">
+                    申請者名 <span className="text-red-500">*</span>
+                  </p>
+                  <input
+                    type="text"
+                    value={formData.applicant_name}
+                    onChange={(e) => handleInputChange("applicant_name", e.target.value)}
+                    placeholder="例: 山田農園"
+                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
+                    required
+                  />
+                </label>
+              </div>
+
+              <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                <label className="flex flex-col min-w-40 flex-1">
+                  <p className="text-[#111418] text-base font-medium leading-normal pb-2">
+                    災害名 <span className="text-red-500">*</span>
+                  </p>
+                  <input
+                    type="text"
+                    value={formData.disaster_name}
+                    onChange={(e) => handleInputChange("disaster_name", e.target.value)}
+                    placeholder="例: 京都府洪水被害"
+                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
+                    required
+                  />
+                </label>
+              </div>
+
+              <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                <label className="flex flex-col min-w-40 flex-1">
+                  <p className="text-[#111418] text-base font-medium leading-normal pb-2">
+                    申請金額（円） <span className="text-red-500">*</span>
+                  </p>
+                  <input
+                    type="number"
+                    value={formData.requested_amount || ''}
+                    onChange={(e) => handleInputChange("requested_amount", parseInt(e.target.value) || 0)}
+                    placeholder="例: 2500000"
+                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
+                    required
+                    min="0"
+                  />
+                </label>
+              </div>
+
+              <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                <label className="flex flex-col min-w-40 flex-1">
+                  <p className="text-[#111418] text-base font-medium leading-normal pb-2">
+                    ステータス
+                  </p>
+                  <select
+                    value={formData.status || '審査中'}
+                    onChange={(e) => handleInputChange("status", e.target.value)}
+                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 bg-[image:--select-button-svg] placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
+                  >
+                    <option value="審査中">審査中</option>
+                    <option value="書類確認中">書類確認中</option>
+                    <option value="承認済">承認済</option>
+                    <option value="支払処理中">支払処理中</option>
+                    <option value="完了">完了</option>
+                  </select>
+                </label>
+              </div>
+
+              <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                <label className="flex flex-col min-w-40 flex-1">
+                  <p className="text-[#111418] text-base font-medium leading-normal pb-2">
+                    備考
+                  </p>
+                  <textarea
+                    placeholder="追加の備考や詳細情報を入力してください"
+                    value={formData.notes || ''}
+                    onChange={(e) => handleInputChange("notes", e.target.value)}
+                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] min-h-36 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
+                  />
+                </label>
+              </div>
+
+              <div className="flex px-4 py-3 justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => router.push('/application')}
+                  className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-white border border-[#dce0e5] text-[#111418] text-base font-bold leading-normal tracking-[0.015em] hover:bg-gray-50 transition-colors"
                 >
-                  <option value="">選択してください</option>
-                  <option value="damage-assessment">被害査定レポート</option>
-                  <option value="recovery-plan">復旧計画レポート</option>
-                  <option value="financial-impact">経済影響レポート</option>
-                </select>
-              </label>
-            </div>
-
-            <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-              <label className="flex flex-col min-w-40 flex-1">
-                <p className="text-[#111418] text-base font-medium leading-normal pb-2">
-                  プロジェクト
-                </p>
-                <select
-                  value={formData.project}
-                  onChange={(e) =>
-                    handleSelectChange("project", e.target.value)
-                  }
-                  className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 bg-[image:--select-button-svg] placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
+                  <span className="truncate">キャンセル</span>
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-[#197fe5] text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-[#1565c0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <option value="">選択してください</option>
-                  <option value="project-001">
-                    プロジェクト001 - 台風被害対応
-                  </option>
-                  <option value="project-002">
-                    プロジェクト002 - 水害復旧
-                  </option>
-                  <option value="project-003">
-                    プロジェクト003 - 干ばつ対策
-                  </option>
-                </select>
-              </label>
-            </div>
-
-            <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-              <label className="flex flex-col min-w-40 flex-1">
-                <p className="text-[#111418] text-base font-medium leading-normal pb-2">
-                  被災地域
-                </p>
-                <select
-                  value={formData.affectedArea}
-                  onChange={(e) =>
-                    handleSelectChange("affectedArea", e.target.value)
-                  }
-                  className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 bg-[image:--select-button-svg] placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
-                >
-                  <option value="">選択してください</option>
-                  <option value="kyoto">京都府</option>
-                  <option value="osaka">大阪府</option>
-                  <option value="hyogo">兵庫県</option>
-                  <option value="nara">奈良県</option>
-                  <option value="shiga">滋賀県</option>
-                  <option value="wakayama">和歌山県</option>
-                </select>
-              </label>
-            </div>
-
-            <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-              <label className="flex flex-col min-w-40 flex-1">
-                <p className="text-[#111418] text-base font-medium leading-normal pb-2">
-                  被害種別
-                </p>
-                <select
-                  value={formData.damageType}
-                  onChange={(e) =>
-                    handleSelectChange("damageType", e.target.value)
-                  }
-                  className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 bg-[image:--select-button-svg] placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
-                >
-                  <option value="">選択してください</option>
-                  <option value="flood">洪水</option>
-                  <option value="typhoon">台風</option>
-                  <option value="hail">雹害</option>
-                  <option value="drought">干ばつ</option>
-                  <option value="landslide">地滑り</option>
-                  <option value="strong-wind">強風</option>
-                </select>
-              </label>
-            </div>
-
-            <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-              <label className="flex flex-col min-w-40 flex-1">
-                <p className="text-[#111418] text-base font-medium leading-normal pb-2">
-                  被害程度
-                </p>
-                <select
-                  value={formData.damageSeverity}
-                  onChange={(e) =>
-                    handleSelectChange("damageSeverity", e.target.value)
-                  }
-                  className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 bg-[image:--select-button-svg] placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
-                >
-                  <option value="">選択してください</option>
-                  <option value="minor">軽微</option>
-                  <option value="moderate">中程度</option>
-                  <option value="severe">深刻</option>
-                  <option value="critical">甚大</option>
-                </select>
-              </label>
-            </div>
-
-            <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-              <label className="flex flex-col min-w-40 flex-1">
-                <p className="text-[#111418] text-base font-medium leading-normal pb-2">
-                  レポート日付
-                </p>
-                <select
-                  value={formData.reportDate}
-                  onChange={(e) =>
-                    handleSelectChange("reportDate", e.target.value)
-                  }
-                  className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 bg-[image:--select-button-svg] placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
-                >
-                  <option value="">選択してください</option>
-                  <option value="2024-12-01">2024年12月1日</option>
-                  <option value="2024-11-30">2024年11月30日</option>
-                  <option value="2024-11-29">2024年11月29日</option>
-                  <option value="custom">カスタム日付</option>
-                </select>
-              </label>
-            </div>
-
-            <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-              <label className="flex flex-col min-w-40 flex-1">
-                <p className="text-[#111418] text-base font-medium leading-normal pb-2">
-                  追加メモ
-                </p>
-                <textarea
-                  placeholder="追加のメモや観察事項を入力してください"
-                  value={formData.additionalNotes}
-                  onChange={(e) => handleTextareaChange(e.target.value)}
-                  className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] min-h-36 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
-                />
-              </label>
-            </div>
-
-            <div className="flex px-4 py-3 justify-end">
-              <button
-                onClick={handleGenerateReport}
-                className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-[#197fe5] text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-[#1565c0] transition-colors"
-              >
-                <span className="truncate">レポート生成</span>
-              </button>
-            </div>
+                  <span className="truncate">{isSubmitting ? '送信中...' : '申請を作成'}</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
 
@@ -220,4 +225,4 @@ const ReportGenerationPage: React.FC = () => {
   )
 }
 
-export default ReportGenerationPage
+export default SupportApplicationCreatePage
