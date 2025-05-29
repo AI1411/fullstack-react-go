@@ -19,12 +19,15 @@ import (
 type Module struct {
 	fx.Out
 
-	Logger          *logger.Logger
-	DBClient        db.Client
-	GinEngine       *gin.Engine
-	DisasterRepo    datastore.DisasterRepository
-	DisasterUsecase usecase.DisasterUseCase
-	DisasterHandler handler.Disaster
+	Logger            *logger.Logger
+	DBClient          db.Client
+	GinEngine         *gin.Engine
+	DisasterRepo      datastore.DisasterRepository
+	PrefectureRepo    datastore.PrefectureRepository
+	DisasterUsecase   usecase.DisasterUseCase
+	PrefectureUsecase usecase.PrefectureUseCase
+	DisasterHandler   handler.Disaster
+	PrefectureHandler handler.Prefecture
 }
 
 // ProvideLogger creates a new logger instance
@@ -70,14 +73,30 @@ func ProvideDisasterRepository(dbClient db.Client) datastore.DisasterRepository 
 	return datastore.NewDisasterRepository(ctx, dbClient)
 }
 
+// ProvidePrefectureRepository creates a new prefecture repository
+func ProvidePrefectureRepository(dbClient db.Client) datastore.PrefectureRepository {
+	ctx := context.Background()
+	return datastore.NewPrefectureRepository(ctx, dbClient)
+}
+
 // ProvideDisasterUseCase creates a new disaster use case
 func ProvideDisasterUseCase(repo datastore.DisasterRepository) usecase.DisasterUseCase {
 	return usecase.NewDisasterUseCase(repo)
 }
 
+// ProvidePrefectureUseCase creates a new prefecture use case
+func ProvidePrefectureUseCase(repo datastore.PrefectureRepository) usecase.PrefectureUseCase {
+	return usecase.NewPrefectureUseCase(repo)
+}
+
 // ProvideDisasterHandler creates a new disaster handler
 func ProvideDisasterHandler(usecase usecase.DisasterUseCase) handler.Disaster {
 	return handler.NewDisasterHandler(usecase)
+}
+
+// ProvidePrefectureHandler creates a new prefecture handler
+func ProvidePrefectureHandler(usecase usecase.PrefectureUseCase) handler.Prefecture {
+	return handler.NewPrefectureHandler(usecase)
 }
 
 // RegisterRoutes registers all HTTP routes

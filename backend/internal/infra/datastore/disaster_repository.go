@@ -32,7 +32,9 @@ func NewDisasterRepository(
 }
 
 func (r *disasterRepository) Find(ctx context.Context) ([]*model.Disaster, error) {
-	disasters, err := r.query.Disaster.Find()
+	disasters, err := r.query.Disaster.
+		Preload(r.query.Disaster.Prefecture).
+		Find()
 	if err != nil {
 		return nil, err
 	}

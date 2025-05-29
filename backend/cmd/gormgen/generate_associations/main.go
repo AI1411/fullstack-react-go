@@ -50,6 +50,9 @@ func main() {
 			model.TableNameDisaster,
 			gen.FieldRelateModel(field.BelongsTo, "Prefecture", model.Prefecture{}, nil),
 		),
+
+		// Userモデル（ユーザー）- リレーションなし
+		g.GenerateModel(model.TableNameUser),
 	}
 
 	g.ApplyBasic(allModels...)

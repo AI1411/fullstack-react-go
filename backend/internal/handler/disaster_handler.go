@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
+	"github.com/AI1411/fullstack-react-go/internal/infra/logger"
 	"github.com/AI1411/fullstack-react-go/internal/usecase"
 )
 
@@ -19,29 +20,41 @@ type Disaster interface {
 }
 
 type disasterHandler struct {
+	l               *logger.Logger
 	disasterUseCase usecase.DisasterUseCase
 }
 
 func NewDisasterHandler(
+	l *logger.Logger,
 	disasterUseCase usecase.DisasterUseCase,
 ) Disaster {
 	return &disasterHandler{
+		l:               l,
 		disasterUseCase: disasterUseCase,
 	}
 }
 
+type PrefectureItem struct {
+	Name   string     `json:"name" binding:"required"`
+	Region RegionItem `json:"region" binding:"required"`
+}
+
+type RegionItem struct {
+	Name string `json:"name" binding:"required"`
+}
+
 type ListDisastersResponse struct {
-	ID                    string   `json:"id"`
-	DisasterCode          string   `json:"disaster_code"`
-	Name                  string   `json:"name"`
-	PrefectureID          int32    `json:"prefecture_id"`
-	OccurredAt            string   `json:"occurred_at"`
-	Summary               string   `json:"summary"`
-	DisasterType          string   `json:"disaster_type"`
-	Status                string   `json:"status"`
-	ImpactLevel           string   `json:"impact_level"`
-	AffectedAreaSize      *float64 `json:"affected_area_size"`
-	EstimatedDamageAmount *float64 `json:"estimated_damage_amount"`
+	ID                    string         `json:"id"`
+	DisasterCode          string         `json:"disaster_code"`
+	Name                  string         `json:"name"`
+	Prefecture            PrefectureItem `json:"prefecture"`
+	OccurredAt            string         `json:"occurred_at"`
+	Summary               string         `json:"summary"`
+	DisasterType          string         `json:"disaster_type"`
+	Status                string         `json:"status"`
+	ImpactLevel           string         `json:"impact_level"`
+	AffectedAreaSize      *float64       `json:"affected_area_size"`
+	EstimatedDamageAmount *float64       `json:"estimated_damage_amount"`
 }
 
 type CreateDisasterRequest struct {
@@ -90,10 +103,15 @@ func (h *disasterHandler) ListDisasters(c *gin.Context) {
 	var response []*ListDisastersResponse
 	for _, disaster := range disasters {
 		response = append(response, &ListDisastersResponse{
-			ID:                    disaster.ID,
-			DisasterCode:          disaster.DisasterCode,
-			Name:                  disaster.Name,
-			PrefectureID:          disaster.PrefectureID,
+			ID:           disaster.ID,
+			DisasterCode: disaster.DisasterCode,
+			Name:         disaster.Name,
+			Prefecture: PrefectureItem{
+				Name: disaster.Prefecture.Name,
+				Region: RegionItem{
+					Name: disaster.Prefecture.Region.Name,
+				},
+			},
 			OccurredAt:            disaster.OccurredAt.Format(time.DateTime),
 			Summary:               disaster.Summary,
 			DisasterType:          disaster.DisasterType,
@@ -130,7 +148,6 @@ func (h *disasterHandler) GetDisaster(c *gin.Context) {
 		ID:                    disaster.ID,
 		DisasterCode:          disaster.DisasterCode,
 		Name:                  disaster.Name,
-		PrefectureID:          disaster.PrefectureID,
 		OccurredAt:            disaster.OccurredAt.Format(time.DateTime),
 		Summary:               disaster.Summary,
 		DisasterType:          disaster.DisasterType,
@@ -198,7 +215,6 @@ func (h *disasterHandler) CreateDisaster(c *gin.Context) {
 		ID:                    disaster.ID,
 		DisasterCode:          disaster.DisasterCode,
 		Name:                  disaster.Name,
-		PrefectureID:          disaster.PrefectureID,
 		OccurredAt:            disaster.OccurredAt.Format(time.DateTime),
 		Summary:               disaster.Summary,
 		DisasterType:          disaster.DisasterType,
@@ -288,7 +304,6 @@ func (h *disasterHandler) UpdateDisaster(c *gin.Context) {
 		ID:                    disaster.ID,
 		DisasterCode:          disaster.DisasterCode,
 		Name:                  disaster.Name,
-		PrefectureID:          disaster.PrefectureID,
 		OccurredAt:            disaster.OccurredAt.Format(time.DateTime),
 		Summary:               disaster.Summary,
 		DisasterType:          disaster.DisasterType,
