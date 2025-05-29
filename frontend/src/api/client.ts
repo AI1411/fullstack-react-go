@@ -646,3 +646,236 @@ export function useGetPrefecture<TData = Awaited<ReturnType<typeof getPrefecture
 
 
 
+/**
+ * @summary 支援申請一覧取得
+ */
+export const listSupportApplications = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.get(
+      `/support-applications`,options
+    );
+  }
+
+
+export const getListSupportApplicationsQueryKey = () => {
+    return [`/support-applications`] as const;
+    }
+
+    
+export const getListSupportApplicationsQueryOptions = <TData = Awaited<ReturnType<typeof listSupportApplications>>, TError = AxiosError<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSupportApplications>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListSupportApplicationsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listSupportApplications>>> = ({ signal }) => listSupportApplications({ signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listSupportApplications>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type ListSupportApplicationsQueryResult = NonNullable<Awaited<ReturnType<typeof listSupportApplications>>>
+export type ListSupportApplicationsQueryError = AxiosError<unknown>
+
+
+export function useListSupportApplications<TData = Awaited<ReturnType<typeof listSupportApplications>>, TError = AxiosError<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSupportApplications>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listSupportApplications>>,
+          TError,
+          Awaited<ReturnType<typeof listSupportApplications>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useListSupportApplications<TData = Awaited<ReturnType<typeof listSupportApplications>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSupportApplications>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listSupportApplications>>,
+          TError,
+          Awaited<ReturnType<typeof listSupportApplications>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useListSupportApplications<TData = Awaited<ReturnType<typeof listSupportApplications>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSupportApplications>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary 支援申請一覧取得
+ */
+
+export function useListSupportApplications<TData = Awaited<ReturnType<typeof listSupportApplications>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSupportApplications>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getListSupportApplicationsQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary 支援申請作成
+ */
+export const createSupportApplication = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.post(
+      `/support-applications`,undefined,options
+    );
+  }
+
+
+
+export const getCreateSupportApplicationMutationOptions = <TError = AxiosError<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createSupportApplication>>, TError,void, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof createSupportApplication>>, TError,void, TContext> => {
+
+const mutationKey = ['createSupportApplication'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createSupportApplication>>, void> = () => {
+          
+
+          return  createSupportApplication(axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateSupportApplicationMutationResult = NonNullable<Awaited<ReturnType<typeof createSupportApplication>>>
+    
+    export type CreateSupportApplicationMutationError = AxiosError<void>
+
+    /**
+ * @summary 支援申請作成
+ */
+export const useCreateSupportApplication = <TError = AxiosError<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createSupportApplication>>, TError,void, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createSupportApplication>>,
+        TError,
+        void,
+        TContext
+      > => {
+
+      const mutationOptions = getCreateSupportApplicationMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary 支援申請詳細取得
+ */
+export const getSupportApplication = (
+    id: unknown, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.get(
+      `/support-applications/${id}`,options
+    );
+  }
+
+
+export const getGetSupportApplicationQueryKey = (id: unknown,) => {
+    return [`/support-applications/${id}`] as const;
+    }
+
+    
+export const getGetSupportApplicationQueryOptions = <TData = Awaited<ReturnType<typeof getSupportApplication>>, TError = AxiosError<void>>(id: unknown, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSupportApplication>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetSupportApplicationQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSupportApplication>>> = ({ signal }) => getSupportApplication(id, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getSupportApplication>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetSupportApplicationQueryResult = NonNullable<Awaited<ReturnType<typeof getSupportApplication>>>
+export type GetSupportApplicationQueryError = AxiosError<void>
+
+
+export function useGetSupportApplication<TData = Awaited<ReturnType<typeof getSupportApplication>>, TError = AxiosError<void>>(
+ id: unknown, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSupportApplication>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSupportApplication>>,
+          TError,
+          Awaited<ReturnType<typeof getSupportApplication>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetSupportApplication<TData = Awaited<ReturnType<typeof getSupportApplication>>, TError = AxiosError<void>>(
+ id: unknown, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSupportApplication>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSupportApplication>>,
+          TError,
+          Awaited<ReturnType<typeof getSupportApplication>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetSupportApplication<TData = Awaited<ReturnType<typeof getSupportApplication>>, TError = AxiosError<void>>(
+ id: unknown, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSupportApplication>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary 支援申請詳細取得
+ */
+
+export function useGetSupportApplication<TData = Awaited<ReturnType<typeof getSupportApplication>>, TError = AxiosError<void>>(
+ id: unknown, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSupportApplication>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetSupportApplicationQueryOptions(id,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+

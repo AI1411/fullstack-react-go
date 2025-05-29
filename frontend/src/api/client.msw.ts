@@ -89,6 +89,36 @@ export const getGetPrefectureMockHandler = (overrideResponse?: void | ((info: Pa
       })
   })
 }
+
+export const getListSupportApplicationsMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<void> | void)) => {
+  return http.get('*/support-applications', async (info) => {await delay(1000);
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+    return new HttpResponse(null,
+      { status: 200,
+        
+      })
+  })
+}
+
+export const getCreateSupportApplicationMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void)) => {
+  return http.post('*/support-applications', async (info) => {await delay(1000);
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+    return new HttpResponse(null,
+      { status: 201,
+        
+      })
+  })
+}
+
+export const getGetSupportApplicationMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<void> | void)) => {
+  return http.get('*/support-applications/:id', async (info) => {await delay(1000);
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+    return new HttpResponse(null,
+      { status: 200,
+        
+      })
+  })
+}
 export const getUndefinedMock = () => [
   getListDisastersMockHandler(),
   getCreateDisasterMockHandler(),
@@ -97,5 +127,8 @@ export const getUndefinedMock = () => [
   getUpdateDisasterMockHandler(),
   getGetDisastersIdTimelinesMockHandler(),
   getListPrefecturesMockHandler(),
-  getGetPrefectureMockHandler()
+  getGetPrefectureMockHandler(),
+  getListSupportApplicationsMockHandler(),
+  getCreateSupportApplicationMockHandler(),
+  getGetSupportApplicationMockHandler()
 ]

@@ -19,18 +19,21 @@ import (
 type Module struct {
 	fx.Out
 
-	Logger            *logger.Logger
-	DBClient          db.Client
-	GinEngine         *gin.Engine
-	DisasterRepo      datastore.DisasterRepository
-	PrefectureRepo    datastore.PrefectureRepository
-	TimelineRepo      datastore.TimelineRepository
-	DisasterUsecase   usecase.DisasterUseCase
-	PrefectureUsecase usecase.PrefectureUseCase
-	TimelineUsecase   usecase.TimelineUseCase
-	DisasterHandler   handler.Disaster
-	PrefectureHandler handler.Prefecture
-	TimelineHandler   handler.Timeline
+	Logger                    *logger.Logger
+	DBClient                  db.Client
+	GinEngine                 *gin.Engine
+	DisasterRepo              datastore.DisasterRepository
+	PrefectureRepo            datastore.PrefectureRepository
+	TimelineRepo              datastore.TimelineRepository
+	SupportApplicationRepo    datastore.SupportApplicationRepository
+	DisasterUsecase           usecase.DisasterUseCase
+	PrefectureUsecase         usecase.PrefectureUseCase
+	TimelineUsecase           usecase.TimelineUseCase
+	SupportApplicationUsecase usecase.SupportApplicationUseCase
+	DisasterHandler           handler.Disaster
+	PrefectureHandler         handler.Prefecture
+	TimelineHandler           handler.Timeline
+	SupportApplicationHandler handler.SupportApplication
 }
 
 // ProvideLogger creates a new logger instance
@@ -88,6 +91,12 @@ func ProvideTimelineRepository(dbClient db.Client) datastore.TimelineRepository 
 	return datastore.NewTimelineRepository(ctx, dbClient)
 }
 
+// ProvideSupportApplicationRepository creates a new support application repository
+func ProvideSupportApplicationRepository(dbClient db.Client) datastore.SupportApplicationRepository {
+	ctx := context.Background()
+	return datastore.NewSupportApplicationRepository(ctx, dbClient)
+}
+
 // ProvideDisasterUseCase creates a new disaster use case
 func ProvideDisasterUseCase(repo datastore.DisasterRepository) usecase.DisasterUseCase {
 	return usecase.NewDisasterUseCase(repo)
@@ -101,6 +110,11 @@ func ProvidePrefectureUseCase(repo datastore.PrefectureRepository) usecase.Prefe
 // ProvideTimelineUseCase creates a new timeline use case
 func ProvideTimelineUseCase(repo datastore.TimelineRepository) usecase.TimelineUseCase {
 	return usecase.NewTimelineUseCase(repo)
+}
+
+// ProvideSupportApplicationUseCase creates a new support application use case
+func ProvideSupportApplicationUseCase(repo datastore.SupportApplicationRepository) usecase.SupportApplicationUseCase {
+	return usecase.NewSupportApplicationUseCase(repo)
 }
 
 // ProvideDisasterHandler creates a new disaster handler
@@ -118,6 +132,11 @@ func ProvideTimelineHandler(l *logger.Logger, usecase usecase.TimelineUseCase) h
 	return handler.NewTimelineHandler(l, usecase)
 }
 
+// ProvideSupportApplicationHandler creates a new support application handler
+func ProvideSupportApplicationHandler(l *logger.Logger, usecase usecase.SupportApplicationUseCase) handler.SupportApplication {
+	return handler.NewSupportApplicationHandler(l, usecase)
+}
+
 // RegisterRoutes registers all HTTP routes
 func RegisterRoutes(
 	lc fx.Lifecycle,
@@ -127,6 +146,7 @@ func RegisterRoutes(
 	disasterHandler handler.Disaster,
 	prefectureHandler handler.Prefecture,
 	timelineHandler handler.Timeline,
+	supportApplicationHandler handler.SupportApplication,
 ) {
 	// Context for health check
 	ctx := context.Background()
@@ -161,6 +181,11 @@ func RegisterRoutes(
 
 	// タイムライン関連のルート
 	r.GET("/disasters/:id/timelines", timelineHandler.GetTimelinesByDisasterID)
+
+	// 支援申請関連のルート
+	r.GET("/support-applications", supportApplicationHandler.ListSupportApplications)
+	r.GET("/support-applications/:id", supportApplicationHandler.GetSupportApplication)
+	r.POST("/support-applications", supportApplicationHandler.CreateSupportApplication)
 
 	// Swagger JSON エンドポイント
 	r.GET("/docs", func(c *gin.Context) {
@@ -197,12 +222,15 @@ func main() {
 			ProvideDisasterRepository,
 			ProvidePrefectureRepository,
 			ProvideTimelineRepository,
+			ProvideSupportApplicationRepository,
 			ProvideDisasterUseCase,
 			ProvidePrefectureUseCase,
 			ProvideTimelineUseCase,
+			ProvideSupportApplicationUseCase,
 			ProvideDisasterHandler,
 			ProvidePrefectureHandler,
 			ProvideTimelineHandler,
+			ProvideSupportApplicationHandler,
 		),
 		// Register the lifecycle hooks
 		fx.Invoke(RegisterRoutes),
