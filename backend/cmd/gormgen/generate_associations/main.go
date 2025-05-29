@@ -49,10 +49,16 @@ func main() {
 		g.GenerateModel(
 			model.TableNameDisaster,
 			gen.FieldRelateModel(field.BelongsTo, "Prefecture", model.Prefecture{}, nil),
+			gen.FieldRelateModel(field.HasMany, "Timelines", model.Timeline{}, nil),
 		),
 
 		// Userモデル（ユーザー）- リレーションなし
 		g.GenerateModel(model.TableNameUser),
+
+		g.GenerateModel(
+			model.TableNameTimeline,
+			gen.FieldRelateModel(field.BelongsTo, "Disaster", model.Disaster{}, nil),
+		),
 	}
 
 	g.ApplyBasic(allModels...)

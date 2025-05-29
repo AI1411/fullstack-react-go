@@ -48,6 +48,12 @@ func newDisaster(db *gorm.DB, opts ...gen.DOOption) disaster {
 		RelationField: field.NewRelation("Prefecture", "model.Prefecture"),
 	}
 
+	_disaster.Timelines = disasterHasManyTimelines{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Timelines", "model.Timeline"),
+	}
+
 	_disaster.fillFieldMap()
 
 	return _disaster
@@ -72,6 +78,8 @@ type disaster struct {
 	UpdatedAt             field.Time    // 更新日時 - レコード最終更新日時
 	DeletedAt             field.Field   // 削除日時 - 論理削除用のタイムスタンプ
 	Prefecture            disasterBelongsToPrefecture
+
+	Timelines disasterHasManyTimelines
 
 	fieldMap map[string]field.Expr
 }
@@ -118,7 +126,7 @@ func (d *disaster) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (d *disaster) fillFieldMap() {
-	d.fieldMap = make(map[string]field.Expr, 15)
+	d.fieldMap = make(map[string]field.Expr, 16)
 	d.fieldMap["id"] = d.ID
 	d.fieldMap["disaster_code"] = d.DisasterCode
 	d.fieldMap["name"] = d.Name
@@ -140,12 +148,15 @@ func (d disaster) clone(db *gorm.DB) disaster {
 	d.disasterDo.ReplaceConnPool(db.Statement.ConnPool)
 	d.Prefecture.db = db.Session(&gorm.Session{Initialized: true})
 	d.Prefecture.db.Statement.ConnPool = db.Statement.ConnPool
+	d.Timelines.db = db.Session(&gorm.Session{Initialized: true})
+	d.Timelines.db.Statement.ConnPool = db.Statement.ConnPool
 	return d
 }
 
 func (d disaster) replaceDB(db *gorm.DB) disaster {
 	d.disasterDo.ReplaceDB(db)
 	d.Prefecture.db = db.Session(&gorm.Session{})
+	d.Timelines.db = db.Session(&gorm.Session{})
 	return d
 }
 
@@ -226,6 +237,87 @@ func (a disasterBelongsToPrefectureTx) Count() int64 {
 }
 
 func (a disasterBelongsToPrefectureTx) Unscoped() *disasterBelongsToPrefectureTx {
+	a.tx = a.tx.Unscoped()
+	return &a
+}
+
+type disasterHasManyTimelines struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a disasterHasManyTimelines) Where(conds ...field.Expr) *disasterHasManyTimelines {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a disasterHasManyTimelines) WithContext(ctx context.Context) *disasterHasManyTimelines {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a disasterHasManyTimelines) Session(session *gorm.Session) *disasterHasManyTimelines {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a disasterHasManyTimelines) Model(m *model.Disaster) *disasterHasManyTimelinesTx {
+	return &disasterHasManyTimelinesTx{a.db.Model(m).Association(a.Name())}
+}
+
+func (a disasterHasManyTimelines) Unscoped() *disasterHasManyTimelines {
+	a.db = a.db.Unscoped()
+	return &a
+}
+
+type disasterHasManyTimelinesTx struct{ tx *gorm.Association }
+
+func (a disasterHasManyTimelinesTx) Find() (result []*model.Timeline, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a disasterHasManyTimelinesTx) Append(values ...*model.Timeline) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a disasterHasManyTimelinesTx) Replace(values ...*model.Timeline) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a disasterHasManyTimelinesTx) Delete(values ...*model.Timeline) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a disasterHasManyTimelinesTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a disasterHasManyTimelinesTx) Count() int64 {
+	return a.tx.Count()
+}
+
+func (a disasterHasManyTimelinesTx) Unscoped() *disasterHasManyTimelinesTx {
 	a.tx = a.tx.Unscoped()
 	return &a
 }

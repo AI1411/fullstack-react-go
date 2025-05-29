@@ -23,6 +23,7 @@ type Timeline struct {
 	CreatedAt   time.Time      `gorm:"column:created_at;type:timestamp without time zone;not null;default:CURRENT_TIMESTAMP;comment:作成日時 - レコード作成日時" json:"created_at"`                        // 作成日時 - レコード作成日時
 	UpdatedAt   time.Time      `gorm:"column:updated_at;type:timestamp without time zone;not null;default:CURRENT_TIMESTAMP;comment:更新日時 - レコード最終更新日時" json:"updated_at"`                      // 更新日時 - レコード最終更新日時
 	DeletedAt   gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp without time zone;comment:削除日時 - 論理削除用のタイムスタンプ" json:"deleted_at"`                                                      // 削除日時 - 論理削除用のタイムスタンプ
+	Disaster    Disaster       `json:"disaster"`
 }
 
 // TableName Timeline's table name

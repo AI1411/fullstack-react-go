@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
+	"github.com/AI1411/fullstack-react-go/internal/domain/query"
 	"github.com/AI1411/fullstack-react-go/internal/infra/db"
 )
 
@@ -13,6 +14,7 @@ type TimelineRepository interface {
 
 type timelineRepository struct {
 	client db.Client
+	query  *query.Query
 }
 
 func NewTimelineRepository(
@@ -21,17 +23,16 @@ func NewTimelineRepository(
 ) TimelineRepository {
 	return &timelineRepository{
 		client: client,
+		query:  query.Use(client.Conn(ctx)),
 	}
 }
 
 func (r *timelineRepository) FindByDisasterID(ctx context.Context, disasterID string) ([]*model.Timeline, error) {
-	var timelines []*model.Timeline
-
-	err := r.client.Conn(ctx).
-		Where("disaster_id = ?", disasterID).
-		Order("event_time").
-		Find(&timelines).Error
-
+	timelines, err := r.query.WithContext(ctx).
+		Timeline.
+		Where(r.query.Timeline.DisasterID.Eq(disasterID)).
+		Order(r.query.Timeline.EventTime.Desc()).
+		Find()
 	if err != nil {
 		return nil, err
 	}

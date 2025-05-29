@@ -29,6 +29,7 @@ type Disaster struct {
 	UpdatedAt             time.Time      `gorm:"column:updated_at;type:timestamp with time zone;not null;default:CURRENT_TIMESTAMP;comment:更新日時 - レコード最終更新日時" json:"updated_at"`                                                                     // 更新日時 - レコード最終更新日時
 	DeletedAt             gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp with time zone;comment:削除日時 - 論理削除用のタイムスタンプ" json:"deleted_at"`                                                                                                     // 削除日時 - 論理削除用のタイムスタンプ
 	Prefecture            Prefecture     `json:"prefecture"`
+	Timelines             []Timeline     `json:"timelines"`
 }
 
 // TableName Disaster's table name

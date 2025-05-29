@@ -37,6 +37,11 @@ func newTimeline(db *gorm.DB, opts ...gen.DOOption) timeline {
 	_timeline.CreatedAt = field.NewTime(tableName, "created_at")
 	_timeline.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_timeline.DeletedAt = field.NewField(tableName, "deleted_at")
+	_timeline.Disaster = timelineBelongsToDisaster{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Disaster", "model.Disaster"),
+	}
 
 	_timeline.fillFieldMap()
 
@@ -56,6 +61,7 @@ type timeline struct {
 	CreatedAt   field.Time   // 作成日時 - レコード作成日時
 	UpdatedAt   field.Time   // 更新日時 - レコード最終更新日時
 	DeletedAt   field.Field  // 削除日時 - 論理削除用のタイムスタンプ
+	Disaster    timelineBelongsToDisaster
 
 	fieldMap map[string]field.Expr
 }
@@ -97,7 +103,7 @@ func (t *timeline) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (t *timeline) fillFieldMap() {
-	t.fieldMap = make(map[string]field.Expr, 9)
+	t.fieldMap = make(map[string]field.Expr, 10)
 	t.fieldMap["id"] = t.ID
 	t.fieldMap["disaster_id"] = t.DisasterID
 	t.fieldMap["event_name"] = t.EventName
@@ -107,16 +113,101 @@ func (t *timeline) fillFieldMap() {
 	t.fieldMap["created_at"] = t.CreatedAt
 	t.fieldMap["updated_at"] = t.UpdatedAt
 	t.fieldMap["deleted_at"] = t.DeletedAt
+
 }
 
 func (t timeline) clone(db *gorm.DB) timeline {
 	t.timelineDo.ReplaceConnPool(db.Statement.ConnPool)
+	t.Disaster.db = db.Session(&gorm.Session{Initialized: true})
+	t.Disaster.db.Statement.ConnPool = db.Statement.ConnPool
 	return t
 }
 
 func (t timeline) replaceDB(db *gorm.DB) timeline {
 	t.timelineDo.ReplaceDB(db)
+	t.Disaster.db = db.Session(&gorm.Session{})
 	return t
+}
+
+type timelineBelongsToDisaster struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a timelineBelongsToDisaster) Where(conds ...field.Expr) *timelineBelongsToDisaster {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a timelineBelongsToDisaster) WithContext(ctx context.Context) *timelineBelongsToDisaster {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a timelineBelongsToDisaster) Session(session *gorm.Session) *timelineBelongsToDisaster {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a timelineBelongsToDisaster) Model(m *model.Timeline) *timelineBelongsToDisasterTx {
+	return &timelineBelongsToDisasterTx{a.db.Model(m).Association(a.Name())}
+}
+
+func (a timelineBelongsToDisaster) Unscoped() *timelineBelongsToDisaster {
+	a.db = a.db.Unscoped()
+	return &a
+}
+
+type timelineBelongsToDisasterTx struct{ tx *gorm.Association }
+
+func (a timelineBelongsToDisasterTx) Find() (result *model.Disaster, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a timelineBelongsToDisasterTx) Append(values ...*model.Disaster) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a timelineBelongsToDisasterTx) Replace(values ...*model.Disaster) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a timelineBelongsToDisasterTx) Delete(values ...*model.Disaster) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a timelineBelongsToDisasterTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a timelineBelongsToDisasterTx) Count() int64 {
+	return a.tx.Count()
+}
+
+func (a timelineBelongsToDisasterTx) Unscoped() *timelineBelongsToDisasterTx {
+	a.tx = a.tx.Unscoped()
+	return &a
 }
 
 type timelineDo struct{ gen.DO }
