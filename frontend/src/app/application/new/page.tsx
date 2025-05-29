@@ -1,61 +1,74 @@
 "use client"
 
-import Footer from "@/components/layout/footer/page"
-import Header from "@/components/layout/header/page"
-import React, { useState } from "react"
 import { useCreateSupportApplication } from "@/api/client"
 import { HandlerCreateSupportApplicationRequest } from "@/api/model"
+import Footer from "@/components/layout/footer/page"
+import Header from "@/components/layout/header/page"
 import { useRouter } from "next/navigation"
+import React, { useState } from "react"
 
 const SupportApplicationCreatePage: React.FC = () => {
-  const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const createSupportApplicationMutation = useCreateSupportApplication({
-    onSuccess: () => {
-      setIsSubmitting(false);
-      // 成功したら一覧ページに戻る
-      router.push("/application");
+    mutation: {
+      onSuccess: () => {
+        setIsSubmitting(false)
+        router.push("/application")
+      },
+      onError: (error) => {
+        setIsSubmitting(false)
+        setError("申請の作成に失敗しました。入力内容を確認してください。")
+        console.error("Error creating support application:", error)
+      },
     },
-    onError: (error) => {
-      setIsSubmitting(false);
-      setError("申請の作成に失敗しました。入力内容を確認してください。");
-      console.error("Error creating support application:", error);
-    }
-  });
-
-  const [formData, setFormData] = useState<HandlerCreateSupportApplicationRequest>({
-    application_id: "",
-    application_date: new Date().toISOString().split('T')[0], // 今日の日付をデフォルト値に
-    applicant_name: "",
-    disaster_name: "",
-    requested_amount: 0,
-    status: "審査中", // デフォルト値
-    notes: "",
   })
 
-  const handleInputChange = (field: keyof HandlerCreateSupportApplicationRequest, value: string | number) => {
+  const [formData, setFormData] =
+    useState<HandlerCreateSupportApplicationRequest>({
+      application_id: "",
+      application_date: new Date().toISOString().split("T")[0], // 今日の日付をデフォルト値に
+      applicant_name: "",
+      disaster_name: "",
+      requested_amount: 0,
+      status: "審査中", // デフォルト値
+      notes: "",
+    })
+
+  const handleInputChange = (
+    field: keyof HandlerCreateSupportApplicationRequest,
+    value: string | number
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError(null);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setError(null)
 
-    // バリデーション
-    if (!formData.application_id || !formData.applicant_name || !formData.disaster_name || !formData.requested_amount) {
-      setError("必須項目を入力してください");
-      setIsSubmitting(false);
-      return;
+    try {
+      const requestData = {
+        ...formData,
+        requested_amount: Number(formData.requested_amount),
+      }
+
+      console.log("送信データ:", requestData)
+
+      createSupportApplicationMutation.mutate(requestData)
+      // 削除: router.push("/application")
+      // onSuccessコールバックで既にリダイレクトが処理されるため、ここでのリダイレクトは不要
+    } catch (error) {
+      console.error("エラー:", error)
+      setError(`申請の作成に失敗しました: ${error.message}`)
+    } finally {
+      setIsSubmitting(false)
     }
-
-    // APIを呼び出して申請を作成
-    createSupportApplicationMutation.mutate(formData);
   }
 
   return (
@@ -94,7 +107,9 @@ const SupportApplicationCreatePage: React.FC = () => {
                   <input
                     type="text"
                     value={formData.application_id}
-                    onChange={(e) => handleInputChange("application_id", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("application_id", e.target.value)
+                    }
                     placeholder="例: A001"
                     className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                     required
@@ -110,7 +125,9 @@ const SupportApplicationCreatePage: React.FC = () => {
                   <input
                     type="date"
                     value={formData.application_date}
-                    onChange={(e) => handleInputChange("application_date", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("application_date", e.target.value)
+                    }
                     className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                     required
                   />
@@ -125,7 +142,9 @@ const SupportApplicationCreatePage: React.FC = () => {
                   <input
                     type="text"
                     value={formData.applicant_name}
-                    onChange={(e) => handleInputChange("applicant_name", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("applicant_name", e.target.value)
+                    }
                     placeholder="例: 山田農園"
                     className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                     required
@@ -141,7 +160,9 @@ const SupportApplicationCreatePage: React.FC = () => {
                   <input
                     type="text"
                     value={formData.disaster_name}
-                    onChange={(e) => handleInputChange("disaster_name", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("disaster_name", e.target.value)
+                    }
                     placeholder="例: 京都府洪水被害"
                     className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                     required
@@ -156,8 +177,13 @@ const SupportApplicationCreatePage: React.FC = () => {
                   </p>
                   <input
                     type="number"
-                    value={formData.requested_amount || ''}
-                    onChange={(e) => handleInputChange("requested_amount", parseInt(e.target.value) || 0)}
+                    value={formData.requested_amount || ""}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "requested_amount",
+                        Number.parseInt(e.target.value) || 0
+                      )
+                    }
                     placeholder="例: 2500000"
                     className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                     required
@@ -172,8 +198,10 @@ const SupportApplicationCreatePage: React.FC = () => {
                     ステータス
                   </p>
                   <select
-                    value={formData.status || '審査中'}
-                    onChange={(e) => handleInputChange("status", e.target.value)}
+                    value={formData.status || "審査中"}
+                    onChange={(e) =>
+                      handleInputChange("status", e.target.value)
+                    }
                     className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] h-14 bg-[image:--select-button-svg] placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                   >
                     <option value="審査中">審査中</option>
@@ -192,7 +220,7 @@ const SupportApplicationCreatePage: React.FC = () => {
                   </p>
                   <textarea
                     placeholder="追加の備考や詳細情報を入力してください"
-                    value={formData.notes || ''}
+                    value={formData.notes || ""}
                     onChange={(e) => handleInputChange("notes", e.target.value)}
                     className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dce0e5] bg-white focus:border-[#dce0e5] min-h-36 placeholder:text-[#637588] p-[15px] text-base font-normal leading-normal"
                   />
@@ -202,7 +230,7 @@ const SupportApplicationCreatePage: React.FC = () => {
               <div className="flex px-4 py-3 justify-end gap-3">
                 <button
                   type="button"
-                  onClick={() => router.push('/application')}
+                  onClick={() => router.push("/application")}
                   className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-white border border-[#dce0e5] text-[#111418] text-base font-bold leading-normal tracking-[0.015em] hover:bg-gray-50 transition-colors"
                 >
                   <span className="truncate">キャンセル</span>
@@ -212,7 +240,9 @@ const SupportApplicationCreatePage: React.FC = () => {
                   disabled={isSubmitting}
                   className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-[#197fe5] text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-[#1565c0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span className="truncate">{isSubmitting ? '送信中...' : '申請を作成'}</span>
+                  <span className="truncate">
+                    {isSubmitting ? "送信中..." : "申請を作成"}
+                  </span>
                 </button>
               </div>
             </form>
