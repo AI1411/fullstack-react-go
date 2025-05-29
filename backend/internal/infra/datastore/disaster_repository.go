@@ -15,6 +15,7 @@ type DisasterSearchParams struct {
 	DisasterType string
 	Status       string
 	PrefectureID int32
+	ImpactLevel  string
 	StartDate    time.Time
 	EndDate      time.Time
 }
@@ -59,6 +60,9 @@ func (r *disasterRepository) Find(ctx context.Context, params *DisasterSearchPar
 		}
 		if params.PrefectureID != 0 {
 			q = q.Where(r.query.Disaster.PrefectureID.Eq(params.PrefectureID))
+		}
+		if params.ImpactLevel != "" {
+			q = q.Where(r.query.Disaster.ImpactLevel.Eq(params.ImpactLevel))
 		}
 		// Apply date range filter if both start and end dates are provided
 		if !params.StartDate.IsZero() && !params.EndDate.IsZero() {

@@ -6,11 +6,4 @@
  * OpenAPI spec version: 1.0
  */
 
-export interface HandlerTimelineResponse {
-  description?: string;
-  disaster_id?: string;
-  event_name?: string;
-  event_time?: string;
-  id?: number;
-  severity?: string;
-}
+export type PutDisastersId500 = {[key: string]: string};
