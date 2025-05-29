@@ -60,6 +60,16 @@ export const getUpdateDisasterMockHandler = (overrideResponse?: void | ((info: P
   })
 }
 
+export const getGetDisastersIdTimelinesMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<void> | void)) => {
+  return http.get('*/disasters/:id/timelines', async (info) => {await delay(1000);
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+    return new HttpResponse(null,
+      { status: 200,
+        
+      })
+  })
+}
+
 export const getListPrefecturesMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<void> | void)) => {
   return http.get('*/prefectures', async (info) => {await delay(1000);
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
@@ -85,6 +95,7 @@ export const getUndefinedMock = () => [
   getDeleteDisasterMockHandler(),
   getGetDisasterMockHandler(),
   getUpdateDisasterMockHandler(),
+  getGetDisastersIdTimelinesMockHandler(),
   getListPrefecturesMockHandler(),
   getGetPrefectureMockHandler()
 ]

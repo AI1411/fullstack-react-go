@@ -24,10 +24,13 @@ type Module struct {
 	GinEngine         *gin.Engine
 	DisasterRepo      datastore.DisasterRepository
 	PrefectureRepo    datastore.PrefectureRepository
+	TimelineRepo      datastore.TimelineRepository
 	DisasterUsecase   usecase.DisasterUseCase
 	PrefectureUsecase usecase.PrefectureUseCase
+	TimelineUsecase   usecase.TimelineUseCase
 	DisasterHandler   handler.Disaster
 	PrefectureHandler handler.Prefecture
+	TimelineHandler   handler.Timeline
 }
 
 // ProvideLogger creates a new logger instance
@@ -79,6 +82,12 @@ func ProvidePrefectureRepository(dbClient db.Client) datastore.PrefectureReposit
 	return datastore.NewPrefectureRepository(ctx, dbClient)
 }
 
+// ProvideTimelineRepository creates a new timeline repository
+func ProvideTimelineRepository(dbClient db.Client) datastore.TimelineRepository {
+	ctx := context.Background()
+	return datastore.NewTimelineRepository(ctx, dbClient)
+}
+
 // ProvideDisasterUseCase creates a new disaster use case
 func ProvideDisasterUseCase(repo datastore.DisasterRepository) usecase.DisasterUseCase {
 	return usecase.NewDisasterUseCase(repo)
@@ -87,6 +96,11 @@ func ProvideDisasterUseCase(repo datastore.DisasterRepository) usecase.DisasterU
 // ProvidePrefectureUseCase creates a new prefecture use case
 func ProvidePrefectureUseCase(repo datastore.PrefectureRepository) usecase.PrefectureUseCase {
 	return usecase.NewPrefectureUseCase(repo)
+}
+
+// ProvideTimelineUseCase creates a new timeline use case
+func ProvideTimelineUseCase(repo datastore.TimelineRepository) usecase.TimelineUseCase {
+	return usecase.NewTimelineUseCase(repo)
 }
 
 // ProvideDisasterHandler creates a new disaster handler
@@ -99,6 +113,11 @@ func ProvidePrefectureHandler(l *logger.Logger, usecase usecase.PrefectureUseCas
 	return handler.NewPrefectureHandler(l, usecase)
 }
 
+// ProvideTimelineHandler creates a new timeline handler
+func ProvideTimelineHandler(l *logger.Logger, usecase usecase.TimelineUseCase) handler.Timeline {
+	return handler.NewTimelineHandler(l, usecase)
+}
+
 // RegisterRoutes registers all HTTP routes
 func RegisterRoutes(
 	lc fx.Lifecycle,
@@ -107,6 +126,7 @@ func RegisterRoutes(
 	dbClient db.Client,
 	disasterHandler handler.Disaster,
 	prefectureHandler handler.Prefecture,
+	timelineHandler handler.Timeline,
 ) {
 	// Context for health check
 	ctx := context.Background()
@@ -138,6 +158,9 @@ func RegisterRoutes(
 	// 都道府県関連のルート
 	r.GET("/prefectures", prefectureHandler.ListPrefectures)
 	r.GET("/prefectures/:id", prefectureHandler.GetPrefecture)
+
+	// タイムライン関連のルート
+	r.GET("/disasters/:id/timelines", timelineHandler.GetTimelinesByDisasterID)
 
 	// Swagger JSON エンドポイント
 	r.GET("/docs", func(c *gin.Context) {
@@ -173,10 +196,13 @@ func main() {
 			ProvideGinEngine,
 			ProvideDisasterRepository,
 			ProvidePrefectureRepository,
+			ProvideTimelineRepository,
 			ProvideDisasterUseCase,
 			ProvidePrefectureUseCase,
+			ProvideTimelineUseCase,
 			ProvideDisasterHandler,
 			ProvidePrefectureHandler,
+			ProvideTimelineHandler,
 		),
 		// Register the lifecycle hooks
 		fx.Invoke(RegisterRoutes),

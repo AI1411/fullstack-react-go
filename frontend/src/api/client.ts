@@ -388,6 +388,93 @@ export const useUpdateDisaster = <TError = AxiosError<void>,
     }
     
 /**
+ * Get timelines by disaster ID
+ * @summary Get timelines by disaster ID
+ */
+export const getDisastersIdTimelines = (
+    id: unknown, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.get(
+      `/disasters/${id}/timelines`,options
+    );
+  }
+
+
+export const getGetDisastersIdTimelinesQueryKey = (id: unknown,) => {
+    return [`/disasters/${id}/timelines`] as const;
+    }
+
+    
+export const getGetDisastersIdTimelinesQueryOptions = <TData = Awaited<ReturnType<typeof getDisastersIdTimelines>>, TError = AxiosError<unknown>>(id: unknown, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDisastersIdTimelines>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetDisastersIdTimelinesQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDisastersIdTimelines>>> = ({ signal }) => getDisastersIdTimelines(id, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getDisastersIdTimelines>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetDisastersIdTimelinesQueryResult = NonNullable<Awaited<ReturnType<typeof getDisastersIdTimelines>>>
+export type GetDisastersIdTimelinesQueryError = AxiosError<unknown>
+
+
+export function useGetDisastersIdTimelines<TData = Awaited<ReturnType<typeof getDisastersIdTimelines>>, TError = AxiosError<unknown>>(
+ id: unknown, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDisastersIdTimelines>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDisastersIdTimelines>>,
+          TError,
+          Awaited<ReturnType<typeof getDisastersIdTimelines>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetDisastersIdTimelines<TData = Awaited<ReturnType<typeof getDisastersIdTimelines>>, TError = AxiosError<unknown>>(
+ id: unknown, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDisastersIdTimelines>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDisastersIdTimelines>>,
+          TError,
+          Awaited<ReturnType<typeof getDisastersIdTimelines>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetDisastersIdTimelines<TData = Awaited<ReturnType<typeof getDisastersIdTimelines>>, TError = AxiosError<unknown>>(
+ id: unknown, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDisastersIdTimelines>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary Get timelines by disaster ID
+ */
+
+export function useGetDisastersIdTimelines<TData = Awaited<ReturnType<typeof getDisastersIdTimelines>>, TError = AxiosError<unknown>>(
+ id: unknown, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDisastersIdTimelines>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetDisastersIdTimelinesQueryOptions(id,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
  * @summary 都道府県一覧取得
  */
 export const listPrefectures = (
