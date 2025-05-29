@@ -86,7 +86,9 @@ export default function ApplicationDetailPage() {
                       申請 #{application.application_id}
                     </h2>
                     <div className="flex items-center">
-                      <span className="mr-2 text-sm text-[#637588]">ステータス:</span>
+                      <span className="mr-2 text-sm text-[#637588]">
+                        ステータス:
+                      </span>
                       <button
                         type="button"
                         className={`flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-3 ${getStatusBadgeClass(
@@ -101,15 +103,25 @@ export default function ApplicationDetailPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                       <div>
-                        <h3 className="text-sm font-medium text-[#637588]">申請者</h3>
-                        <p className="text-base text-[#111418]">{application.applicant_name}</p>
+                        <h3 className="text-sm font-medium text-[#637588]">
+                          申請者
+                        </h3>
+                        <p className="text-base text-[#111418]">
+                          {application.applicant_name}
+                        </p>
                       </div>
                       <div>
-                        <h3 className="text-sm font-medium text-[#637588]">災害名</h3>
-                        <p className="text-base text-[#111418]">{application.disaster_name}</p>
+                        <h3 className="text-sm font-medium text-[#637588]">
+                          災害名
+                        </h3>
+                        <p className="text-base text-[#111418]">
+                          {application.disaster_name}
+                        </p>
                       </div>
                       <div>
-                        <h3 className="text-sm font-medium text-[#637588]">申請金額</h3>
+                        <h3 className="text-sm font-medium text-[#637588]">
+                          申請金額
+                        </h3>
                         <p className="text-base text-[#111418]">
                           {application.requested_amount
                             ? formatAmount(application.requested_amount)
@@ -119,25 +131,33 @@ export default function ApplicationDetailPage() {
                     </div>
                     <div className="space-y-4">
                       <div>
-                        <h3 className="text-sm font-medium text-[#637588]">申請日</h3>
+                        <h3 className="text-sm font-medium text-[#637588]">
+                          申請日
+                        </h3>
                         <p className="text-base text-[#111418]">
                           {formatDate(application.application_date)}
                         </p>
                       </div>
                       <div>
-                        <h3 className="text-sm font-medium text-[#637588]">審査日</h3>
+                        <h3 className="text-sm font-medium text-[#637588]">
+                          審査日
+                        </h3>
                         <p className="text-base text-[#111418]">
                           {formatDate(application.reviewed_at)}
                         </p>
                       </div>
                       <div>
-                        <h3 className="text-sm font-medium text-[#637588]">承認日</h3>
+                        <h3 className="text-sm font-medium text-[#637588]">
+                          承認日
+                        </h3>
                         <p className="text-base text-[#111418]">
                           {formatDate(application.approved_at)}
                         </p>
                       </div>
                       <div>
-                        <h3 className="text-sm font-medium text-[#637588]">完了日</h3>
+                        <h3 className="text-sm font-medium text-[#637588]">
+                          完了日
+                        </h3>
                         <p className="text-base text-[#111418]">
                           {formatDate(application.completed_at)}
                         </p>
@@ -147,7 +167,9 @@ export default function ApplicationDetailPage() {
 
                   {application.notes && (
                     <div className="mt-6">
-                      <h3 className="text-sm font-medium text-[#637588]">備考</h3>
+                      <h3 className="text-sm font-medium text-[#637588]">
+                        備考
+                      </h3>
                       <p className="text-base text-[#111418] whitespace-pre-line">
                         {application.notes}
                       </p>

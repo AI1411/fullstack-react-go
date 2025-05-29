@@ -1,12 +1,14 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
+	"github.com/AI1411/fullstack-react-go/internal/infra/datastore"
 	"github.com/AI1411/fullstack-react-go/internal/infra/logger"
 	"github.com/AI1411/fullstack-react-go/internal/usecase"
 )
@@ -96,11 +98,55 @@ type UpdateDisasterRequest struct {
 // @version バージョン(1.0)
 // @description
 // @Summary 災害マスタ一覧取得
+// @Param name query string false "災害名"
+// @Param disaster_type query string false "災害種別"
+// @Param status query string false "ステータス"
+// @Param prefecture_id query integer false "都道府県ID"
+// @Param start_date query string false "開始日 (RFC3339形式)"
+// @Param end_date query string false "終了日 (RFC3339形式)"
 // @Success 200 {array} ListDisastersResponse
 // @Router /disasters [get]
 func (h *disasterHandler) ListDisasters(c *gin.Context) {
 	ctx := c.Request.Context()
-	disasters, err := h.disasterUseCase.ListDisasters(ctx)
+
+	// Create search parameters
+	params := &datastore.DisasterSearchParams{}
+
+	// Extract search parameters from query
+	if name := c.Query("name"); name != "" {
+		params.Name = name
+	}
+
+	if disasterType := c.Query("disaster_type"); disasterType != "" {
+		params.DisasterType = disasterType
+	}
+
+	if status := c.Query("status"); status != "" {
+		params.Status = status
+	}
+
+	// Parse prefecture_id if provided
+	if prefectureID := c.Query("prefecture_id"); prefectureID != "" {
+		var id int32
+		if _, err := fmt.Sscanf(prefectureID, "%d", &id); err == nil {
+			params.PrefectureID = id
+		}
+	}
+
+	// Parse date range if provided
+	if startDate := c.Query("start_date"); startDate != "" {
+		if date, err := time.Parse(time.RFC3339, startDate); err == nil {
+			params.StartDate = date
+		}
+	}
+
+	if endDate := c.Query("end_date"); endDate != "" {
+		if date, err := time.Parse(time.RFC3339, endDate); err == nil {
+			params.EndDate = date
+		}
+	}
+
+	disasters, err := h.disasterUseCase.ListDisasters(ctx, params)
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Failed to list disasters")
 		c.JSON(500, gin.H{"error": "Internal Server Error"})

@@ -8,7 +8,7 @@ import (
 )
 
 type DisasterUseCase interface {
-	ListDisasters(ctx context.Context) ([]*model.Disaster, error)
+	ListDisasters(ctx context.Context, params *datastore.DisasterSearchParams) ([]*model.Disaster, error)
 	GetDisasterByID(ctx context.Context, id string) (*model.Disaster, error)
 	CreateDisaster(ctx context.Context, disaster *model.Disaster) error
 	UpdateDisaster(ctx context.Context, disaster *model.Disaster) error
@@ -27,8 +27,8 @@ func NewDisasterUseCase(
 	}
 }
 
-func (u *disasterUseCase) ListDisasters(ctx context.Context) ([]*model.Disaster, error) {
-	disasters, err := u.disasterRepository.Find(ctx)
+func (u *disasterUseCase) ListDisasters(ctx context.Context, params *datastore.DisasterSearchParams) ([]*model.Disaster, error) {
+	disasters, err := u.disasterRepository.Find(ctx, params)
 	if err != nil {
 		return nil, err
 	}

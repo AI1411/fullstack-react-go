@@ -9,33 +9,36 @@ type TabNavigationProps = {
   setActiveTab: Dispatch<SetStateAction<TabType>>
 }
 
-export default function TabNavigation({ activeTab, setActiveTab }: TabNavigationProps) {
+export default function TabNavigation({
+  activeTab,
+  setActiveTab,
+}: TabNavigationProps) {
   return (
     <div className="pb-3">
       <div className="flex border-b border-[#dce0e5] px-4 gap-8">
-        <TabButton 
-          label="概要" 
-          tabValue="overview" 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
+        <TabButton
+          label="概要"
+          tabValue="overview"
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
         />
-        <TabButton 
-          label="被害状況" 
-          tabValue="damages" 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
+        <TabButton
+          label="被害状況"
+          tabValue="damages"
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
         />
-        <TabButton 
-          label="関連書類" 
-          tabValue="documents" 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
+        <TabButton
+          label="関連書類"
+          tabValue="documents"
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
         />
-        <TabButton 
-          label="タイムライン" 
-          tabValue="timeline" 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
+        <TabButton
+          label="タイムライン"
+          tabValue="timeline"
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
         />
       </div>
     </div>
@@ -49,9 +52,14 @@ type TabButtonProps = {
   setActiveTab: Dispatch<SetStateAction<TabType>>
 }
 
-function TabButton({ label, tabValue, activeTab, setActiveTab }: TabButtonProps) {
+function TabButton({
+  label,
+  tabValue,
+  activeTab,
+  setActiveTab,
+}: TabButtonProps) {
   const isActive = activeTab === tabValue
-  
+
   return (
     <button
       type="button"

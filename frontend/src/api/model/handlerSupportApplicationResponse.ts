@@ -4,16 +4,16 @@
  */
 
 export interface HandlerSupportApplicationResponse {
-  applicant_name?: string;
-  application_date?: string;
-  application_id?: string;
-  approved_at?: string;
-  completed_at?: string;
-  created_at?: string;
-  disaster_name?: string;
-  notes?: string;
-  requested_amount?: number;
-  reviewed_at?: string;
-  status?: string;
-  updated_at?: string;
+  applicant_name?: string
+  application_date?: string
+  application_id?: string
+  approved_at?: string
+  completed_at?: string
+  created_at?: string
+  disaster_name?: string
+  notes?: string
+  requested_amount?: number
+  reviewed_at?: string
+  status?: string
+  updated_at?: string
 }

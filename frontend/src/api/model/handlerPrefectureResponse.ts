@@ -4,7 +4,7 @@
  */
 
 export interface HandlerPrefectureResponse {
-  id?: number;
-  name?: string;
-  region_id?: number;
+  id?: number
+  name?: string
+  region_id?: number
 }

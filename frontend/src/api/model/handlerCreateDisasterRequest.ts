@@ -4,14 +4,14 @@
  */
 
 export interface HandlerCreateDisasterRequest {
-  affected_area_size?: number;
-  disaster_code: string;
-  disaster_type: string;
-  estimated_damage_amount?: number;
-  impact_level: string;
-  name: string;
-  occurred_at: string;
-  prefecture_id: number;
-  status?: string;
-  summary: string;
+  affected_area_size?: number
+  disaster_code: string
+  disaster_type: string
+  estimated_damage_amount?: number
+  impact_level: string
+  name: string
+  occurred_at: string
+  prefecture_id: number
+  status?: string
+  summary: string
 }
