@@ -9,29 +9,35 @@ export default function Home() {
   const {
     data: disastersResponse,
     isLoading,
-    isError
+    isError,
   } = useListDisasters({
     query: {
       staleTime: 5 * 60 * 1000, // 5分間キャッシュ
-    }
+    },
   })
 
   const disasters = disastersResponse?.data || []
 
   // 統計情報を計算
   const totalDisasters = disasters.length
-  const pendingCount = disasters.filter(d => d.status === 'pending' || d.status === 'under_review').length
+  const pendingCount = disasters.filter(
+    (d) => d.status === "pending" || d.status === "under_review"
+  ).length
   const recentDisasters = disasters
-    .sort((a, b) => new Date(b.occurred_at || '').getTime() - new Date(a.occurred_at || '').getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.occurred_at || "").getTime() -
+        new Date(a.occurred_at || "").getTime()
+    )
     .slice(0, 5)
 
   // 日付フォーマット関数
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleDateString('ja-JP', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
+    return date.toLocaleDateString("ja-JP", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
     })
   }
 
@@ -103,7 +109,9 @@ export default function Home() {
                 <div className="animate-pulse bg-gray-200 h-8 rounded"></div>
               ) : (
                 <p className="text-[#111418] tracking-light text-2xl font-bold leading-tight">
-                  {disasters.filter(d => d.status === 'completed').length.toLocaleString()}
+                  {disasters
+                    .filter((d) => d.status === "completed")
+                    .length.toLocaleString()}
                 </p>
               )}
             </div>
@@ -112,7 +120,7 @@ export default function Home() {
           <h2 className="text-[#111418] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">
             最新災害情報
           </h2>
-          
+
           {isLoading ? (
             <div className="p-4">
               <div className="animate-pulse">
@@ -138,8 +146,11 @@ export default function Home() {
                     {recentDisasters[0].summary}
                   </p>
                   <p className="text-[#637588] text-xs font-normal leading-normal mt-2">
-                    発生日: {recentDisasters[0].occurred_at ? formatDate(recentDisasters[0].occurred_at) : '-'} | 
-                    状態: {getStatusLabel(recentDisasters[0].status || '')}
+                    発生日:{" "}
+                    {recentDisasters[0].occurred_at
+                      ? formatDate(recentDisasters[0].occurred_at)
+                      : "-"}{" "}
+                    | 状態: {getStatusLabel(recentDisasters[0].status || "")}
                   </p>
                 </div>
                 <div
@@ -198,7 +209,10 @@ export default function Home() {
                   </thead>
                   <tbody>
                     {recentDisasters.map((disaster) => (
-                      <tr key={disaster.id} className="border-t border-t-[#dce0e5]">
+                      <tr
+                        key={disaster.id}
+                        className="border-t border-t-[#dce0e5]"
+                      >
                         <td className="table-column-120 h-[72px] px-4 py-2 w-[400px] text-[#111418] text-sm font-normal leading-normal">
                           <Link
                             href={`/disasters/${disaster.id}`}
@@ -212,16 +226,22 @@ export default function Home() {
                         </td>
                         <td className="table-column-360 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
                           <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal w-full">
-                            <span className="truncate">{disaster.disaster_type}</span>
+                            <span className="truncate">
+                              {disaster.disaster_type}
+                            </span>
                           </button>
                         </td>
                         <td className="table-column-480 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
                           <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal w-full">
-                            <span className="truncate">{getStatusLabel(disaster.status || '')}</span>
+                            <span className="truncate">
+                              {getStatusLabel(disaster.status || "")}
+                            </span>
                           </button>
                         </td>
                         <td className="table-column-600 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
-                          {disaster.occurred_at ? formatDate(disaster.occurred_at) : '-'}
+                          {disaster.occurred_at
+                            ? formatDate(disaster.occurred_at)
+                            : "-"}
                         </td>
                       </tr>
                     ))}

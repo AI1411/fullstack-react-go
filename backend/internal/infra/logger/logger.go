@@ -44,6 +44,7 @@ type Config struct {
 func DefaultConfig() Config {
 	// 環境変数でログレベルを設定可能にする
 	level := InfoLevel
+
 	if logLevel := os.Getenv("LOG_LEVEL"); logLevel != "" {
 		switch logLevel {
 		case "debug":
@@ -141,6 +142,7 @@ func TraceIDFromContext(ctx context.Context) string {
 	if traceID, ok := ctx.Value(traceIDKey{}).(string); ok {
 		return traceID
 	}
+
 	return ""
 }
 
@@ -149,6 +151,7 @@ func (l *Logger) addTraceIDFromContext(ctx context.Context, args []any) []any {
 	if traceID := TraceIDFromContext(ctx); traceID != "" {
 		return append(args, slog.String("trace_id", traceID))
 	}
+
 	return args
 }
 
@@ -159,6 +162,7 @@ func (l *Logger) WithTrace(ctx context.Context) *Logger {
 			Logger: l.Logger.With(slog.String("trace_id", traceID)),
 		}
 	}
+
 	return l
 }
 

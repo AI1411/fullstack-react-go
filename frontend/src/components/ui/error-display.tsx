@@ -1,5 +1,5 @@
-import React from 'react'
-import { AlertTriangle, RefreshCw } from 'lucide-react'
+import React from "react"
+import { AlertTriangle, RefreshCw } from "lucide-react"
 
 interface ErrorDisplayProps {
   title?: string
@@ -9,13 +9,15 @@ interface ErrorDisplayProps {
 }
 
 export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
-  title = 'エラーが発生しました',
+  title = "エラーが発生しました",
   message,
   onRetry,
-  className = ''
+  className = "",
 }) => {
   return (
-    <div className={`bg-red-50 border border-red-200 rounded-lg p-4 ${className}`}>
+    <div
+      className={`bg-red-50 border border-red-200 rounded-lg p-4 ${className}`}
+    >
       <div className="flex items-start">
         <AlertTriangle className="h-5 w-5 text-red-400 mt-0.5 mr-3" />
         <div className="flex-1">
@@ -49,15 +51,11 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   description,
   icon,
   action,
-  className = ''
+  className = "",
 }) => {
   return (
     <div className={`text-center p-8 ${className}`}>
-      {icon && (
-        <div className="flex justify-center mb-4">
-          {icon}
-        </div>
-      )}
+      {icon && <div className="flex justify-center mb-4">{icon}</div>}
       <h3 className="text-[#111418] font-medium text-lg mb-2">{title}</h3>
       {description && (
         <p className="text-[#637588] text-sm mb-4">{description}</p>

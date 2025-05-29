@@ -99,6 +99,7 @@ func (h *disasterHandler) ListDisasters(c *gin.Context) {
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Failed to list disasters")
 		c.JSON(500, gin.H{"error": "Internal Server Error"})
+
 		return
 	}
 
@@ -143,6 +144,7 @@ func (h *disasterHandler) GetDisaster(c *gin.Context) {
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Failed to get disaster", "disaster_id", id)
 		c.JSON(404, gin.H{"error": "Disaster not found"})
+
 		return
 	}
 
@@ -262,35 +264,45 @@ func (h *disasterHandler) UpdateDisaster(c *gin.Context) {
 	if req.DisasterCode != "" {
 		disaster.DisasterCode = req.DisasterCode
 	}
+
 	if req.Name != "" {
 		disaster.Name = req.Name
 	}
+
 	if req.PrefectureID != 0 {
 		disaster.PrefectureID = req.PrefectureID
 	}
+
 	if req.OccurredAt != "" {
 		occurredAt, err := time.Parse(time.RFC3339, req.OccurredAt)
 		if err != nil {
 			c.JSON(400, gin.H{"error": "Invalid occurred_at format. Use RFC3339 format"})
 			return
 		}
+
 		disaster.OccurredAt = occurredAt
 	}
+
 	if req.Summary != "" {
 		disaster.Summary = req.Summary
 	}
+
 	if req.DisasterType != "" {
 		disaster.DisasterType = req.DisasterType
 	}
+
 	if req.Status != "" {
 		disaster.Status = req.Status
 	}
+
 	if req.ImpactLevel != "" {
 		disaster.ImpactLevel = req.ImpactLevel
 	}
+
 	if req.AffectedAreaSize != nil {
 		disaster.AffectedAreaSize = req.AffectedAreaSize
 	}
+
 	if req.EstimatedDamageAmount != nil {
 		disaster.EstimatedDamageAmount = req.EstimatedDamageAmount
 	}
@@ -336,6 +348,7 @@ func (h *disasterHandler) DeleteDisaster(c *gin.Context) {
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Disaster not found for deletion", "disaster_id", id)
 		c.JSON(404, gin.H{"error": "Disaster not found"})
+
 		return
 	}
 
@@ -343,6 +356,7 @@ func (h *disasterHandler) DeleteDisaster(c *gin.Context) {
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Failed to delete disaster", "disaster_id", id)
 		c.JSON(500, gin.H{"error": "Failed to delete disaster"})
+
 		return
 	}
 

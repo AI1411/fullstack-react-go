@@ -96,5 +96,6 @@ func getTraceID(ctx context.Context) string {
 
 	// Generate new trace ID
 	tid, _ := uuid.NewRandom()
+
 	return tid.String()
 }

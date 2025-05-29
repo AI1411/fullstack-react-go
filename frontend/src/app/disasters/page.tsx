@@ -45,10 +45,10 @@ const getStatusLabel = (status: string) => {
 // 日付フォーマット関数
 const formatDate = (dateString: string) => {
   const date = new Date(dateString)
-  return date.toLocaleDateString('ja-JP', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
+  return date.toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
   })
 }
 
@@ -61,12 +61,12 @@ export default function DisasterInfoPage() {
     isLoading,
     isError,
     error,
-    refetch
+    refetch,
   } = useListDisasters({
     query: {
       retry: 3,
       staleTime: 5 * 60 * 1000, // 5分間キャッシュ
-    }
+    },
   })
 
   // レスポンスからデータを取得
@@ -96,7 +96,10 @@ export default function DisasterInfoPage() {
             {/* ローディング状態 */}
             {isLoading && (
               <div className="p-8">
-                <LoadingSpinner message="災害情報を読み込み中..." className="mb-4" />
+                <LoadingSpinner
+                  message="災害情報を読み込み中..."
+                  className="mb-4"
+                />
                 <LoadingTable rows={10} columns={5} />
               </div>
             )}
@@ -143,32 +146,43 @@ export default function DisasterInfoPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {disasters.map((disaster: HandlerListDisastersResponse) => (
-                          <tr key={disaster.id} className="border-t border-t-[#dce0e5]">
-                            <td className="table-column-120 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
-                              {disaster.occurred_at ? formatDate(disaster.occurred_at) : '-'}
-                            </td>
-                            <td className="table-column-240 h-[72px] px-4 py-2 w-[400px] text-[#111418] text-sm font-normal leading-normal">
-                              {disaster.name || '-'}
-                            </td>
-                            <td className="table-column-360 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
-                              {disaster.disaster_type || '-'}
-                            </td>
-                            <td className="table-column-480 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
-                              <button className={`flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 ${getStatusBadgeClass(disaster.status || '')} text-sm font-medium leading-normal w-full`}>
-                                <span className="truncate">{getStatusLabel(disaster.status || '')}</span>
-                              </button>
-                            </td>
-                            <td className="table-column-600 h-[72px] px-4 py-2 w-60 text-sm font-bold leading-normal tracking-[0.015em]">
-                              <Link
-                                href={`/disasters/${disaster.id}`}
-                                className="text-[#007bff] hover:underline"
-                              >
-                                詳細を表示
-                              </Link>
-                            </td>
-                          </tr>
-                        ))}
+                        {disasters.map(
+                          (disaster: HandlerListDisastersResponse) => (
+                            <tr
+                              key={disaster.id}
+                              className="border-t border-t-[#dce0e5]"
+                            >
+                              <td className="table-column-120 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
+                                {disaster.occurred_at
+                                  ? formatDate(disaster.occurred_at)
+                                  : "-"}
+                              </td>
+                              <td className="table-column-240 h-[72px] px-4 py-2 w-[400px] text-[#111418] text-sm font-normal leading-normal">
+                                {disaster.name || "-"}
+                              </td>
+                              <td className="table-column-360 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
+                                {disaster.disaster_type || "-"}
+                              </td>
+                              <td className="table-column-480 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
+                                <button
+                                  className={`flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 ${getStatusBadgeClass(disaster.status || "")} text-sm font-medium leading-normal w-full`}
+                                >
+                                  <span className="truncate">
+                                    {getStatusLabel(disaster.status || "")}
+                                  </span>
+                                </button>
+                              </td>
+                              <td className="table-column-600 h-[72px] px-4 py-2 w-60 text-sm font-bold leading-normal tracking-[0.015em]">
+                                <Link
+                                  href={`/disasters/${disaster.id}`}
+                                  className="text-[#007bff] hover:underline"
+                                >
+                                  詳細を表示
+                                </Link>
+                              </td>
+                            </tr>
+                          )
+                        )}
                       </tbody>
                     </table>
                   </div>

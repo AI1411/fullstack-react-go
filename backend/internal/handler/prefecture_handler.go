@@ -50,6 +50,7 @@ func (h *prefectureHandler) ListPrefectures(c *gin.Context) {
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Failed to list prefectures")
 		c.JSON(500, gin.H{"error": "Internal Server Error"})
+
 		return
 	}
 
@@ -84,6 +85,7 @@ func (h *prefectureHandler) GetPrefecture(c *gin.Context) {
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Invalid prefecture ID", "prefecture_id_str", idStr)
 		c.JSON(400, gin.H{"error": "Invalid prefecture ID"})
+
 		return
 	}
 
@@ -91,6 +93,7 @@ func (h *prefectureHandler) GetPrefecture(c *gin.Context) {
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Prefecture not found", "prefecture_id", id)
 		c.JSON(404, gin.H{"error": "Prefecture not found"})
+
 		return
 	}
 

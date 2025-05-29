@@ -43,6 +43,7 @@ type JSONLogger struct {
 func NewJSONLogger(appLogger *applogger.Logger) SQLLogger {
 	// 環境変数でSQLログレベルを設定可能にする
 	sqlLogLevel := logger.Info
+
 	if logLevel := os.Getenv("SQL_LOG_LEVEL"); logLevel != "" {
 		switch logLevel {
 		case "debug":
@@ -60,6 +61,7 @@ func NewJSONLogger(appLogger *applogger.Logger) SQLLogger {
 
 	// スロークエリの閾値も環境変数で設定可能にする
 	slowThreshold := time.Second
+
 	if threshold := os.Getenv("SQL_SLOW_THRESHOLD"); threshold != "" {
 		if duration, err := time.ParseDuration(threshold); err == nil {
 			slowThreshold = duration
@@ -116,6 +118,7 @@ func (l *JSONLogger) Trace(ctx context.Context, begin time.Time, fc func() (stri
 			"sql", sql,
 			"rows", rows,
 			"elapsed_ms", elapsed.Milliseconds())
+
 		return
 	}
 
@@ -125,6 +128,7 @@ func (l *JSONLogger) Trace(ctx context.Context, begin time.Time, fc func() (stri
 			"rows", rows,
 			"elapsed_ms", elapsed.Milliseconds(),
 			"threshold_ms", l.slowThreshold.Milliseconds())
+
 		return
 	}
 

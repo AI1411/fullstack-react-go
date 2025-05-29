@@ -1,20 +1,20 @@
-import React from 'react'
+import React from "react"
 
 interface LoadingSpinnerProps {
-  size?: 'sm' | 'md' | 'lg'
+  size?: "sm" | "md" | "lg"
   message?: string
   className?: string
 }
 
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
-  size = 'md',
+  size = "md",
   message,
-  className = ''
+  className = "",
 }) => {
   const sizeClasses = {
-    sm: 'h-4 w-4',
-    md: 'h-8 w-8',
-    lg: 'h-12 w-12'
+    sm: "h-4 w-4",
+    md: "h-8 w-8",
+    lg: "h-12 w-12",
   }
 
   return (
@@ -36,7 +36,7 @@ interface LoadingTableProps {
 
 export const LoadingTable: React.FC<LoadingTableProps> = ({
   rows = 5,
-  columns = 4
+  columns = 4,
 }) => {
   return (
     <div className="animate-pulse">
@@ -68,7 +68,10 @@ export const LoadingCard: React.FC<LoadingCardProps> = ({ count = 3 }) => {
   return (
     <div className="flex flex-wrap gap-4">
       {Array.from({ length: count }, (_, i) => (
-        <div key={i} className="flex min-w-[158px] flex-1 flex-col gap-2 rounded-lg p-6 border border-[#dce0e5]">
+        <div
+          key={i}
+          className="flex min-w-[158px] flex-1 flex-col gap-2 rounded-lg p-6 border border-[#dce0e5]"
+        >
           <div className="animate-pulse">
             <div className="bg-gray-200 h-4 rounded mb-2" />
             <div className="bg-gray-200 h-8 rounded" />
