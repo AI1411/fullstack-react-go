@@ -64,6 +64,10 @@ func main() {
 			model.TableNameDisasterDocument,
 			gen.FieldRelateModel(field.BelongsTo, "Disaster", model.Disaster{}, nil),
 		),
+
+		g.GenerateModel(
+			model.TableNameSupportApplication,
+		),
 	}
 
 	g.ApplyBasic(allModels...)

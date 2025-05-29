@@ -16,13 +16,14 @@ import (
 )
 
 var (
-	Q                = new(Query)
-	Disaster         *disaster
-	DisasterDocument *disasterDocument
-	Prefecture       *prefecture
-	Region           *region
-	Timeline         *timeline
-	User             *user
+	Q                  = new(Query)
+	Disaster           *disaster
+	DisasterDocument   *disasterDocument
+	Prefecture         *prefecture
+	Region             *region
+	SupportApplication *supportApplication
+	Timeline           *timeline
+	User               *user
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
@@ -31,44 +32,48 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	DisasterDocument = &Q.DisasterDocument
 	Prefecture = &Q.Prefecture
 	Region = &Q.Region
+	SupportApplication = &Q.SupportApplication
 	Timeline = &Q.Timeline
 	User = &Q.User
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:               db,
-		Disaster:         newDisaster(db, opts...),
-		DisasterDocument: newDisasterDocument(db, opts...),
-		Prefecture:       newPrefecture(db, opts...),
-		Region:           newRegion(db, opts...),
-		Timeline:         newTimeline(db, opts...),
-		User:             newUser(db, opts...),
+		db:                 db,
+		Disaster:           newDisaster(db, opts...),
+		DisasterDocument:   newDisasterDocument(db, opts...),
+		Prefecture:         newPrefecture(db, opts...),
+		Region:             newRegion(db, opts...),
+		SupportApplication: newSupportApplication(db, opts...),
+		Timeline:           newTimeline(db, opts...),
+		User:               newUser(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	Disaster         disaster
-	DisasterDocument disasterDocument
-	Prefecture       prefecture
-	Region           region
-	Timeline         timeline
-	User             user
+	Disaster           disaster
+	DisasterDocument   disasterDocument
+	Prefecture         prefecture
+	Region             region
+	SupportApplication supportApplication
+	Timeline           timeline
+	User               user
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:               db,
-		Disaster:         q.Disaster.clone(db),
-		DisasterDocument: q.DisasterDocument.clone(db),
-		Prefecture:       q.Prefecture.clone(db),
-		Region:           q.Region.clone(db),
-		Timeline:         q.Timeline.clone(db),
-		User:             q.User.clone(db),
+		db:                 db,
+		Disaster:           q.Disaster.clone(db),
+		DisasterDocument:   q.DisasterDocument.clone(db),
+		Prefecture:         q.Prefecture.clone(db),
+		Region:             q.Region.clone(db),
+		SupportApplication: q.SupportApplication.clone(db),
+		Timeline:           q.Timeline.clone(db),
+		User:               q.User.clone(db),
 	}
 }
 
@@ -82,33 +87,36 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:               db,
-		Disaster:         q.Disaster.replaceDB(db),
-		DisasterDocument: q.DisasterDocument.replaceDB(db),
-		Prefecture:       q.Prefecture.replaceDB(db),
-		Region:           q.Region.replaceDB(db),
-		Timeline:         q.Timeline.replaceDB(db),
-		User:             q.User.replaceDB(db),
+		db:                 db,
+		Disaster:           q.Disaster.replaceDB(db),
+		DisasterDocument:   q.DisasterDocument.replaceDB(db),
+		Prefecture:         q.Prefecture.replaceDB(db),
+		Region:             q.Region.replaceDB(db),
+		SupportApplication: q.SupportApplication.replaceDB(db),
+		Timeline:           q.Timeline.replaceDB(db),
+		User:               q.User.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	Disaster         IDisasterDo
-	DisasterDocument IDisasterDocumentDo
-	Prefecture       IPrefectureDo
-	Region           IRegionDo
-	Timeline         ITimelineDo
-	User             IUserDo
+	Disaster           IDisasterDo
+	DisasterDocument   IDisasterDocumentDo
+	Prefecture         IPrefectureDo
+	Region             IRegionDo
+	SupportApplication ISupportApplicationDo
+	Timeline           ITimelineDo
+	User               IUserDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		Disaster:         q.Disaster.WithContext(ctx),
-		DisasterDocument: q.DisasterDocument.WithContext(ctx),
-		Prefecture:       q.Prefecture.WithContext(ctx),
-		Region:           q.Region.WithContext(ctx),
-		Timeline:         q.Timeline.WithContext(ctx),
-		User:             q.User.WithContext(ctx),
+		Disaster:           q.Disaster.WithContext(ctx),
+		DisasterDocument:   q.DisasterDocument.WithContext(ctx),
+		Prefecture:         q.Prefecture.WithContext(ctx),
+		Region:             q.Region.WithContext(ctx),
+		SupportApplication: q.SupportApplication.WithContext(ctx),
+		Timeline:           q.Timeline.WithContext(ctx),
+		User:               q.User.WithContext(ctx),
 	}
 }
 
