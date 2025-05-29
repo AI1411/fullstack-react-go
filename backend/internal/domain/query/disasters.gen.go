@@ -54,6 +54,12 @@ func newDisaster(db *gorm.DB, opts ...gen.DOOption) disaster {
 		RelationField: field.NewRelation("Timelines", "model.Timeline"),
 	}
 
+	_disaster.DisasterDocuments = disasterHasManyDisasterDocuments{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("DisasterDocuments", "model.DisasterDocument"),
+	}
+
 	_disaster.fillFieldMap()
 
 	return _disaster
@@ -80,6 +86,8 @@ type disaster struct {
 	Prefecture            disasterBelongsToPrefecture
 
 	Timelines disasterHasManyTimelines
+
+	DisasterDocuments disasterHasManyDisasterDocuments
 
 	fieldMap map[string]field.Expr
 }
@@ -126,7 +134,7 @@ func (d *disaster) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (d *disaster) fillFieldMap() {
-	d.fieldMap = make(map[string]field.Expr, 16)
+	d.fieldMap = make(map[string]field.Expr, 17)
 	d.fieldMap["id"] = d.ID
 	d.fieldMap["disaster_code"] = d.DisasterCode
 	d.fieldMap["name"] = d.Name
@@ -150,6 +158,8 @@ func (d disaster) clone(db *gorm.DB) disaster {
 	d.Prefecture.db.Statement.ConnPool = db.Statement.ConnPool
 	d.Timelines.db = db.Session(&gorm.Session{Initialized: true})
 	d.Timelines.db.Statement.ConnPool = db.Statement.ConnPool
+	d.DisasterDocuments.db = db.Session(&gorm.Session{Initialized: true})
+	d.DisasterDocuments.db.Statement.ConnPool = db.Statement.ConnPool
 	return d
 }
 
@@ -157,6 +167,7 @@ func (d disaster) replaceDB(db *gorm.DB) disaster {
 	d.disasterDo.ReplaceDB(db)
 	d.Prefecture.db = db.Session(&gorm.Session{})
 	d.Timelines.db = db.Session(&gorm.Session{})
+	d.DisasterDocuments.db = db.Session(&gorm.Session{})
 	return d
 }
 
@@ -318,6 +329,87 @@ func (a disasterHasManyTimelinesTx) Count() int64 {
 }
 
 func (a disasterHasManyTimelinesTx) Unscoped() *disasterHasManyTimelinesTx {
+	a.tx = a.tx.Unscoped()
+	return &a
+}
+
+type disasterHasManyDisasterDocuments struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a disasterHasManyDisasterDocuments) Where(conds ...field.Expr) *disasterHasManyDisasterDocuments {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a disasterHasManyDisasterDocuments) WithContext(ctx context.Context) *disasterHasManyDisasterDocuments {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a disasterHasManyDisasterDocuments) Session(session *gorm.Session) *disasterHasManyDisasterDocuments {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a disasterHasManyDisasterDocuments) Model(m *model.Disaster) *disasterHasManyDisasterDocumentsTx {
+	return &disasterHasManyDisasterDocumentsTx{a.db.Model(m).Association(a.Name())}
+}
+
+func (a disasterHasManyDisasterDocuments) Unscoped() *disasterHasManyDisasterDocuments {
+	a.db = a.db.Unscoped()
+	return &a
+}
+
+type disasterHasManyDisasterDocumentsTx struct{ tx *gorm.Association }
+
+func (a disasterHasManyDisasterDocumentsTx) Find() (result []*model.DisasterDocument, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a disasterHasManyDisasterDocumentsTx) Append(values ...*model.DisasterDocument) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a disasterHasManyDisasterDocumentsTx) Replace(values ...*model.DisasterDocument) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a disasterHasManyDisasterDocumentsTx) Delete(values ...*model.DisasterDocument) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a disasterHasManyDisasterDocumentsTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a disasterHasManyDisasterDocumentsTx) Count() int64 {
+	return a.tx.Count()
+}
+
+func (a disasterHasManyDisasterDocumentsTx) Unscoped() *disasterHasManyDisasterDocumentsTx {
 	a.tx = a.tx.Unscoped()
 	return &a
 }
