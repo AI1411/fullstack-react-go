@@ -43,7 +43,7 @@ type RegionItem struct {
 	Name string `json:"name" binding:"required"`
 }
 
-type ListDisastersResponse struct {
+type DisasterResponse struct {
 	ID                    string         `json:"id"`
 	DisasterCode          string         `json:"disaster_code"`
 	Name                  string         `json:"name"`
@@ -55,6 +55,11 @@ type ListDisastersResponse struct {
 	ImpactLevel           string         `json:"impact_level"`
 	AffectedAreaSize      *float64       `json:"affected_area_size"`
 	EstimatedDamageAmount *float64       `json:"estimated_damage_amount"`
+}
+
+type ListDisastersResponse struct {
+	Disasters []*DisasterResponse `json:"disasters"`
+	Total     int64               `json:"total"`
 }
 
 type CreateDisasterRequest struct {
@@ -103,9 +108,9 @@ func (h *disasterHandler) ListDisasters(c *gin.Context) {
 		return
 	}
 
-	var response []*ListDisastersResponse
+	var ds []*DisasterResponse
 	for _, disaster := range disasters {
-		response = append(response, &ListDisastersResponse{
+		ds = append(ds, &DisasterResponse{
 			ID:           disaster.ID,
 			DisasterCode: disaster.DisasterCode,
 			Name:         disaster.Name,
@@ -122,8 +127,12 @@ func (h *disasterHandler) ListDisasters(c *gin.Context) {
 		})
 	}
 
-	h.l.InfoContext(ctx, "Successfully listed disasters", "count", len(response))
-	c.JSON(http.StatusOK, response)
+	res := &ListDisastersResponse{
+		Disasters: ds,
+		Total:     int64(len(ds)),
+	}
+
+	c.JSON(http.StatusOK, res)
 }
 
 // GetDisaster @title 災害詳細取得
@@ -148,7 +157,7 @@ func (h *disasterHandler) GetDisaster(c *gin.Context) {
 		return
 	}
 
-	response := &ListDisastersResponse{
+	response := &DisasterResponse{
 		ID:                    disaster.ID,
 		DisasterCode:          disaster.DisasterCode,
 		Name:                  disaster.Name,
@@ -216,7 +225,7 @@ func (h *disasterHandler) CreateDisaster(c *gin.Context) {
 		return
 	}
 
-	response := &ListDisastersResponse{
+	response := &DisasterResponse{
 		ID:                    disaster.ID,
 		DisasterCode:          disaster.DisasterCode,
 		Name:                  disaster.Name,
@@ -315,7 +324,7 @@ func (h *disasterHandler) UpdateDisaster(c *gin.Context) {
 		return
 	}
 
-	response := &ListDisastersResponse{
+	response := &DisasterResponse{
 		ID:                    disaster.ID,
 		DisasterCode:          disaster.DisasterCode,
 		Name:                  disaster.Name,
@@ -360,6 +369,5 @@ func (h *disasterHandler) DeleteDisaster(c *gin.Context) {
 		return
 	}
 
-	h.l.InfoContext(ctx, "Successfully deleted disaster", "disaster_id", id)
 	c.Status(http.StatusNoContent)
 }

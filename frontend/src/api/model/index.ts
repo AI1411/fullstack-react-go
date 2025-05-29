@@ -3,4 +3,10 @@
  * Do not edit manually.
  */
 
-export * from "./handlerListDisastersResponse"
+export * from "./handlerListDisastersResponse";
+export * from './handlerCreateDisasterRequest';
+export * from './handlerDisasterResponse';
+export * from './handlerPrefectureItem';
+export * from './handlerPrefectureResponse';
+export * from './handlerRegionItem';
+export * from './handlerUpdateDisasterRequest';
