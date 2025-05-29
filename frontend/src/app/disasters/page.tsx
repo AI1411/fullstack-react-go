@@ -1,14 +1,17 @@
 "use client"
 
+import { useListDisasters } from "@/api/client"
+import {
+  type HandlerDisasterResponse,
+  type HandlerListDisastersResponse,
+} from "@/api/model"
 import Footer from "@/components/layout/footer/page"
 import Header from "@/components/layout/header/page"
-import Link from "next/link"
-import { useListDisasters } from "@/api/client"
-import { HandlerListDisastersResponse } from "@/api/model"
+import { EmptyState, ErrorDisplay } from "@/components/ui/error-display"
 import { LoadingSpinner, LoadingTable } from "@/components/ui/loading"
-import { ErrorDisplay, EmptyState } from "@/components/ui/error-display"
 import { useErrorHandler } from "@/hooks/useErrorHandler"
 import { FileX } from "lucide-react"
+import Link from "next/link"
 
 // ステータスに応じたバッジの色を定義
 const getStatusBadgeClass = (status: string) => {
@@ -62,15 +65,22 @@ export default function DisasterInfoPage() {
     isError,
     error,
     refetch,
-  } = useListDisasters({
+  } = useListDisasters<{ data: HandlerListDisastersResponse }>({
     query: {
       retry: 3,
       staleTime: 5 * 60 * 1000, // 5分間キャッシュ
     },
   })
 
-  // レスポンスからデータを取得
-  const disasters = disastersResponse?.data || []
+  if (isLoading) {
+    return <div>読み込み中</div>
+  }
+
+  if (error) {
+    return <div>データの取得に失敗しました</div>
+  }
+
+  const disasters = disastersResponse?.data?.disasters || []
 
   // エラーハンドリング
   const apiError = isError ? handleError(error) : null
@@ -93,7 +103,6 @@ export default function DisasterInfoPage() {
           </div>
 
           <div className="px-4 py-3 @container">
-            {/* ローディング状態 */}
             {isLoading && (
               <div className="p-8">
                 <LoadingSpinner
@@ -104,7 +113,6 @@ export default function DisasterInfoPage() {
               </div>
             )}
 
-            {/* エラー状態 */}
             {isError && apiError && (
               <ErrorDisplay
                 title="災害情報の取得に失敗しました"
@@ -113,82 +121,77 @@ export default function DisasterInfoPage() {
                 className="mb-4"
               />
             )}
-
-            {/* データ表示 */}
-            {!isLoading && !isError && (
-              <>
-                {disasters.length === 0 ? (
-                  <EmptyState
-                    title="災害情報が見つかりませんでした"
-                    description="現在登録されている災害情報がありません。"
-                    icon={<FileX className="h-12 w-12 text-gray-400" />}
-                  />
-                ) : (
-                  <div className="flex overflow-hidden rounded-lg border border-[#dce0e5] bg-white">
-                    <table className="flex-1">
-                      <thead>
-                        <tr className="bg-white">
-                          <th className="table-column-120 px-4 py-3 text-left text-[#111418] w-[400px] text-sm font-medium leading-normal">
-                            発生日
-                          </th>
-                          <th className="table-column-240 px-4 py-3 text-left text-[#111418] w-[400px] text-sm font-medium leading-normal">
-                            災害名
-                          </th>
-                          <th className="table-column-360 px-4 py-3 text-left text-[#111418] w-[400px] text-sm font-medium leading-normal">
-                            災害種別
-                          </th>
-                          <th className="table-column-480 px-4 py-3 text-left text-[#111418] w-60 text-sm font-medium leading-normal">
-                            ステータス
-                          </th>
-                          <th className="table-column-600 px-4 py-3 text-left text-[#111418] w-60 text-[#637588] text-sm font-medium leading-normal">
-                            アクション
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {disasters.map(
-                          (disaster: HandlerListDisastersResponse) => (
-                            <tr
-                              key={disaster.id}
-                              className="border-t border-t-[#dce0e5]"
+            {!isLoading &&
+              !isError &&
+              (disasters.length === 0 ? (
+                <EmptyState
+                  title="災害情報が見つかりませんでした"
+                  description="現在登録されている災害情報がありません。"
+                  icon={<FileX className="h-12 w-12 text-gray-400" />}
+                />
+              ) : (
+                <div className="flex overflow-hidden rounded-lg border border-[#dce0e5] bg-white">
+                  <table className="flex-1">
+                    <thead>
+                      <tr className="bg-white">
+                        <th className="table-column-120 px-4 py-3 text-left text-[#111418] w-[400px] text-sm font-medium leading-normal">
+                          発生日
+                        </th>
+                        <th className="table-column-240 px-4 py-3 text-left text-[#111418] w-[400px] text-sm font-medium leading-normal">
+                          災害名
+                        </th>
+                        <th className="table-column-360 px-4 py-3 text-left text-[#111418] w-[400px] text-sm font-medium leading-normal">
+                          災害種別
+                        </th>
+                        <th className="table-column-480 px-4 py-3 text-left text-[#111418] w-60 text-sm font-medium leading-normal">
+                          ステータス
+                        </th>
+                        <th className="table-column-600 px-4 py-3 text-left text-[#111418] w-60 text-[#637588] text-sm font-medium leading-normal">
+                          アクション
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {disasters.map((disaster: HandlerDisasterResponse) => (
+                        <tr
+                          key={disaster.id}
+                          className="border-t border-t-[#dce0e5]"
+                        >
+                          <td className="table-column-120 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
+                            {disaster.occurred_at
+                              ? formatDate(disaster.occurred_at)
+                              : "-"}
+                          </td>
+                          <td className="table-column-240 h-[72px] px-4 py-2 w-[400px] text-[#111418] text-sm font-normal leading-normal">
+                            {disaster.name || "-"}
+                          </td>
+                          <td className="table-column-360 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
+                            {disaster.disaster_type || "-"}
+                          </td>
+                          <td className="table-column-480 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
+                            <button
+                              type="button"
+                              className={`flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 ${getStatusBadgeClass(disaster.status || "")} text-sm font-medium leading-normal w-full`}
                             >
-                              <td className="table-column-120 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
-                                {disaster.occurred_at
-                                  ? formatDate(disaster.occurred_at)
-                                  : "-"}
-                              </td>
-                              <td className="table-column-240 h-[72px] px-4 py-2 w-[400px] text-[#111418] text-sm font-normal leading-normal">
-                                {disaster.name || "-"}
-                              </td>
-                              <td className="table-column-360 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
-                                {disaster.disaster_type || "-"}
-                              </td>
-                              <td className="table-column-480 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
-                                <button
-                                  className={`flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 ${getStatusBadgeClass(disaster.status || "")} text-sm font-medium leading-normal w-full`}
-                                >
-                                  <span className="truncate">
-                                    {getStatusLabel(disaster.status || "")}
-                                  </span>
-                                </button>
-                              </td>
-                              <td className="table-column-600 h-[72px] px-4 py-2 w-60 text-sm font-bold leading-normal tracking-[0.015em]">
-                                <Link
-                                  href={`/disasters/${disaster.id}`}
-                                  className="text-[#007bff] hover:underline"
-                                >
-                                  詳細を表示
-                                </Link>
-                              </td>
-                            </tr>
-                          )
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </>
-            )}
+                              <span className="truncate">
+                                {getStatusLabel(disaster.status || "")}
+                              </span>
+                            </button>
+                          </td>
+                          <td className="table-column-600 h-[72px] px-4 py-2 w-60 text-sm font-bold leading-normal tracking-[0.015em]">
+                            <Link
+                              href={`/disasters/${disaster.id}`}
+                              className="text-[#007bff] hover:underline"
+                            >
+                              詳細を表示
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ))}
           </div>
         </div>
       </main>
