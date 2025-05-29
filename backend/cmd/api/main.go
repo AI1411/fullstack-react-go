@@ -108,7 +108,12 @@ func RegisterRoutes(
 		})
 	})
 
+	// 災害関連のルート
 	r.GET("/disasters", disasterHandler.ListDisasters)
+	r.GET("/disasters/:id", disasterHandler.GetDisaster)
+	r.POST("/disasters", disasterHandler.CreateDisaster)
+	r.PUT("/disasters/:id", disasterHandler.UpdateDisaster)
+	r.DELETE("/disasters/:id", disasterHandler.DeleteDisaster)
 
 	// Swagger JSON エンドポイント
 	r.GET("/docs", func(c *gin.Context) {

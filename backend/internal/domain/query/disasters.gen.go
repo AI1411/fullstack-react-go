@@ -42,6 +42,11 @@ func newDisaster(db *gorm.DB, opts ...gen.DOOption) disaster {
 	_disaster.CreatedAt = field.NewTime(tableName, "created_at")
 	_disaster.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_disaster.DeletedAt = field.NewField(tableName, "deleted_at")
+	_disaster.Prefecture = disasterBelongsToPrefecture{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Prefecture", "model.Prefecture"),
+	}
 
 	_disaster.fillFieldMap()
 
@@ -66,6 +71,7 @@ type disaster struct {
 	CreatedAt             field.Time    // 作成日時 - レコード作成日時
 	UpdatedAt             field.Time    // 更新日時 - レコード最終更新日時
 	DeletedAt             field.Field   // 削除日時 - 論理削除用のタイムスタンプ
+	Prefecture            disasterBelongsToPrefecture
 
 	fieldMap map[string]field.Expr
 }
@@ -112,7 +118,7 @@ func (d *disaster) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (d *disaster) fillFieldMap() {
-	d.fieldMap = make(map[string]field.Expr, 14)
+	d.fieldMap = make(map[string]field.Expr, 15)
 	d.fieldMap["id"] = d.ID
 	d.fieldMap["disaster_code"] = d.DisasterCode
 	d.fieldMap["name"] = d.Name
@@ -127,16 +133,101 @@ func (d *disaster) fillFieldMap() {
 	d.fieldMap["created_at"] = d.CreatedAt
 	d.fieldMap["updated_at"] = d.UpdatedAt
 	d.fieldMap["deleted_at"] = d.DeletedAt
+
 }
 
 func (d disaster) clone(db *gorm.DB) disaster {
 	d.disasterDo.ReplaceConnPool(db.Statement.ConnPool)
+	d.Prefecture.db = db.Session(&gorm.Session{Initialized: true})
+	d.Prefecture.db.Statement.ConnPool = db.Statement.ConnPool
 	return d
 }
 
 func (d disaster) replaceDB(db *gorm.DB) disaster {
 	d.disasterDo.ReplaceDB(db)
+	d.Prefecture.db = db.Session(&gorm.Session{})
 	return d
+}
+
+type disasterBelongsToPrefecture struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a disasterBelongsToPrefecture) Where(conds ...field.Expr) *disasterBelongsToPrefecture {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a disasterBelongsToPrefecture) WithContext(ctx context.Context) *disasterBelongsToPrefecture {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a disasterBelongsToPrefecture) Session(session *gorm.Session) *disasterBelongsToPrefecture {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a disasterBelongsToPrefecture) Model(m *model.Disaster) *disasterBelongsToPrefectureTx {
+	return &disasterBelongsToPrefectureTx{a.db.Model(m).Association(a.Name())}
+}
+
+func (a disasterBelongsToPrefecture) Unscoped() *disasterBelongsToPrefecture {
+	a.db = a.db.Unscoped()
+	return &a
+}
+
+type disasterBelongsToPrefectureTx struct{ tx *gorm.Association }
+
+func (a disasterBelongsToPrefectureTx) Find() (result *model.Prefecture, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a disasterBelongsToPrefectureTx) Append(values ...*model.Prefecture) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a disasterBelongsToPrefectureTx) Replace(values ...*model.Prefecture) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a disasterBelongsToPrefectureTx) Delete(values ...*model.Prefecture) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a disasterBelongsToPrefectureTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a disasterBelongsToPrefectureTx) Count() int64 {
+	return a.tx.Count()
+}
+
+func (a disasterBelongsToPrefectureTx) Unscoped() *disasterBelongsToPrefectureTx {
+	a.tx = a.tx.Unscoped()
+	return &a
 }
 
 type disasterDo struct{ gen.DO }

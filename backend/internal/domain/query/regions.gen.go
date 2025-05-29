@@ -30,6 +30,11 @@ func newRegion(db *gorm.DB, opts ...gen.DOOption) region {
 	_region.ALL = field.NewAsterisk(tableName)
 	_region.ID = field.NewInt32(tableName, "id")
 	_region.Name = field.NewString(tableName, "name")
+	_region.Prefectures = regionHasManyPrefectures{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Prefectures", "model.Prefecture"),
+	}
 
 	_region.fillFieldMap()
 
@@ -39,9 +44,10 @@ func newRegion(db *gorm.DB, opts ...gen.DOOption) region {
 type region struct {
 	regionDo
 
-	ALL  field.Asterisk
-	ID   field.Int32  // 地域ID
-	Name field.String // 地域名
+	ALL         field.Asterisk
+	ID          field.Int32  // 地域ID
+	Name        field.String // 地域名
+	Prefectures regionHasManyPrefectures
 
 	fieldMap map[string]field.Expr
 }
@@ -76,19 +82,104 @@ func (r *region) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (r *region) fillFieldMap() {
-	r.fieldMap = make(map[string]field.Expr, 2)
+	r.fieldMap = make(map[string]field.Expr, 3)
 	r.fieldMap["id"] = r.ID
 	r.fieldMap["name"] = r.Name
+
 }
 
 func (r region) clone(db *gorm.DB) region {
 	r.regionDo.ReplaceConnPool(db.Statement.ConnPool)
+	r.Prefectures.db = db.Session(&gorm.Session{Initialized: true})
+	r.Prefectures.db.Statement.ConnPool = db.Statement.ConnPool
 	return r
 }
 
 func (r region) replaceDB(db *gorm.DB) region {
 	r.regionDo.ReplaceDB(db)
+	r.Prefectures.db = db.Session(&gorm.Session{})
 	return r
+}
+
+type regionHasManyPrefectures struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a regionHasManyPrefectures) Where(conds ...field.Expr) *regionHasManyPrefectures {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a regionHasManyPrefectures) WithContext(ctx context.Context) *regionHasManyPrefectures {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a regionHasManyPrefectures) Session(session *gorm.Session) *regionHasManyPrefectures {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a regionHasManyPrefectures) Model(m *model.Region) *regionHasManyPrefecturesTx {
+	return &regionHasManyPrefecturesTx{a.db.Model(m).Association(a.Name())}
+}
+
+func (a regionHasManyPrefectures) Unscoped() *regionHasManyPrefectures {
+	a.db = a.db.Unscoped()
+	return &a
+}
+
+type regionHasManyPrefecturesTx struct{ tx *gorm.Association }
+
+func (a regionHasManyPrefecturesTx) Find() (result []*model.Prefecture, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a regionHasManyPrefecturesTx) Append(values ...*model.Prefecture) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a regionHasManyPrefecturesTx) Replace(values ...*model.Prefecture) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a regionHasManyPrefecturesTx) Delete(values ...*model.Prefecture) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a regionHasManyPrefecturesTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a regionHasManyPrefecturesTx) Count() int64 {
+	return a.tx.Count()
+}
+
+func (a regionHasManyPrefecturesTx) Unscoped() *regionHasManyPrefecturesTx {
+	a.tx = a.tx.Unscoped()
+	return &a
 }
 
 type regionDo struct{ gen.DO }

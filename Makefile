@@ -48,8 +48,8 @@ logs:
 
 .PHONY: generate-models
 generate-models:
-	@cd backend && rm -rf ./internal/domain/query/*.gen.go ./internal/domain/model/*.gen.go
-	@cd backend && go run ./cmd/gormgen/generate_all/main.go
+	@docker compose exec gen-api go run ./cmd/gormgen/generate_all/main.go
+	@docker compose exec gen-api go run ./cmd/gormgen/generate_associations/main.go
 
 .PHONY: exec-schema
 exec-schema: ## sqlファイルをコンテナに流す

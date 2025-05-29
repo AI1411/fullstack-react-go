@@ -20,7 +20,6 @@ var (
 	Disaster   *disaster
 	Prefecture *prefecture
 	Region     *region
-	User       *user
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
@@ -28,7 +27,6 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	Disaster = &Q.Disaster
 	Prefecture = &Q.Prefecture
 	Region = &Q.Region
-	User = &Q.User
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
@@ -37,7 +35,6 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		Disaster:   newDisaster(db, opts...),
 		Prefecture: newPrefecture(db, opts...),
 		Region:     newRegion(db, opts...),
-		User:       newUser(db, opts...),
 	}
 }
 
@@ -47,7 +44,6 @@ type Query struct {
 	Disaster   disaster
 	Prefecture prefecture
 	Region     region
-	User       user
 }
 
 func (q *Query) Available() bool { return q.db != nil }
@@ -58,7 +54,6 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		Disaster:   q.Disaster.clone(db),
 		Prefecture: q.Prefecture.clone(db),
 		Region:     q.Region.clone(db),
-		User:       q.User.clone(db),
 	}
 }
 
@@ -76,7 +71,6 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		Disaster:   q.Disaster.replaceDB(db),
 		Prefecture: q.Prefecture.replaceDB(db),
 		Region:     q.Region.replaceDB(db),
-		User:       q.User.replaceDB(db),
 	}
 }
 
@@ -84,7 +78,6 @@ type queryCtx struct {
 	Disaster   IDisasterDo
 	Prefecture IPrefectureDo
 	Region     IRegionDo
-	User       IUserDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
@@ -92,7 +85,6 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		Disaster:   q.Disaster.WithContext(ctx),
 		Prefecture: q.Prefecture.WithContext(ctx),
 		Region:     q.Region.WithContext(ctx),
-		User:       q.User.WithContext(ctx),
 	}
 }
 

@@ -8,8 +8,9 @@ const TableNameRegion = "regions"
 
 // Region mapped from table <regions>
 type Region struct {
-	ID   int32  `gorm:"column:id;type:integer;primaryKey;autoIncrement:true;comment:地域ID" json:"id"`                               // 地域ID
-	Name string `gorm:"column:name;type:character varying(50);not null;index:idx_regions_name,priority:1;comment:地域名" json:"name"` // 地域名
+	ID          int32        `gorm:"column:id;type:integer;primaryKey;autoIncrement:true;comment:地域ID" json:"id"`                               // 地域ID
+	Name        string       `gorm:"column:name;type:character varying(50);not null;index:idx_regions_name,priority:1;comment:地域名" json:"name"` // 地域名
+	Prefectures []Prefecture `json:"prefectures"`
 }
 
 // TableName Region's table name
