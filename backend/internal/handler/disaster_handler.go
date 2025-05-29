@@ -158,9 +158,12 @@ func (h *disasterHandler) GetDisaster(c *gin.Context) {
 	}
 
 	response := &DisasterResponse{
-		ID:                    disaster.ID,
-		DisasterCode:          disaster.DisasterCode,
-		Name:                  disaster.Name,
+		ID:           disaster.ID,
+		DisasterCode: disaster.DisasterCode,
+		Name:         disaster.Name,
+		Prefecture: PrefectureItem{
+			Name: disaster.Prefecture.Name,
+		},
 		OccurredAt:            disaster.OccurredAt.Format(time.DateTime),
 		Summary:               disaster.Summary,
 		DisasterType:          disaster.DisasterType,

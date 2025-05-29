@@ -43,7 +43,11 @@ func (r *disasterRepository) Find(ctx context.Context) ([]*model.Disaster, error
 }
 
 func (r *disasterRepository) FindByID(ctx context.Context, id string) (*model.Disaster, error) {
-	disaster, err := r.query.WithContext(ctx).Disaster.Where(r.query.Disaster.ID.Eq(id)).First()
+	disaster, err := r.query.WithContext(ctx).
+		Disaster.
+		Where(r.query.Disaster.ID.Eq(id)).
+		Preload(r.query.Disaster.Prefecture).
+		First()
 	if err != nil {
 		return nil, err
 	}
