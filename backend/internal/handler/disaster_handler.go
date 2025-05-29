@@ -94,8 +94,10 @@ type UpdateDisasterRequest struct {
 // @Success 200 {array} ListDisastersResponse
 // @Router /disasters [get]
 func (h *disasterHandler) ListDisasters(c *gin.Context) {
-	disasters, err := h.disasterUseCase.ListDisasters(c.Request.Context())
+	ctx := c.Request.Context()
+	disasters, err := h.disasterUseCase.ListDisasters(ctx)
 	if err != nil {
+		h.l.ErrorContext(ctx, err, "Failed to list disasters")
 		c.JSON(500, gin.H{"error": "Internal Server Error"})
 		return
 	}
@@ -119,6 +121,7 @@ func (h *disasterHandler) ListDisasters(c *gin.Context) {
 		})
 	}
 
+	h.l.InfoContext(ctx, "Successfully listed disasters", "count", len(response))
 	c.JSON(http.StatusOK, response)
 }
 
@@ -134,9 +137,11 @@ func (h *disasterHandler) ListDisasters(c *gin.Context) {
 // @Router /disasters/{id} [get]
 func (h *disasterHandler) GetDisaster(c *gin.Context) {
 	id := c.Param("id")
+	ctx := c.Request.Context()
 
-	disaster, err := h.disasterUseCase.GetDisasterByID(c.Request.Context(), id)
+	disaster, err := h.disasterUseCase.GetDisasterByID(ctx, id)
 	if err != nil {
+		h.l.ErrorContext(ctx, err, "Failed to get disaster", "disaster_id", id)
 		c.JSON(404, gin.H{"error": "Disaster not found"})
 		return
 	}
@@ -154,6 +159,7 @@ func (h *disasterHandler) GetDisaster(c *gin.Context) {
 		EstimatedDamageAmount: disaster.EstimatedDamageAmount,
 	}
 
+	h.l.InfoContext(ctx, "Successfully retrieved disaster", "disaster_id", id)
 	c.JSON(http.StatusOK, response)
 }
 
@@ -323,19 +329,23 @@ func (h *disasterHandler) UpdateDisaster(c *gin.Context) {
 // @Router /disasters/{id} [delete]
 func (h *disasterHandler) DeleteDisaster(c *gin.Context) {
 	id := c.Param("id")
+	ctx := c.Request.Context()
 
 	// Check if disaster exists
-	_, err := h.disasterUseCase.GetDisasterByID(c.Request.Context(), id)
+	_, err := h.disasterUseCase.GetDisasterByID(ctx, id)
 	if err != nil {
+		h.l.ErrorContext(ctx, err, "Disaster not found for deletion", "disaster_id", id)
 		c.JSON(404, gin.H{"error": "Disaster not found"})
 		return
 	}
 
-	err = h.disasterUseCase.DeleteDisaster(c.Request.Context(), id)
+	err = h.disasterUseCase.DeleteDisaster(ctx, id)
 	if err != nil {
+		h.l.ErrorContext(ctx, err, "Failed to delete disaster", "disaster_id", id)
 		c.JSON(500, gin.H{"error": "Failed to delete disaster"})
 		return
 	}
 
+	h.l.InfoContext(ctx, "Successfully deleted disaster", "disaster_id", id)
 	c.Status(http.StatusNoContent)
 }

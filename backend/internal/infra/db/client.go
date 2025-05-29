@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"gorm.io/driver/postgres"
@@ -151,8 +150,6 @@ func NewSqlHandler(config *DatabaseConfig, appLogger *applogger.Logger) (Client,
 	// PostgreSQL形式の接続文字列
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
 		config.Host, config.User, config.Password, config.DBName, config.Port, config.SSLMode, config.Timezone)
-
-	log.Printf("dsn=%s", dsn)
 
 	// PostgreSQLに直接接続
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{

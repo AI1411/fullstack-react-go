@@ -112,6 +112,63 @@ func FromContext(ctx context.Context) *Logger {
 // loggerKey is the key used to store the logger in the context.
 type loggerKey struct{}
 
+// traceIDKey is the key used to store the trace ID in the context.
+type traceIDKey struct{}
+
+// WithTraceID returns a new context with the trace ID attached.
+func WithTraceID(ctx context.Context, traceID string) context.Context {
+	return context.WithValue(ctx, traceIDKey{}, traceID)
+}
+
+// TraceIDFromContext returns the trace ID from the context.
+// If no trace ID is found, it returns an empty string.
+func TraceIDFromContext(ctx context.Context) string {
+	if traceID, ok := ctx.Value(traceIDKey{}).(string); ok {
+		return traceID
+	}
+	return ""
+}
+
+// addTraceIDFromContext adds trace_id field to the log arguments if present in context.
+func (l *Logger) addTraceIDFromContext(ctx context.Context, args []any) []any {
+	if traceID := TraceIDFromContext(ctx); traceID != "" {
+		return append(args, slog.String("trace_id", traceID))
+	}
+	return args
+}
+
+// WithTrace returns a new Logger with trace_id from context added to all logs.
+func (l *Logger) WithTrace(ctx context.Context) *Logger {
+	if traceID := TraceIDFromContext(ctx); traceID != "" {
+		return &Logger{
+			Logger: l.Logger.With(slog.String("trace_id", traceID)),
+		}
+	}
+	return l
+}
+
+// Context-aware logging methods that automatically add trace_id
+
+// DebugContext logs a debug message with trace_id from context.
+func (l *Logger) DebugContext(ctx context.Context, msg string, args ...any) {
+	l.Logger.Debug(msg, l.addTraceIDFromContext(ctx, args)...)
+}
+
+// InfoContext logs an info message with trace_id from context.
+func (l *Logger) InfoContext(ctx context.Context, msg string, args ...any) {
+	l.Logger.Info(msg, l.addTraceIDFromContext(ctx, args)...)
+}
+
+// WarnContext logs a warning message with trace_id from context.
+func (l *Logger) WarnContext(ctx context.Context, msg string, args ...any) {
+	l.Logger.Warn(msg, l.addTraceIDFromContext(ctx, args)...)
+}
+
+// ErrorContext logs an error message with trace_id from context.
+func (l *Logger) ErrorContext(ctx context.Context, err error, msg string, args ...any) {
+	l.Logger.Error(msg, l.addTraceIDFromContext(ctx, args)...)
+}
+
 // LogRequest logs information about an HTTP request.
 func (l *Logger) LogRequest(method, path string, statusCode int, latency time.Duration) {
 	l.Info("request",
@@ -122,9 +179,28 @@ func (l *Logger) LogRequest(method, path string, statusCode int, latency time.Du
 	)
 }
 
+// LogRequestContext logs information about an HTTP request with trace_id from context.
+func (l *Logger) LogRequestContext(ctx context.Context, method, path string, statusCode int, latency time.Duration) {
+	args := []any{
+		slog.String("method", method),
+		slog.String("path", path),
+		slog.Int("status", statusCode),
+		slog.Duration("latency", latency),
+	}
+	l.InfoContext(ctx, "request", args...)
+}
+
 // LogError logs an error with additional context.
 func (l *Logger) LogError(err error, msg string, args ...any) {
 	if err != nil {
 		l.Error(msg, append(args, slog.Any("error", err))...)
+	}
+}
+
+// LogErrorContext logs an error with additional context and trace_id from context.
+func (l *Logger) LogErrorContext(ctx context.Context, err error, msg string, args ...any) {
+	if err != nil {
+		args = append(args, slog.Any("error", err))
+		l.ErrorContext(ctx, err, msg, args...)
 	}
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/AI1411/fullstack-react-go/internal/infra/logger"
 	"github.com/AI1411/fullstack-react-go/internal/usecase"
 )
 
@@ -15,13 +16,16 @@ type Prefecture interface {
 }
 
 type prefectureHandler struct {
+	l                 *logger.Logger
 	prefectureUseCase usecase.PrefectureUseCase
 }
 
 func NewPrefectureHandler(
+	l *logger.Logger,
 	prefectureUseCase usecase.PrefectureUseCase,
 ) Prefecture {
 	return &prefectureHandler{
+		l:                 l,
 		prefectureUseCase: prefectureUseCase,
 	}
 }
@@ -41,8 +45,10 @@ type PrefectureResponse struct {
 // @Success 200 {array} PrefectureResponse
 // @Router /prefectures [get]
 func (h *prefectureHandler) ListPrefectures(c *gin.Context) {
-	prefectures, err := h.prefectureUseCase.ListPrefectures(c.Request.Context())
+	ctx := c.Request.Context()
+	prefectures, err := h.prefectureUseCase.ListPrefectures(ctx)
 	if err != nil {
+		h.l.ErrorContext(ctx, err, "Failed to list prefectures")
 		c.JSON(500, gin.H{"error": "Internal Server Error"})
 		return
 	}
@@ -56,6 +62,7 @@ func (h *prefectureHandler) ListPrefectures(c *gin.Context) {
 		})
 	}
 
+	h.l.InfoContext(ctx, "Successfully listed prefectures", "count", len(response))
 	c.JSON(http.StatusOK, response)
 }
 
@@ -71,14 +78,18 @@ func (h *prefectureHandler) ListPrefectures(c *gin.Context) {
 // @Router /prefectures/{id} [get]
 func (h *prefectureHandler) GetPrefecture(c *gin.Context) {
 	idStr := c.Param("id")
+	ctx := c.Request.Context()
+
 	id, err := strconv.ParseInt(idStr, 10, 32)
 	if err != nil {
+		h.l.ErrorContext(ctx, err, "Invalid prefecture ID", "prefecture_id_str", idStr)
 		c.JSON(400, gin.H{"error": "Invalid prefecture ID"})
 		return
 	}
 
-	prefecture, err := h.prefectureUseCase.GetPrefectureByID(c.Request.Context(), int32(id))
+	prefecture, err := h.prefectureUseCase.GetPrefectureByID(ctx, int32(id))
 	if err != nil {
+		h.l.ErrorContext(ctx, err, "Prefecture not found", "prefecture_id", id)
 		c.JSON(404, gin.H{"error": "Prefecture not found"})
 		return
 	}
@@ -89,5 +100,6 @@ func (h *prefectureHandler) GetPrefecture(c *gin.Context) {
 		RegionID: prefecture.RegionID,
 	}
 
+	h.l.InfoContext(ctx, "Successfully retrieved prefecture", "prefecture_id", id)
 	c.JSON(http.StatusOK, response)
 }

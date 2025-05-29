@@ -90,13 +90,13 @@ func ProvidePrefectureUseCase(repo datastore.PrefectureRepository) usecase.Prefe
 }
 
 // ProvideDisasterHandler creates a new disaster handler
-func ProvideDisasterHandler(usecase usecase.DisasterUseCase) handler.Disaster {
-	return handler.NewDisasterHandler(usecase)
+func ProvideDisasterHandler(l *logger.Logger, usecase usecase.DisasterUseCase) handler.Disaster {
+	return handler.NewDisasterHandler(l, usecase)
 }
 
 // ProvidePrefectureHandler creates a new prefecture handler
-func ProvidePrefectureHandler(usecase usecase.PrefectureUseCase) handler.Prefecture {
-	return handler.NewPrefectureHandler(usecase)
+func ProvidePrefectureHandler(l *logger.Logger, usecase usecase.PrefectureUseCase) handler.Prefecture {
+	return handler.NewPrefectureHandler(l, usecase)
 }
 
 // RegisterRoutes registers all HTTP routes
@@ -106,6 +106,7 @@ func RegisterRoutes(
 	l *logger.Logger,
 	dbClient db.Client,
 	disasterHandler handler.Disaster,
+	prefectureHandler handler.Prefecture,
 ) {
 	// Context for health check
 	ctx := context.Background()
@@ -133,6 +134,10 @@ func RegisterRoutes(
 	r.POST("/disasters", disasterHandler.CreateDisaster)
 	r.PUT("/disasters/:id", disasterHandler.UpdateDisaster)
 	r.DELETE("/disasters/:id", disasterHandler.DeleteDisaster)
+
+	// 都道府県関連のルート
+	r.GET("/prefectures", prefectureHandler.ListPrefectures)
+	r.GET("/prefectures/:id", prefectureHandler.GetPrefecture)
 
 	// Swagger JSON エンドポイント
 	r.GET("/docs", func(c *gin.Context) {
@@ -167,8 +172,11 @@ func main() {
 			ProvideDBClient,
 			ProvideGinEngine,
 			ProvideDisasterRepository,
+			ProvidePrefectureRepository,
 			ProvideDisasterUseCase,
+			ProvidePrefectureUseCase,
 			ProvideDisasterHandler,
+			ProvidePrefectureHandler,
 		),
 		// Register the lifecycle hooks
 		fx.Invoke(RegisterRoutes),
