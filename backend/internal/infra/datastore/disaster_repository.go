@@ -32,7 +32,7 @@ func NewDisasterRepository(
 }
 
 func (r *disasterRepository) Find(ctx context.Context) ([]*model.Disaster, error) {
-	disasters, err := r.query.Disaster.
+	disasters, err := r.query.WithContext(ctx).Disaster.
 		Preload(r.query.Disaster.Prefecture).
 		Find()
 	if err != nil {
@@ -43,7 +43,7 @@ func (r *disasterRepository) Find(ctx context.Context) ([]*model.Disaster, error
 }
 
 func (r *disasterRepository) FindByID(ctx context.Context, id string) (*model.Disaster, error) {
-	disaster, err := r.query.Disaster.Where(r.query.Disaster.ID.Eq(id)).First()
+	disaster, err := r.query.WithContext(ctx).Disaster.Where(r.query.Disaster.ID.Eq(id)).First()
 	if err != nil {
 		return nil, err
 	}
@@ -52,16 +52,16 @@ func (r *disasterRepository) FindByID(ctx context.Context, id string) (*model.Di
 }
 
 func (r *disasterRepository) Create(ctx context.Context, disaster *model.Disaster) error {
-	return r.query.Disaster.Create(disaster)
+	return r.query.WithContext(ctx).Disaster.Create(disaster)
 }
 
 func (r *disasterRepository) Update(ctx context.Context, disaster *model.Disaster) error {
-	_, err := r.query.Disaster.Where(r.query.Disaster.ID.Eq(disaster.ID)).Updates(disaster)
+	_, err := r.query.WithContext(ctx).Disaster.Where(r.query.Disaster.ID.Eq(disaster.ID)).Updates(disaster)
 	return err
 }
 
 func (r *disasterRepository) Delete(ctx context.Context, id string) error {
-	_, err := r.query.Disaster.Where(r.query.Disaster.ID.Eq(id)).Delete()
+	_, err := r.query.WithContext(ctx).Disaster.Where(r.query.Disaster.ID.Eq(id)).Delete()
 
 	return err
 }

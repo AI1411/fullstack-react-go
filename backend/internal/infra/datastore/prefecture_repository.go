@@ -29,7 +29,7 @@ func NewPrefectureRepository(
 }
 
 func (r *prefectureRepository) Find(ctx context.Context) ([]*model.Prefecture, error) {
-	prefectures, err := r.query.Prefecture.Find()
+	prefectures, err := r.query.WithContext(ctx).Prefecture.Find()
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func (r *prefectureRepository) Find(ctx context.Context) ([]*model.Prefecture, e
 }
 
 func (r *prefectureRepository) FindByID(ctx context.Context, id int32) (*model.Prefecture, error) {
-	prefecture, err := r.query.Prefecture.Where(r.query.Prefecture.ID.Eq(id)).First()
+	prefecture, err := r.query.WithContext(ctx).Prefecture.Where(r.query.Prefecture.ID.Eq(id)).First()
 	if err != nil {
 		return nil, err
 	}

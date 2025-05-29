@@ -42,8 +42,23 @@ type Config struct {
 
 // DefaultConfig returns a default configuration for the logger.
 func DefaultConfig() Config {
+	// 環境変数でログレベルを設定可能にする
+	level := InfoLevel
+	if logLevel := os.Getenv("LOG_LEVEL"); logLevel != "" {
+		switch logLevel {
+		case "debug":
+			level = DebugLevel
+		case "info":
+			level = InfoLevel
+		case "warn":
+			level = WarnLevel
+		case "error":
+			level = ErrorLevel
+		}
+	}
+
 	return Config{
-		Level:     InfoLevel,
+		Level:     level,
 		Output:    os.Stdout,
 		AddSource: true,
 		JSON:      true,

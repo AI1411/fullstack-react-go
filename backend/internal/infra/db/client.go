@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"time"
 
 	"gorm.io/driver/postgres"
@@ -40,10 +41,35 @@ type JSONLogger struct {
 
 // NewJSONLogger creates a new JSONLogger
 func NewJSONLogger(appLogger *applogger.Logger) SQLLogger {
+	// 環境変数でSQLログレベルを設定可能にする
+	sqlLogLevel := logger.Info
+	if logLevel := os.Getenv("SQL_LOG_LEVEL"); logLevel != "" {
+		switch logLevel {
+		case "debug":
+			sqlLogLevel = logger.Info
+		case "info":
+			sqlLogLevel = logger.Info
+		case "warn":
+			sqlLogLevel = logger.Warn
+		case "error":
+			sqlLogLevel = logger.Error
+		case "silent":
+			sqlLogLevel = logger.Silent
+		}
+	}
+
+	// スロークエリの閾値も環境変数で設定可能にする
+	slowThreshold := time.Second
+	if threshold := os.Getenv("SQL_SLOW_THRESHOLD"); threshold != "" {
+		if duration, err := time.ParseDuration(threshold); err == nil {
+			slowThreshold = duration
+		}
+	}
+
 	return &JSONLogger{
 		logger:        appLogger,
-		slowThreshold: time.Second,
-		logLevel:      logger.Info,
+		slowThreshold: slowThreshold,
+		logLevel:      sqlLogLevel,
 	}
 }
 
@@ -58,21 +84,21 @@ func (l *JSONLogger) LogMode(level logger.LogLevel) logger.Interface {
 // Info logs info messages
 func (l *JSONLogger) Info(ctx context.Context, msg string, data ...interface{}) {
 	if l.logLevel >= logger.Info {
-		l.logger.Info(msg, "data", data)
+		l.logger.InfoContext(ctx, msg, "data", data)
 	}
 }
 
 // Warn logs warn messages
 func (l *JSONLogger) Warn(ctx context.Context, msg string, data ...interface{}) {
 	if l.logLevel >= logger.Warn {
-		l.logger.Info(msg, "data", data)
+		l.logger.WarnContext(ctx, msg, "data", data)
 	}
 }
 
 // Error logs error messages
 func (l *JSONLogger) Error(ctx context.Context, msg string, data ...interface{}) {
 	if l.logLevel >= logger.Error {
-		l.logger.LogError(errors.New(msg), msg, "data", data)
+		l.logger.ErrorContext(ctx, errors.New(msg), msg, "data", data)
 	}
 }
 
@@ -86,28 +112,27 @@ func (l *JSONLogger) Trace(ctx context.Context, begin time.Time, fc func() (stri
 	sql, rows := fc()
 
 	if err != nil {
-		l.logger.LogError(err, "SQL error",
+		l.logger.ErrorContext(ctx, err, "SQL error",
 			"sql", sql,
 			"rows", rows,
-			"elapsed", elapsed)
-
+			"elapsed_ms", elapsed.Milliseconds())
 		return
 	}
 
 	if l.slowThreshold != 0 && elapsed > l.slowThreshold {
-		l.logger.Info("SLOW SQL",
+		l.logger.WarnContext(ctx, "SLOW SQL",
 			"sql", sql,
 			"rows", rows,
-			"elapsed", elapsed)
-
+			"elapsed_ms", elapsed.Milliseconds(),
+			"threshold_ms", l.slowThreshold.Milliseconds())
 		return
 	}
 
 	if l.logLevel >= logger.Info {
-		l.logger.Info("SQL",
+		l.logger.InfoContext(ctx, "SQL",
 			"sql", sql,
 			"rows", rows,
-			"elapsed", elapsed)
+			"elapsed_ms", elapsed.Milliseconds())
 	}
 }
 
