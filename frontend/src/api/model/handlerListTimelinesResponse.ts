@@ -6,4 +6,5 @@ import type { HandlerTimelineResponse } from './handlerTimelineResponse';
 
 export interface HandlerListTimelinesResponse {
   timelines?: HandlerTimelineResponse[];
+  total?: number;
 }

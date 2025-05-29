@@ -39,6 +39,7 @@ type TimelineResponse struct {
 
 type ListTimelinesResponse struct {
 	Timelines []*TimelineResponse `json:"timelines"`
+	Total     int32               `json:"total,omitempty"`
 }
 
 // GetTimelinesByDisasterID godoc
@@ -94,5 +95,6 @@ func (h *timelineHandler) GetTimelinesByDisasterID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, ListTimelinesResponse{
 		Timelines: response,
+		Total:     int32(len(response)),
 	})
 }
