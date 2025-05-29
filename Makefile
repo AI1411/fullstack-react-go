@@ -64,45 +64,41 @@ exec-schema: ## sqlファイルをコンテナに流す
 swag: ## swagger更新
 	@docker compose exec gen-api swag init -g ./cmd/api/main.go
 	@cd frontend && pnpm generate
-fmt: ## コードを自動整形
-	@cd backend && gofumpt -l -w .
-	@cd backend && goimports -l -w -local "github.com/AI1411/fullstack-react-go"
+fmt: ## コードを自動整形（ツールチェイン使用）
+	@cd backend && go run mvdan.cc/gofumpt@latest -l -w .
+	@cd backend && go run golang.org/x/tools/cmd/goimports@latest -l -w -local "github.com/AI1411/fullstack-react-go" .
 	@cd frontend && pnpm lint
 
-.PHONY: lint lint-fix test test-coverage vet sec tools
+.PHONY: lint lint-fix test test-coverage vet sec staticcheck tools
 ## 開発ツール関連
 
-tools: ## 開発ツールをインストール
-	cd backend && go mod download
-	cd backend && go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-	cd backend && go install honnef.co/go/tools/cmd/staticcheck@latest
-	cd backend && go install golang.org/x/tools/cmd/goimports@latest
-	cd backend && go install mvdan.cc/gofumpt@latest
-	cd backend && go install golang.org/x/vuln/cmd/govulncheck@latest
-	cd backend && go install github.com/axw/gocov/gocov@latest
-	cd backend && go install github.com/matm/gocov-html/cmd/gocov-html@latest
+tools: ## 開発ツールをインストール（ツールチェイン使用）
+	@cd backend && go mod download
+	@cd backend && go mod tidy
 
+lint: ## 静的解析実行（ツールチェイン使用）
+	@cd backend && go run github.com/golangci/golangci-lint/cmd/golangci-lint@latest run ./...
 
-lint: ## 静的解析実行
-	@cd backend && golangci-lint run ./...
-
-lint-fix: ## 静的解析で修正可能な問題を自動修正
-	@cd backend && golangci-lint run --fix ./...
+lint-fix: ## 静的解析で修正可能な問題を自動修正（ツールチェイン使用）
+	@cd backend && go run github.com/golangci/golangci-lint/cmd/golangci-lint@latest run --fix ./...
 
 vet: ## go vetを実行
 	@cd backend && go vet ./...
 
-sec: ## セキュリティチェック実行
-	@cd backend && govulncheck ./...
+staticcheck: ## staticcheckを実行（ツールチェイン使用）
+	@cd backend && go run honnef.co/go/tools/cmd/staticcheck@latest ./...
+
+sec: ## セキュリティチェック実行（ツールチェイン使用）
+	@cd backend && go run golang.org/x/vuln/cmd/govulncheck@latest ./...
 
 test: ## テスト実行
 	@cd backend && go test -v ./...
 
 test-coverage: ## テストカバレッジ計測
 	@cd backend && go test -coverprofile=coverage.out ./...
-	@cd backend && gocov convert coverage.out | gocov-html > coverage.html
+	@cd backend && go tool cover -html=coverage.out -o coverage.html
 	@echo "カバレッジレポートが coverage.html に生成されました"
 
-quality: lint vet sec ## コード品質チェック（lint + vet + sec）
+quality: lint vet staticcheck sec ## コード品質チェック（全ツール）
 
 ci: fmt quality test ## CI環境で実行するチェック
