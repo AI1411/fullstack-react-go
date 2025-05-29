@@ -1,0 +1,63 @@
+{
+  "go.useLanguageServer": true,
+  "go.formatTool": "gofumpt",
+  "go.lintTool": "golangci-lint",
+  "go.lintFlags": ["--fast"],
+  "go.vetFlags": ["-all"],
+  "go.buildOnSave": "off",
+  "go.lintOnSave": "package",
+  "go.vetOnSave": "package",
+  "go.formatOnSave": true,
+  "go.gocodeAutoBuild": true,
+  "go.gotoSymbol.includeImports": true,
+  "go.autocompleteUnimportedPackages": true,
+  "go.gocodePackageLookupMode": "go",
+  "go.docsTool": "guru",
+  "go.testFlags": ["-v", "-race"],
+  "go.coverOnSave": true,
+  "go.coverOnSingleTest": true,
+  "go.coverageDecorator": {
+    "type": "gutter",
+    "coveredHighlightColor": "rgba(64,128,128,0.5)",
+    "uncoveredHighlightColor": "rgba(128,64,64,0.25)"
+  },
+  "gopls": {
+    "usePlaceholders": true,
+    "staticcheck": true,
+    "vulncheck": "Imports",
+    "ui.completion.usePlaceholders": true,
+    "ui.semanticTokens": true,
+    "ui.codelenses": {
+      "gc_details": false,
+      "generate": true,
+      "regenerate_cgo": true,
+      "test": true,
+      "tidy": true,
+      "upgrade_dependency": true,
+      "vendor": true
+    },
+    "analyses": {
+      "fieldalignment": false,
+      "nilness": true,
+      "unusedwrite": true,
+      "useany": true
+    },
+    "gofumpt": true
+  },
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  },
+  "[go]": {
+    "editor.insertSpaces": false,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    }
+  },
+  "files.exclude": {
+    "**/coverage.out": true,
+    "**/coverage.html": true,
+    "**/*.gen.go": false
+  }
+}

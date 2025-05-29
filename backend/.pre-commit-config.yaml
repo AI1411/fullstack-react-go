@@ -1,0 +1,48 @@
+repos:
+  - repo: local
+    hooks:
+      - id: go-fmt
+        name: go fmt
+        entry: gofumpt
+        args: [-w]
+        language: system
+        files: \.go$
+        
+      - id: go-imports
+        name: go imports
+        entry: goimports
+        args: [-w, -local, "github.com/AI1411/fullstack-react-go"]
+        language: system
+        files: \.go$
+        
+      - id: go-vet
+        name: go vet
+        entry: go
+        args: [vet, ./...]
+        language: system
+        files: \.go$
+        pass_filenames: false
+        
+      - id: golangci-lint
+        name: golangci-lint
+        entry: golangci-lint
+        args: [run, --fix]
+        language: system
+        files: \.go$
+        pass_filenames: false
+        
+      - id: go-test
+        name: go test
+        entry: go
+        args: [test, ./...]
+        language: system
+        files: \.go$
+        pass_filenames: false
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-merge-conflict

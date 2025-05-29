@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "golang.go",
+    "ms-vscode.vscode-go",
+    "editorconfig.editorconfig",
+    "ms-vscode.makefile-tools",
+    "bradlc.vscode-tailwindcss",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-json",
+    "redhat.vscode-yaml",
+    "github.copilot"
+  ]
+}

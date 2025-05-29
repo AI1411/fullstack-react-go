@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"gorm.io/gen"
 
 	"github.com/AI1411/fullstack-react-go/internal/infra/db"
@@ -8,6 +10,8 @@ import (
 )
 
 func main() {
+	ctx := context.Background()
+
 	g := gen.NewGenerator(gen.Config{
 		OutPath:           "./internal/domain/query", // 出力パス
 		Mode:              gen.WithoutContext | gen.WithDefaultQuery | gen.WithQueryInterface,
@@ -17,27 +21,24 @@ func main() {
 	})
 
 	sqlHandler, err := db.NewSqlHandler(
-		"postgres",
-		"postgres",
-		"localhost",
-		"5432",
-		"gen",
+		db.DefaultDatabaseConfig(),
 		applogger.New(applogger.DefaultConfig()),
 	)
 	if err != nil {
 		panic(err)
 	}
 
-	g.UseDB(sqlHandler.Conn)
+	g.UseDB(sqlHandler.Conn(ctx))
 
 	// schema_migrationsを除外してテーブル生成
-	tables, err := sqlHandler.Conn.Migrator().GetTables()
+	tables, err := sqlHandler.Conn(ctx).Migrator().GetTables()
 	if err != nil {
 		panic(err)
 	}
 
 	// schema_migrationsを除外
 	var filteredTables []interface{}
+
 	for _, tableName := range tables {
 		if tableName != "schema_migrations" {
 			model := g.GenerateModel(tableName)

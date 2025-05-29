@@ -47,6 +47,7 @@ func ProvideDBClient(lc fx.Lifecycle, l *logger.Logger) (db.Client, error) {
 			return nil // Add proper cleanup if needed
 		},
 	})
+
 	return dbClient, nil
 }
 
@@ -97,6 +98,7 @@ func RegisterRoutes(
 				"status": "unhealthy",
 				"error":  "database ping failed",
 			})
+
 			return
 		}
 

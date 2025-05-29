@@ -61,13 +61,14 @@ func NewLogging(logger *logger.Logger) gin.HandlerFunc {
 			body:           bytes.NewBufferString(""),
 		}
 		c.Writer = writer
+
 		defer func() {
 			logger.Info("response",
 				slog.String("trace_id", traceID),
 				slog.String("endpoint", endpoint),
 				slog.Any("header", writer.Header()),
 				slog.Int("http_status", writer.Status()),
-				slog.Any("body", string(writer.body.Bytes())),
+				slog.Any("body", writer.body.String()),
 			)
 		}()
 
@@ -80,7 +81,9 @@ func getTraceID(ctx context.Context) string {
 	if !ok {
 		tid, _ := uuid.NewRandom()
 		traceID = tid.String()
+
 		return traceID
 	}
+
 	return traceID
 }

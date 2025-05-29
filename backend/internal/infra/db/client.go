@@ -52,6 +52,7 @@ func NewJSONLogger(appLogger *applogger.Logger) SQLLogger {
 func (l *JSONLogger) LogMode(level logger.LogLevel) logger.Interface {
 	newLogger := *l
 	newLogger.logLevel = level
+
 	return &newLogger
 }
 
@@ -90,6 +91,7 @@ func (l *JSONLogger) Trace(ctx context.Context, begin time.Time, fc func() (stri
 			"sql", sql,
 			"rows", rows,
 			"elapsed", elapsed)
+
 		return
 	}
 
@@ -98,6 +100,7 @@ func (l *JSONLogger) Trace(ctx context.Context, begin time.Time, fc func() (stri
 			"sql", sql,
 			"rows", rows,
 			"elapsed", elapsed)
+
 		return
 	}
 
@@ -186,6 +189,7 @@ func (s *SqlHandler) Close() error {
 	if err != nil {
 		return fmt.Errorf("failed to get underlying sql.DB: %w", err)
 	}
+
 	return sqlDB.Close()
 }
 
@@ -195,6 +199,7 @@ func (s *SqlHandler) Ping(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("failed to get underlying sql.DB: %w", err)
 	}
+
 	return sqlDB.PingContext(ctx)
 }
 
@@ -248,6 +253,7 @@ func (m *MockDatabaseHandler) Close() error {
 	if m.shouldError {
 		return errors.New(m.errorMessage)
 	}
+
 	return nil
 }
 
@@ -256,6 +262,7 @@ func (m *MockDatabaseHandler) Ping(ctx context.Context) error {
 	if m.shouldError {
 		return errors.New(m.errorMessage)
 	}
+
 	return nil
 }
 
@@ -264,6 +271,7 @@ func (m *MockDatabaseHandler) Transaction(ctx context.Context, fn func(tx Client
 	if m.shouldError {
 		return errors.New(m.errorMessage)
 	}
+
 	return fn(m)
 }
 

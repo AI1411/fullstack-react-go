@@ -53,6 +53,7 @@ func DefaultConfig() Config {
 // New creates a new Logger with the given configuration.
 func New(cfg Config) *Logger {
 	var level slog.Level
+
 	switch cfg.Level {
 	case DebugLevel:
 		level = slog.LevelDebug
@@ -67,6 +68,7 @@ func New(cfg Config) *Logger {
 	}
 
 	var handler slog.Handler
+
 	opts := &slog.HandlerOptions{
 		Level:     level,
 		AddSource: cfg.AddSource,
@@ -101,6 +103,7 @@ func FromContext(ctx context.Context) *Logger {
 	if logger, ok := ctx.Value(loggerKey{}).(*Logger); ok {
 		return logger
 	}
+
 	return &Logger{
 		Logger: slog.Default(),
 	}

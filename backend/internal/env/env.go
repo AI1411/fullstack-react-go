@@ -27,11 +27,13 @@ type DB struct {
 
 func NewValues() (*Values, error) {
 	var v Values
+
 	err := envconfig.Process("", &v)
 	if err != nil {
 		s := fmt.Sprintf("need to set all env values %+v", v)
 		return nil, errors.Wrap(err, s)
 	}
+
 	return &v, nil
 }
 
