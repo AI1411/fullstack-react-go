@@ -2,16 +2,51 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
+  Outlet,
 } from "@tanstack/react-router"
+import { Layout } from "./components/layouts/Header"
+import { Home } from "./routes/Home"
 import { Hello } from "./App"
-const rootRoute = createRootRoute({})
 
+// Root route with layout
+const rootRoute = createRootRoute({
+  component: () => <Layout><Outlet /></Layout>,
+})
+
+// Home route
+const indexRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/",
+  component: Home,
+})
+
+// Disasters route
+const disastersRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/disasters",
+  component: () => <div>災害情報ページ</div>,
+})
+
+// Application route
+const applicationRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/application",
+  component: () => <div>申請ページ</div>,
+})
+
+// Legacy hello route
 const helloRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/$helloId",
   component: () => <Hello />,
 })
-const routeTree = rootRoute.addChildren([helloRoute])
+
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  disastersRoute,
+  applicationRoute,
+  helloRoute,
+])
 
 export const router = createRouter({ routeTree })
 
