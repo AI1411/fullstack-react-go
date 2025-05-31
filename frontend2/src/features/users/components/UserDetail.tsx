@@ -78,6 +78,24 @@ export const UserDetail = () => {
           </div>
         </div>
       </div>
+
+      {user.organizations && user.organizations.length > 0 && (
+        <div className="bg-white rounded-lg border border-[#dce0e5] overflow-hidden mb-6">
+          <div className="p-6">
+            <h2 className="text-[#111418] text-xl font-semibold mb-4">所属組織</h2>
+            <div className="grid grid-cols-1 gap-4">
+              {user.organizations.map((org) => (
+                <div key={org.id} className="flex items-center p-3 border border-[#dce0e5] rounded-md">
+                  <div className="flex-1">
+                    <p className="text-[#111418] text-base font-medium">{org.name}</p>
+                    <p className="text-[#637588] text-sm">{org.type}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -7,6 +7,11 @@ export type User = {
   email: string
   created_at: string
   updated_at: string
+  organizations?: {
+    id: number
+    name: string
+    type: string
+  }[]
 }
 
 export type UserSearchParams = {

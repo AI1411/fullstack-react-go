@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
-import { User } from "../../users/hooks/useUsers"
+import type { User } from "../../users/hooks/useUsers"
 
 export type Organization = {
   id: string
