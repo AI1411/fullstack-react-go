@@ -21,6 +21,7 @@ import type {
   HandlerListDisastersResponse,
   HandlerListSupportApplicationsResponse,
   HandlerListTimelinesResponse,
+  HandlerNotificationResponse,
   HandlerPrefectureResponse,
   HandlerSupportApplicationResponse
 } from './model';
@@ -51,6 +52,18 @@ export const getCreateFacilityEquipmentResponseMock = (overrideResponse: Partial
 export const getGetFacilityEquipmentResponseMock = (overrideResponse: Partial< HandlerFacilityEquipmentResponse > = {}): HandlerFacilityEquipmentResponse => ({facility_type_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), facility_type_name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), installation_date: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), location_description: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), location_latitude: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), location_longitude: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), manufacturer: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), model_number: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), notes: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), status: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), ...overrideResponse})
 
 export const getUpdateFacilityEquipmentResponseMock = (overrideResponse: Partial< HandlerFacilityEquipmentResponse > = {}): HandlerFacilityEquipmentResponse => ({facility_type_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), facility_type_name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), installation_date: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), location_description: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), location_latitude: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), location_longitude: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), manufacturer: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), model_number: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), notes: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), status: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), ...overrideResponse})
+
+export const getListNotificationsResponseMock = (): HandlerNotificationResponse[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({created_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), is_read: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), message: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), notification_type: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), read_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), related_entity_id: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), related_entity_type: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), title: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), updated_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), user_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])})))
+
+export const getCreateNotificationResponseMock = (overrideResponse: Partial< HandlerNotificationResponse > = {}): HandlerNotificationResponse => ({created_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), is_read: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), message: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), notification_type: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), read_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), related_entity_id: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), related_entity_type: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), title: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), updated_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), user_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
+
+export const getGetNotificationResponseMock = (overrideResponse: Partial< HandlerNotificationResponse > = {}): HandlerNotificationResponse => ({created_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), is_read: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), message: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), notification_type: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), read_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), related_entity_id: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), related_entity_type: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), title: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), updated_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), user_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
+
+export const getUpdateNotificationResponseMock = (overrideResponse: Partial< HandlerNotificationResponse > = {}): HandlerNotificationResponse => ({created_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), is_read: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), message: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), notification_type: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), read_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), related_entity_id: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), related_entity_type: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), title: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), updated_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), user_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
+
+export const getMarkAsReadResponseMock = (overrideResponse: Partial< HandlerNotificationResponse > = {}): HandlerNotificationResponse => ({created_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), is_read: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), message: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), notification_type: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), read_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), related_entity_id: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), related_entity_type: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), title: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), updated_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), user_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
+
+export const getGetNotificationsByUserIDResponseMock = (): HandlerNotificationResponse[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({created_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), is_read: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), message: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), notification_type: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), read_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), related_entity_id: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), related_entity_type: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), title: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), updated_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), user_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])})))
 
 export const getListPrefecturesResponseMock = (): HandlerPrefectureResponse[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), region_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])})))
 
@@ -249,6 +262,88 @@ export const getUpdateFacilityEquipmentMockHandler = (overrideResponse?: Handler
   })
 }
 
+export const getListNotificationsMockHandler = (overrideResponse?: HandlerNotificationResponse[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<HandlerNotificationResponse[]> | HandlerNotificationResponse[])) => {
+  return http.get('*/notifications', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getListNotificationsResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getCreateNotificationMockHandler = (overrideResponse?: HandlerNotificationResponse | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<HandlerNotificationResponse> | HandlerNotificationResponse)) => {
+  return http.post('*/notifications', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getCreateNotificationResponseMock()),
+      { status: 201,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getDeleteNotificationMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void)) => {
+  return http.delete('*/notifications/:id', async (info) => {await delay(1000);
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+    return new HttpResponse(null,
+      { status: 204,
+        
+      })
+  })
+}
+
+export const getGetNotificationMockHandler = (overrideResponse?: HandlerNotificationResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<HandlerNotificationResponse> | HandlerNotificationResponse)) => {
+  return http.get('*/notifications/:id', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getGetNotificationResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getUpdateNotificationMockHandler = (overrideResponse?: HandlerNotificationResponse | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<HandlerNotificationResponse> | HandlerNotificationResponse)) => {
+  return http.put('*/notifications/:id', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getUpdateNotificationResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getMarkAsReadMockHandler = (overrideResponse?: HandlerNotificationResponse | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<HandlerNotificationResponse> | HandlerNotificationResponse)) => {
+  return http.put('*/notifications/:id/read', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getMarkAsReadResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getGetNotificationsByUserIDMockHandler = (overrideResponse?: HandlerNotificationResponse[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<HandlerNotificationResponse[]> | HandlerNotificationResponse[])) => {
+  return http.get('*/notifications/user/:userId', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getGetNotificationsByUserIDResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
 export const getListPrefecturesMockHandler = (overrideResponse?: HandlerPrefectureResponse[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<HandlerPrefectureResponse[]> | HandlerPrefectureResponse[])) => {
   return http.get('*/prefectures', async (info) => {await delay(1000);
   
@@ -325,6 +420,13 @@ export const getApiMock = () => [
   getDeleteFacilityEquipmentMockHandler(),
   getGetFacilityEquipmentMockHandler(),
   getUpdateFacilityEquipmentMockHandler(),
+  getListNotificationsMockHandler(),
+  getCreateNotificationMockHandler(),
+  getDeleteNotificationMockHandler(),
+  getGetNotificationMockHandler(),
+  getUpdateNotificationMockHandler(),
+  getMarkAsReadMockHandler(),
+  getGetNotificationsByUserIDMockHandler(),
   getListPrefecturesMockHandler(),
   getGetPrefectureMockHandler(),
   getListSupportApplicationsMockHandler(),

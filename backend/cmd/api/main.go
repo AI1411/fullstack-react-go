@@ -47,14 +47,17 @@ type Module struct {
 	PrefectureRepo            datastore.PrefectureRepository
 	TimelineRepo              datastore.TimelineRepository
 	SupportApplicationRepo    datastore.SupportApplicationRepository
+	NotificationRepo          datastore.NotificationRepository
 	DisasterUsecase           usecase.DisasterUseCase
 	PrefectureUsecase         usecase.PrefectureUseCase
 	TimelineUsecase           usecase.TimelineUseCase
 	SupportApplicationUsecase usecase.SupportApplicationUseCase
+	NotificationUsecase       usecase.NotificationUseCase
 	DisasterHandler           handler.Disaster
 	PrefectureHandler         handler.Prefecture
 	TimelineHandler           handler.Timeline
 	SupportApplicationHandler handler.SupportApplication
+	NotificationHandler       handler.Notification
 }
 
 // ProvideLogger creates a new logger instance
@@ -188,6 +191,21 @@ func ProvideFacilityEquipmentHandler(l *logger.Logger, usecase usecase.FacilityE
 	return handler.NewFacilityEquipmentHandler(l, usecase)
 }
 
+// ProvideNotificationRepository creates a new notification repository
+func ProvideNotificationRepository(dbClient db.Client) datastore.NotificationRepository {
+	return datastore.NewNotificationRepository(context.Background(), dbClient)
+}
+
+// ProvideNotificationUseCase creates a new notification use case
+func ProvideNotificationUseCase(repo datastore.NotificationRepository) usecase.NotificationUseCase {
+	return usecase.NewNotificationUseCase(repo)
+}
+
+// ProvideNotificationHandler creates a new notification handler
+func ProvideNotificationHandler(l *logger.Logger, usecase usecase.NotificationUseCase) handler.Notification {
+	return handler.NewNotificationHandler(l, usecase)
+}
+
 // RegisterRoutes registers all HTTP routes
 func RegisterRoutes(
 	lc fx.Lifecycle,
@@ -200,6 +218,7 @@ func RegisterRoutes(
 	supportApplicationHandler handler.SupportApplication,
 	damageLevelHandler handler.DamageLevel,
 	facilityEquipmentHandler handler.FacilityEquipment,
+	notificationHandler handler.Notification,
 ) {
 	// Context for health check
 	ctx := context.Background()
@@ -254,6 +273,15 @@ func RegisterRoutes(
 	r.PUT("/facility-equipment/:id", facilityEquipmentHandler.UpdateFacilityEquipment)
 	r.DELETE("/facility-equipment/:id", facilityEquipmentHandler.DeleteFacilityEquipment)
 
+	// 通知関連のルート
+	r.GET("/notifications", notificationHandler.ListNotifications)
+	r.GET("/notifications/:id", notificationHandler.GetNotification)
+	r.GET("/notifications/user/:user_id", notificationHandler.GetNotificationsByUserID)
+	r.POST("/notifications", notificationHandler.CreateNotification)
+	r.PUT("/notifications/:id", notificationHandler.UpdateNotification)
+	r.DELETE("/notifications/:id", notificationHandler.DeleteNotification)
+	r.PUT("/notifications/:id/read", notificationHandler.MarkAsRead)
+
 	// Swagger JSON エンドポイント
 	r.GET("/docs", func(c *gin.Context) {
 		c.Header("Content-Type", "application/json")
@@ -292,18 +320,21 @@ func main() {
 			ProvideSupportApplicationRepository,
 			ProvideDamageLevelRepository,
 			ProvideFacilityEquipmentRepository,
+			ProvideNotificationRepository,
 			ProvideDisasterUseCase,
 			ProvidePrefectureUseCase,
 			ProvideTimelineUseCase,
 			ProvideSupportApplicationUseCase,
 			ProvideDamageLevelUseCase,
 			ProvideFacilityEquipmentUseCase,
+			ProvideNotificationUseCase,
 			ProvideDisasterHandler,
 			ProvidePrefectureHandler,
 			ProvideTimelineHandler,
 			ProvideSupportApplicationHandler,
 			ProvideDamageLevelHandler,
 			ProvideFacilityEquipmentHandler,
+			ProvideNotificationHandler,
 		),
 		// Register the lifecycle hooks
 		fx.Invoke(RegisterRoutes),
