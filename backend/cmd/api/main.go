@@ -158,6 +158,21 @@ func ProvideSupportApplicationHandler(l *logger.Logger, usecase usecase.SupportA
 	return handler.NewSupportApplicationHandler(l, usecase)
 }
 
+// ProvideDamageLevelRepository creates a new damage level repository
+func ProvideDamageLevelRepository(dbClient db.Client) datastore.DamageLevelRepository {
+	return datastore.NewDamageLevelRepository(context.Background(), dbClient)
+}
+
+// ProvideDamageLevelUseCase creates a new damage level usecase
+func ProvideDamageLevelUseCase(repo datastore.DamageLevelRepository) usecase.DamageLevelUseCase {
+	return usecase.NewDamageLevelUseCase(repo)
+}
+
+// ProvideDamageLevelHandler creates a new damage level handler
+func ProvideDamageLevelHandler(l *logger.Logger, usecase usecase.DamageLevelUseCase) handler.DamageLevel {
+	return handler.NewDamageLevelHandler(l, usecase)
+}
+
 // RegisterRoutes registers all HTTP routes
 func RegisterRoutes(
 	lc fx.Lifecycle,
@@ -168,6 +183,7 @@ func RegisterRoutes(
 	prefectureHandler handler.Prefecture,
 	timelineHandler handler.Timeline,
 	supportApplicationHandler handler.SupportApplication,
+	damageLevelHandler handler.DamageLevel,
 ) {
 	// Context for health check
 	ctx := context.Background()
@@ -208,6 +224,10 @@ func RegisterRoutes(
 	r.GET("/support-applications/:id", supportApplicationHandler.GetSupportApplication)
 	r.POST("/support-applications", supportApplicationHandler.CreateSupportApplication)
 
+	// 被害程度関連のルート
+	r.GET("/damage-levels", damageLevelHandler.ListDamageLevels)
+	r.GET("/damage-levels/:id", damageLevelHandler.GetDamageLevel)
+
 	// Swagger JSON エンドポイント
 	r.GET("/docs", func(c *gin.Context) {
 		c.Header("Content-Type", "application/json")
@@ -244,14 +264,17 @@ func main() {
 			ProvidePrefectureRepository,
 			ProvideTimelineRepository,
 			ProvideSupportApplicationRepository,
+			ProvideDamageLevelRepository,
 			ProvideDisasterUseCase,
 			ProvidePrefectureUseCase,
 			ProvideTimelineUseCase,
 			ProvideSupportApplicationUseCase,
+			ProvideDamageLevelUseCase,
 			ProvideDisasterHandler,
 			ProvidePrefectureHandler,
 			ProvideTimelineHandler,
 			ProvideSupportApplicationHandler,
+			ProvideDamageLevelHandler,
 		),
 		// Register the lifecycle hooks
 		fx.Invoke(RegisterRoutes),

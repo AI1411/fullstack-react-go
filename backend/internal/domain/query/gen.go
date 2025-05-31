@@ -17,49 +17,85 @@ import (
 
 var (
 	Q                  = new(Query)
+	Assessment         *assessment
+	AssessmentComment  *assessmentComment
+	AssessmentItem     *assessmentItem
+	DamageLevel        *damageLevel
 	Disaster           *disaster
 	DisasterDocument   *disasterDocument
+	FacilityType       *facilityType
+	GisDatum           *gisDatum
+	Notification       *notification
 	Prefecture         *prefecture
 	Region             *region
+	Role               *role
 	SupportApplication *supportApplication
 	Timeline           *timeline
 	User               *user
+	UserOrganization   *userOrganization
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
+	Assessment = &Q.Assessment
+	AssessmentComment = &Q.AssessmentComment
+	AssessmentItem = &Q.AssessmentItem
+	DamageLevel = &Q.DamageLevel
 	Disaster = &Q.Disaster
 	DisasterDocument = &Q.DisasterDocument
+	FacilityType = &Q.FacilityType
+	GisDatum = &Q.GisDatum
+	Notification = &Q.Notification
 	Prefecture = &Q.Prefecture
 	Region = &Q.Region
+	Role = &Q.Role
 	SupportApplication = &Q.SupportApplication
 	Timeline = &Q.Timeline
 	User = &Q.User
+	UserOrganization = &Q.UserOrganization
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:                 db,
+		Assessment:         newAssessment(db, opts...),
+		AssessmentComment:  newAssessmentComment(db, opts...),
+		AssessmentItem:     newAssessmentItem(db, opts...),
+		DamageLevel:        newDamageLevel(db, opts...),
 		Disaster:           newDisaster(db, opts...),
 		DisasterDocument:   newDisasterDocument(db, opts...),
+		FacilityType:       newFacilityType(db, opts...),
+		GisDatum:           newGisDatum(db, opts...),
+		Notification:       newNotification(db, opts...),
 		Prefecture:         newPrefecture(db, opts...),
 		Region:             newRegion(db, opts...),
+		Role:               newRole(db, opts...),
 		SupportApplication: newSupportApplication(db, opts...),
 		Timeline:           newTimeline(db, opts...),
 		User:               newUser(db, opts...),
+		UserOrganization:   newUserOrganization(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
+	Assessment         assessment
+	AssessmentComment  assessmentComment
+	AssessmentItem     assessmentItem
+	DamageLevel        damageLevel
 	Disaster           disaster
 	DisasterDocument   disasterDocument
+	FacilityType       facilityType
+	GisDatum           gisDatum
+	Notification       notification
 	Prefecture         prefecture
 	Region             region
+	Role               role
 	SupportApplication supportApplication
 	Timeline           timeline
 	User               user
+	UserOrganization   userOrganization
 }
 
 func (q *Query) Available() bool { return q.db != nil }
@@ -67,13 +103,22 @@ func (q *Query) Available() bool { return q.db != nil }
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:                 db,
+		Assessment:         q.Assessment.clone(db),
+		AssessmentComment:  q.AssessmentComment.clone(db),
+		AssessmentItem:     q.AssessmentItem.clone(db),
+		DamageLevel:        q.DamageLevel.clone(db),
 		Disaster:           q.Disaster.clone(db),
 		DisasterDocument:   q.DisasterDocument.clone(db),
+		FacilityType:       q.FacilityType.clone(db),
+		GisDatum:           q.GisDatum.clone(db),
+		Notification:       q.Notification.clone(db),
 		Prefecture:         q.Prefecture.clone(db),
 		Region:             q.Region.clone(db),
+		Role:               q.Role.clone(db),
 		SupportApplication: q.SupportApplication.clone(db),
 		Timeline:           q.Timeline.clone(db),
 		User:               q.User.clone(db),
+		UserOrganization:   q.UserOrganization.clone(db),
 	}
 }
 
@@ -88,35 +133,62 @@ func (q *Query) WriteDB() *Query {
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:                 db,
+		Assessment:         q.Assessment.replaceDB(db),
+		AssessmentComment:  q.AssessmentComment.replaceDB(db),
+		AssessmentItem:     q.AssessmentItem.replaceDB(db),
+		DamageLevel:        q.DamageLevel.replaceDB(db),
 		Disaster:           q.Disaster.replaceDB(db),
 		DisasterDocument:   q.DisasterDocument.replaceDB(db),
+		FacilityType:       q.FacilityType.replaceDB(db),
+		GisDatum:           q.GisDatum.replaceDB(db),
+		Notification:       q.Notification.replaceDB(db),
 		Prefecture:         q.Prefecture.replaceDB(db),
 		Region:             q.Region.replaceDB(db),
+		Role:               q.Role.replaceDB(db),
 		SupportApplication: q.SupportApplication.replaceDB(db),
 		Timeline:           q.Timeline.replaceDB(db),
 		User:               q.User.replaceDB(db),
+		UserOrganization:   q.UserOrganization.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
+	Assessment         IAssessmentDo
+	AssessmentComment  IAssessmentCommentDo
+	AssessmentItem     IAssessmentItemDo
+	DamageLevel        IDamageLevelDo
 	Disaster           IDisasterDo
 	DisasterDocument   IDisasterDocumentDo
+	FacilityType       IFacilityTypeDo
+	GisDatum           IGisDatumDo
+	Notification       INotificationDo
 	Prefecture         IPrefectureDo
 	Region             IRegionDo
+	Role               IRoleDo
 	SupportApplication ISupportApplicationDo
 	Timeline           ITimelineDo
 	User               IUserDo
+	UserOrganization   IUserOrganizationDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
+		Assessment:         q.Assessment.WithContext(ctx),
+		AssessmentComment:  q.AssessmentComment.WithContext(ctx),
+		AssessmentItem:     q.AssessmentItem.WithContext(ctx),
+		DamageLevel:        q.DamageLevel.WithContext(ctx),
 		Disaster:           q.Disaster.WithContext(ctx),
 		DisasterDocument:   q.DisasterDocument.WithContext(ctx),
+		FacilityType:       q.FacilityType.WithContext(ctx),
+		GisDatum:           q.GisDatum.WithContext(ctx),
+		Notification:       q.Notification.WithContext(ctx),
 		Prefecture:         q.Prefecture.WithContext(ctx),
 		Region:             q.Region.WithContext(ctx),
+		Role:               q.Role.WithContext(ctx),
 		SupportApplication: q.SupportApplication.WithContext(ctx),
 		Timeline:           q.Timeline.WithContext(ctx),
 		User:               q.User.WithContext(ctx),
+		UserOrganization:   q.UserOrganization.WithContext(ctx),
 	}
 }
 

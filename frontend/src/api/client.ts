@@ -35,11 +35,13 @@ import type {
   CreateDisaster400,
   CreateSupportApplication400,
   DeleteDisaster404,
+  GetDamageLevel404,
   GetDisaster404,
   GetPrefecture404,
   GetSupportApplication404,
   HandlerCreateDisasterRequest,
   HandlerCreateSupportApplicationRequest,
+  HandlerDamageLevelResponse,
   HandlerListDisastersResponse,
   HandlerListSupportApplicationsResponse,
   HandlerListTimelinesResponse,
@@ -51,6 +53,178 @@ import type {
   UpdateDisaster404
 } from './model';
 
+
+
+
+
+/**
+ * @summary 被害程度一覧取得
+ */
+export const listDamageLevels = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerDamageLevelResponse[]>> => {
+    
+    
+    return axios.get(
+      `/damage-levels`,options
+    );
+  }
+
+
+export const getListDamageLevelsQueryKey = () => {
+    return [`/damage-levels`] as const;
+    }
+
+    
+export const getListDamageLevelsQueryOptions = <TData = Awaited<ReturnType<typeof listDamageLevels>>, TError = AxiosError<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDamageLevels>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListDamageLevelsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listDamageLevels>>> = ({ signal }) => listDamageLevels({ signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listDamageLevels>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type ListDamageLevelsQueryResult = NonNullable<Awaited<ReturnType<typeof listDamageLevels>>>
+export type ListDamageLevelsQueryError = AxiosError<unknown>
+
+
+export function useListDamageLevels<TData = Awaited<ReturnType<typeof listDamageLevels>>, TError = AxiosError<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDamageLevels>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listDamageLevels>>,
+          TError,
+          Awaited<ReturnType<typeof listDamageLevels>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useListDamageLevels<TData = Awaited<ReturnType<typeof listDamageLevels>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDamageLevels>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listDamageLevels>>,
+          TError,
+          Awaited<ReturnType<typeof listDamageLevels>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useListDamageLevels<TData = Awaited<ReturnType<typeof listDamageLevels>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDamageLevels>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary 被害程度一覧取得
+ */
+
+export function useListDamageLevels<TData = Awaited<ReturnType<typeof listDamageLevels>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDamageLevels>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getListDamageLevelsQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary 被害程度詳細取得
+ */
+export const getDamageLevel = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerDamageLevelResponse>> => {
+    
+    
+    return axios.get(
+      `/damage-levels/${id}`,options
+    );
+  }
+
+
+export const getGetDamageLevelQueryKey = (id: number,) => {
+    return [`/damage-levels/${id}`] as const;
+    }
+
+    
+export const getGetDamageLevelQueryOptions = <TData = Awaited<ReturnType<typeof getDamageLevel>>, TError = AxiosError<GetDamageLevel404>>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDamageLevel>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetDamageLevelQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDamageLevel>>> = ({ signal }) => getDamageLevel(id, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getDamageLevel>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetDamageLevelQueryResult = NonNullable<Awaited<ReturnType<typeof getDamageLevel>>>
+export type GetDamageLevelQueryError = AxiosError<GetDamageLevel404>
+
+
+export function useGetDamageLevel<TData = Awaited<ReturnType<typeof getDamageLevel>>, TError = AxiosError<GetDamageLevel404>>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDamageLevel>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDamageLevel>>,
+          TError,
+          Awaited<ReturnType<typeof getDamageLevel>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetDamageLevel<TData = Awaited<ReturnType<typeof getDamageLevel>>, TError = AxiosError<GetDamageLevel404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDamageLevel>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDamageLevel>>,
+          TError,
+          Awaited<ReturnType<typeof getDamageLevel>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetDamageLevel<TData = Awaited<ReturnType<typeof getDamageLevel>>, TError = AxiosError<GetDamageLevel404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDamageLevel>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary 被害程度詳細取得
+ */
+
+export function useGetDamageLevel<TData = Awaited<ReturnType<typeof getDamageLevel>>, TError = AxiosError<GetDamageLevel404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDamageLevel>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetDamageLevelQueryOptions(id,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
 
 
 

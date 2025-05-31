@@ -68,6 +68,33 @@ func main() {
 		g.GenerateModel(
 			model.TableNameSupportApplication,
 		),
+		g.GenerateModel(
+			model.TableNameDamageLevel,
+		),
+		g.GenerateModel(
+			model.TableNameAssessment,
+		),
+		g.GenerateModel(
+			model.TableNameAssessmentComment,
+		),
+		g.GenerateModel(
+			model.TableNameAssessmentItem,
+		),
+		g.GenerateModel(
+			model.TableNameFacilityType,
+		),
+		g.GenerateModel(
+			model.TableNameGisDatum,
+		),
+		g.GenerateModel(
+			model.TableNameNotification,
+		),
+		g.GenerateModel(
+			model.TableNameRole,
+		),
+		g.GenerateModel(
+			model.TableNameUserOrganization,
+		),
 	}
 
 	g.ApplyBasic(allModels...)
