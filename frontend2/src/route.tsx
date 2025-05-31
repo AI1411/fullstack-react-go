@@ -9,6 +9,7 @@ import { Home } from "./routes/Home"
 import { Disasters } from "./routes/Disasters"
 import { DisasterDetail } from "./routes/DisasterDetail"
 import { Application } from "./routes/Application"
+import { ApplicationDetail } from "./routes/ApplicationDetail"
 import { Hello } from "./App"
 
 // Root route with layout
@@ -44,6 +45,13 @@ const applicationRoute = createRoute({
   component: Application,
 })
 
+// Application detail route
+const applicationDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/application/$applicationId",
+  component: ApplicationDetail,
+})
+
 // Legacy hello route
 const helloRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -56,6 +64,7 @@ const routeTree = rootRoute.addChildren([
   disastersRoute,
   disasterDetailRoute,
   applicationRoute,
+  applicationDetailRoute,
   helloRoute,
 ])
 
