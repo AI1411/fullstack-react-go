@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-router"
 import { Layout } from "./components/layouts/Header"
 import { Home } from "./routes/Home"
+import { Disasters } from "./routes/Disasters"
 import { Hello } from "./App"
 
 // Root route with layout
@@ -24,7 +25,7 @@ const indexRoute = createRoute({
 const disastersRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/disasters",
-  component: () => <div>災害情報ページ</div>,
+  component: Disasters,
 })
 
 // Application route
