@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
+	"github.com/AI1411/fullstack-react-go/internal/domain/query"
 	"github.com/AI1411/fullstack-react-go/internal/infra/db"
 )
 
@@ -17,6 +18,7 @@ type OrganizationRepository interface {
 
 type organizationRepository struct {
 	client db.Client
+	query  *query.Query
 }
 
 func NewOrganizationRepository(
@@ -25,12 +27,13 @@ func NewOrganizationRepository(
 ) OrganizationRepository {
 	return &organizationRepository{
 		client: client,
+		query:  query.Use(client.Conn(ctx)),
 	}
 }
 
 func (r *organizationRepository) Find(ctx context.Context) ([]*model.Organization, error) {
-	var organizations []*model.Organization
-	if err := r.client.Conn(ctx).Find(&organizations).Error; err != nil {
+	organizations, err := r.query.WithContext(ctx).Organization.Find()
+	if err != nil {
 		return nil, err
 	}
 
@@ -38,22 +41,28 @@ func (r *organizationRepository) Find(ctx context.Context) ([]*model.Organizatio
 }
 
 func (r *organizationRepository) FindByID(ctx context.Context, id int32) (*model.Organization, error) {
-	var organization model.Organization
-	if err := r.client.Conn(ctx).Where("id = ?", id).First(&organization).Error; err != nil {
+	organization, err := r.query.WithContext(ctx).
+		Organization.
+		Where(r.query.Organization.ID.Eq(id)).
+		Preload(r.query.Organization.Users).
+		First()
+	if err != nil {
 		return nil, err
 	}
 
-	return &organization, nil
+	return organization, nil
 }
 
 func (r *organizationRepository) Create(ctx context.Context, organization *model.Organization) error {
-	return r.client.Conn(ctx).Create(organization).Error
+	return r.query.WithContext(ctx).Organization.Create(organization)
 }
 
 func (r *organizationRepository) Update(ctx context.Context, organization *model.Organization) error {
-	return r.client.Conn(ctx).Save(organization).Error
+	_, err := r.query.WithContext(ctx).Organization.Where(r.query.Organization.ID.Eq(organization.ID)).Updates(organization)
+	return err
 }
 
 func (r *organizationRepository) Delete(ctx context.Context, id int32) error {
-	return r.client.Conn(ctx).Delete(&model.Organization{}, id).Error
+	_, err := r.query.WithContext(ctx).Organization.Where(r.query.Organization.ID.Eq(id)).Delete()
+	return err
 }

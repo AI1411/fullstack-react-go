@@ -36,14 +36,15 @@ func NewOrganizationHandler(
 }
 
 type OrganizationResponse struct {
-	ID           int32     `json:"id"`
-	Name         string    `json:"name"`
-	Type         string    `json:"type"`
-	PrefectureID *int32    `json:"prefecture_id,omitempty"`
-	ParentID     *int32    `json:"parent_id,omitempty"`
-	Description  *string   `json:"description,omitempty"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
+	ID           int32          `json:"id"`
+	Name         string         `json:"name"`
+	Type         string         `json:"type"`
+	PrefectureID *int32         `json:"prefecture_id,omitempty"`
+	ParentID     *int32         `json:"parent_id,omitempty"`
+	Description  *string        `json:"description,omitempty"`
+	CreatedAt    time.Time      `json:"created_at"`
+	UpdatedAt    time.Time      `json:"updated_at"`
+	Users        []UserResponse `json:"users,omitempty"`
 }
 
 type CreateOrganizationRequest struct {
@@ -131,6 +132,18 @@ func (h *organizationHandler) GetOrganization(c *gin.Context) {
 		return
 	}
 
+	// Map users to UserResponse
+	var users []UserResponse
+	for _, user := range organization.Users {
+		users = append(users, UserResponse{
+			ID:        user.ID,
+			Name:      user.Name,
+			Email:     user.Email,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+		})
+	}
+
 	response := &OrganizationResponse{
 		ID:           organization.ID,
 		Name:         organization.Name,
@@ -140,6 +153,7 @@ func (h *organizationHandler) GetOrganization(c *gin.Context) {
 		Description:  organization.Description,
 		CreatedAt:    organization.CreatedAt,
 		UpdatedAt:    organization.UpdatedAt,
+		Users:        users,
 	}
 
 	h.l.InfoContext(ctx, "Successfully retrieved organization", "organization_id", id)

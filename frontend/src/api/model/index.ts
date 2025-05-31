@@ -60,6 +60,7 @@ export * from './handlerUpdateDamageLevelRequest';
 export * from './handlerUpdateFacilityEquipmentRequest';
 export * from './handlerUpdateNotificationRequest';
 export * from './handlerUpdateOrganizationRequest';
+export * from './handlerUserResponse';
 export * from './listDisastersParams';
 export * from './markAsRead400';
 export * from './markAsRead404';

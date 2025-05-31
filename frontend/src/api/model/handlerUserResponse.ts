@@ -5,16 +5,11 @@
  * 農業災害の報告と支援申請を管理するためのAPI
  * OpenAPI spec version: 1.0
  */
-import type { HandlerUserResponse } from './handlerUserResponse';
 
-export interface HandlerOrganizationResponse {
+export interface HandlerUserResponse {
   created_at?: string;
-  description?: string;
+  email?: string;
   id?: number;
   name?: string;
-  parent_id?: number;
-  prefecture_id?: number;
-  type?: string;
   updated_at?: string;
-  users?: HandlerUserResponse[];
 }
