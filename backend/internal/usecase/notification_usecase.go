@@ -1,3 +1,4 @@
+//go:generate mockgen -source=notification_usecase.go -destination=../../tests/mock/usecase/notification_usecase.mock.go
 package usecase
 
 import (

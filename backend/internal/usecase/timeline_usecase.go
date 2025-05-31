@@ -1,3 +1,4 @@
+//go:generate mockgen -source=timeline_usecase.go -destination=../../tests/mock/usecase/timeline_usecase.mock.go
 package usecase
 
 import (
