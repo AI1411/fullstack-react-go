@@ -7,6 +7,7 @@ import {
 import { Layout } from "./components/layouts/Header"
 import { Home } from "./routes/Home"
 import { Disasters } from "./routes/Disasters"
+import { Application } from "./routes/Application"
 import { Hello } from "./App"
 
 // Root route with layout
@@ -32,7 +33,7 @@ const disastersRoute = createRoute({
 const applicationRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/application",
-  component: () => <div>申請ページ</div>,
+  component: Application,
 })
 
 // Legacy hello route

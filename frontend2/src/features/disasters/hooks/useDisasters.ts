@@ -8,10 +8,7 @@ export const useDisasters = (searchParams: DisasterSearchParams) => {
     isLoading,
     error,
   } = useListDisasters<{ data: HandlerListDisastersResponse }>({
-    query: {
-      staleTime: 5 * 60 * 1000, // 5分間キャッシュ
-      queryKey: ["disasters", searchParams],
-    },
+    queryKey: ["disasters", searchParams],
     axios: {
       params: searchParams,
     },

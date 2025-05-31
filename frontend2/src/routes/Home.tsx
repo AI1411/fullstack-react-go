@@ -49,9 +49,15 @@ export const Home = () => {
       <div className="p-4 text-center">
         <Link
           to="/disasters"
-          className="inline-flex items-center justify-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#111418] hover:bg-[#333] transition-colors"
+          className="inline-flex items-center justify-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#111418] hover:bg-[#333] transition-colors mr-4"
         >
           すべての災害情報を見る
+        </Link>
+        <Link
+          to="/application"
+          className="inline-flex items-center justify-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#197fe5] hover:bg-[#1565c0] transition-colors"
+        >
+          支援申請を行う
         </Link>
       </div>
     </>
