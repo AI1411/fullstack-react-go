@@ -33,11 +33,12 @@ func NewUserHandler(l *logger.Logger, userUseCase usecase.UserUseCase) User {
 }
 
 type UserResponse struct {
-	ID        int32      `json:"id"`
-	Name      string     `json:"name"`
-	Email     string     `json:"email"`
-	CreatedAt *time.Time `json:"created_at"`
-	UpdatedAt *time.Time `json:"updated_at"`
+	ID            int32                   `json:"id"`
+	Name          string                  `json:"name"`
+	Email         string                  `json:"email"`
+	CreatedAt     *time.Time              `json:"created_at"`
+	UpdatedAt     *time.Time              `json:"updated_at"`
+	Organizations []*OrganizationResponse `json:"organizations,omitempty"`
 }
 
 type CreateUserRequest struct {
@@ -52,6 +53,17 @@ type UpdateUserRequest struct {
 	Password string `json:"password" binding:"omitempty,min=6"`
 }
 
+// ListUsers @title ユーザー一覧取得
+// @id ListUsers
+// @tags users
+// @accept json
+// @produce json
+// @version バージョン(1.0)
+// @description ユーザー一覧を取得します
+// @Summary ユーザー一覧取得
+// @Success 200 {array} UserResponse
+// @Failure 500 {object} map[string]string
+// @Router /users [get]
 func (h *userHandler) ListUsers(c *gin.Context) {
 	ctx := c.Request.Context()
 
@@ -77,6 +89,17 @@ func (h *userHandler) ListUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// GetUser @title ユーザー詳細取得
+// @id GetUser
+// @tags users
+// @accept json
+// @produce json
+// @Param id path integer true "ユーザーID"
+// @Summary 特定のユーザー情報を取得
+// @Success 200 {object} UserResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /users/{id} [get]
 func (h *userHandler) GetUser(c *gin.Context) {
 	ctx := c.Request.Context()
 
@@ -104,9 +127,31 @@ func (h *userHandler) GetUser(c *gin.Context) {
 		UpdatedAt: user.UpdatedAt,
 	}
 
+	if len(user.Organizations) > 0 {
+		response.Organizations = make([]*OrganizationResponse, len(user.Organizations))
+		for i, org := range user.Organizations {
+			response.Organizations[i] = &OrganizationResponse{
+				ID:   org.ID,
+				Name: org.Name,
+				Type: org.Type,
+			}
+		}
+	}
+
 	c.JSON(http.StatusOK, response)
 }
 
+// CreateUser @title ユーザー作成
+// @id CreateUser
+// @tags users
+// @accept json
+// @produce json
+// @Param request body CreateUserRequest true "ユーザー作成リクエスト"
+// @Summary 新規ユーザーを作成
+// @Success 201 {object} UserResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /users [post]
 func (h *userHandler) CreateUser(c *gin.Context) {
 	ctx := c.Request.Context()
 
@@ -145,6 +190,18 @@ func (h *userHandler) CreateUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, response)
 }
 
+// UpdateUser @title ユーザー更新
+// @id UpdateUser
+// @tags users
+// @accept json
+// @produce json
+// @Param id path integer true "ユーザーID"
+// @Param request body UpdateUserRequest true "ユーザー更新リクエスト"
+// @Summary ユーザー情報を更新
+// @Success 200 {object} UserResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /users/{id} [put]
 func (h *userHandler) UpdateUser(c *gin.Context) {
 	ctx := c.Request.Context()
 
@@ -200,6 +257,17 @@ func (h *userHandler) UpdateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// DeleteUser @title ユーザー削除
+// @id DeleteUser
+// @tags users
+// @accept json
+// @produce json
+// @Param id path integer true "ユーザーID"
+// @Summary 指定されたユーザーを削除
+// @Success 204 "No Content"
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /users/{id} [delete]
 func (h *userHandler) DeleteUser(c *gin.Context) {
 	ctx := c.Request.Context()
 

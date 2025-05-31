@@ -24,7 +24,8 @@ import type {
   HandlerNotificationResponse,
   HandlerOrganizationResponse,
   HandlerPrefectureResponse,
-  HandlerSupportApplicationResponse
+  HandlerSupportApplicationResponse,
+  HandlerUserResponse
 } from './model';
 
 
@@ -83,6 +84,14 @@ export const getListSupportApplicationsResponseMock = (): HandlerListSupportAppl
 export const getCreateSupportApplicationResponseMock = (overrideResponse: Partial< HandlerSupportApplicationResponse > = {}): HandlerSupportApplicationResponse => ({applicant_name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), application_date: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), application_id: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), approved_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), completed_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), created_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), disaster_name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), notes: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), requested_amount: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), reviewed_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), status: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), updated_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), ...overrideResponse})
 
 export const getGetSupportApplicationResponseMock = (overrideResponse: Partial< HandlerSupportApplicationResponse > = {}): HandlerSupportApplicationResponse => ({applicant_name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), application_date: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), application_id: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), approved_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), completed_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), created_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), disaster_name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), notes: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), requested_amount: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), reviewed_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), status: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), updated_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), ...overrideResponse})
+
+export const getListUsersResponseMock = (): HandlerUserResponse[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({created_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), email: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), updated_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined])})))
+
+export const getCreateUserResponseMock = (overrideResponse: Partial< HandlerUserResponse > = {}): HandlerUserResponse => ({created_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), email: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), updated_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), ...overrideResponse})
+
+export const getGetUserResponseMock = (overrideResponse: Partial< HandlerUserResponse > = {}): HandlerUserResponse => ({created_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), email: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), updated_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), ...overrideResponse})
+
+export const getUpdateUserResponseMock = (overrideResponse: Partial< HandlerUserResponse > = {}): HandlerUserResponse => ({created_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), email: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), updated_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), ...overrideResponse})
 
 
 export const getListDamageLevelsMockHandler = (overrideResponse?: HandlerDamageLevelResponse[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<HandlerDamageLevelResponse[]> | HandlerDamageLevelResponse[])) => {
@@ -470,6 +479,64 @@ export const getGetSupportApplicationMockHandler = (overrideResponse?: HandlerSu
       })
   })
 }
+
+export const getListUsersMockHandler = (overrideResponse?: HandlerUserResponse[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<HandlerUserResponse[]> | HandlerUserResponse[])) => {
+  return http.get('*/users', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getListUsersResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getCreateUserMockHandler = (overrideResponse?: HandlerUserResponse | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<HandlerUserResponse> | HandlerUserResponse)) => {
+  return http.post('*/users', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getCreateUserResponseMock()),
+      { status: 201,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getDeleteUserMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void)) => {
+  return http.delete('*/users/:id', async (info) => {await delay(1000);
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+    return new HttpResponse(null,
+      { status: 204,
+        
+      })
+  })
+}
+
+export const getGetUserMockHandler = (overrideResponse?: HandlerUserResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<HandlerUserResponse> | HandlerUserResponse)) => {
+  return http.get('*/users/:id', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getGetUserResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getUpdateUserMockHandler = (overrideResponse?: HandlerUserResponse | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<HandlerUserResponse> | HandlerUserResponse)) => {
+  return http.put('*/users/:id', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getUpdateUserResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
 export const getApiMock = () => [
   getListDamageLevelsMockHandler(),
   getCreateDamageLevelMockHandler(),
@@ -503,5 +570,10 @@ export const getApiMock = () => [
   getGetPrefectureMockHandler(),
   getListSupportApplicationsMockHandler(),
   getCreateSupportApplicationMockHandler(),
-  getGetSupportApplicationMockHandler()
+  getGetSupportApplicationMockHandler(),
+  getListUsersMockHandler(),
+  getCreateUserMockHandler(),
+  getDeleteUserMockHandler(),
+  getGetUserMockHandler(),
+  getUpdateUserMockHandler()
 ]

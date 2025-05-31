@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
+	"github.com/AI1411/fullstack-react-go/internal/domain/query"
 	"github.com/AI1411/fullstack-react-go/internal/infra/db"
 )
 
@@ -17,6 +18,7 @@ type UserRepository interface {
 
 type userRepository struct {
 	client db.Client
+	query  *query.Query
 }
 
 func NewUserRepository(
@@ -25,6 +27,7 @@ func NewUserRepository(
 ) UserRepository {
 	return &userRepository{
 		client: client,
+		query:  query.Use(client.Conn(ctx)),
 	}
 }
 
@@ -38,12 +41,15 @@ func (r *userRepository) Find(ctx context.Context) ([]*model.User, error) {
 }
 
 func (r *userRepository) FindByID(ctx context.Context, id int32) (*model.User, error) {
-	var user model.User
-	if err := r.client.Conn(ctx).Where("id = ?", id).First(&user).Error; err != nil {
+	user, err := r.query.User.
+		Where(r.query.User.ID.Eq(id)).
+		Preload(r.query.User.Organizations).
+		First()
+	if err != nil {
 		return nil, err
 	}
 
-	return &user, nil
+	return user, nil
 }
 
 func (r *userRepository) Create(ctx context.Context, user *model.User) error {

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
+import { User } from "../../users/hooks/useUsers"
 
 export type Organization = {
   id: string
@@ -7,6 +8,7 @@ export type Organization = {
   description: string
   created_at: string
   updated_at: string
+  users?: User[]
 }
 
 export type OrganizationSearchParams = {

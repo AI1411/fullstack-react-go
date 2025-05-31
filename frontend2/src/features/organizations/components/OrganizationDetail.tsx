@@ -78,6 +78,38 @@ export const OrganizationDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* ユーザー一覧 */}
+      <div className="bg-white rounded-lg border border-[#dce0e5] overflow-hidden mb-6">
+        <div className="p-6">
+          <h2 className="text-[#111418] text-xl font-semibold mb-4">所属ユーザー一覧</h2>
+
+          {organization.users && organization.users.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">名前</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">メールアドレス</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {organization.users.map((user) => (
+                    <tr key={user.id}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.id}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="text-gray-500">所属ユーザーはいません</p>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
