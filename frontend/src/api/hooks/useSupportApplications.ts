@@ -34,7 +34,7 @@ export const useCreateSupportApplication = () => {
 
   return useMutation({
     mutationFn: createSupportApplication,
-    onSuccess: (data) => {
+    onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: ["supportApplications"] })
     },
