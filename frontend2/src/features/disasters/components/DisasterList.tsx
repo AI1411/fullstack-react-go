@@ -71,7 +71,8 @@ export const DisasterList = ({ disasters, isLoading, error }: DisasterListProps)
                   </td>
                   <td className="h-[72px] px-4 py-2 w-[120px] text-sm font-bold leading-normal tracking-[0.015em]">
                     <Link
-                      to={`/disasters/${disaster.id}`}
+                      to="/disasters/$disasterId"
+                      params={{ disasterId: disaster.id || "" }}
                       className="text-[#197fe5] hover:underline"
                     >
                       詳細を表示

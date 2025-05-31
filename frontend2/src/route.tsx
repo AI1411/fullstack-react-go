@@ -7,6 +7,7 @@ import {
 import { Layout } from "./components/layouts/Header"
 import { Home } from "./routes/Home"
 import { Disasters } from "./routes/Disasters"
+import { DisasterDetail } from "./routes/DisasterDetail"
 import { Application } from "./routes/Application"
 import { Hello } from "./App"
 
@@ -29,6 +30,13 @@ const disastersRoute = createRoute({
   component: Disasters,
 })
 
+// Disaster detail route
+const disasterDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/disasters/$disasterId",
+  component: DisasterDetail,
+})
+
 // Application route
 const applicationRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -46,6 +54,7 @@ const helloRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   indexRoute,
   disastersRoute,
+  disasterDetailRoute,
   applicationRoute,
   helloRoute,
 ])
