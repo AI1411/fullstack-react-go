@@ -10,6 +10,9 @@ import (
 type DamageLevelUseCase interface {
 	ListDamageLevels(ctx context.Context) ([]*model.DamageLevel, error)
 	GetDamageLevelByID(ctx context.Context, id int32) (*model.DamageLevel, error)
+	CreateDamageLevel(ctx context.Context, damageLevel *model.DamageLevel) error
+	UpdateDamageLevel(ctx context.Context, damageLevel *model.DamageLevel) error
+	DeleteDamageLevel(ctx context.Context, id int32) error
 }
 
 type damageLevelUseCase struct {
@@ -40,4 +43,16 @@ func (u *damageLevelUseCase) GetDamageLevelByID(ctx context.Context, id int32) (
 	}
 
 	return damageLevel, nil
+}
+
+func (u *damageLevelUseCase) CreateDamageLevel(ctx context.Context, damageLevel *model.DamageLevel) error {
+	return u.damageLevelRepository.Create(ctx, damageLevel)
+}
+
+func (u *damageLevelUseCase) UpdateDamageLevel(ctx context.Context, damageLevel *model.DamageLevel) error {
+	return u.damageLevelRepository.Update(ctx, damageLevel)
+}
+
+func (u *damageLevelUseCase) DeleteDamageLevel(ctx context.Context, id int32) error {
+	return u.damageLevelRepository.Delete(ctx, id)
 }

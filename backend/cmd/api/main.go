@@ -227,6 +227,9 @@ func RegisterRoutes(
 	// 被害程度関連のルート
 	r.GET("/damage-levels", damageLevelHandler.ListDamageLevels)
 	r.GET("/damage-levels/:id", damageLevelHandler.GetDamageLevel)
+	r.POST("/damage-levels", damageLevelHandler.CreateDamageLevel)
+	r.PUT("/damage-levels/:id", damageLevelHandler.UpdateDamageLevel)
+	r.DELETE("/damage-levels/:id", damageLevelHandler.DeleteDamageLevel)
 
 	// Swagger JSON エンドポイント
 	r.GET("/docs", func(c *gin.Context) {

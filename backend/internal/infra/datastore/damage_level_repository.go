@@ -10,6 +10,9 @@ import (
 type DamageLevelRepository interface {
 	Find(ctx context.Context) ([]*model.DamageLevel, error)
 	FindByID(ctx context.Context, id int32) (*model.DamageLevel, error)
+	Create(ctx context.Context, damageLevel *model.DamageLevel) error
+	Update(ctx context.Context, damageLevel *model.DamageLevel) error
+	Delete(ctx context.Context, id int32) error
 }
 
 type damageLevelRepository struct {
@@ -41,4 +44,16 @@ func (r *damageLevelRepository) FindByID(ctx context.Context, id int32) (*model.
 	}
 
 	return &damageLevel, nil
+}
+
+func (r *damageLevelRepository) Create(ctx context.Context, damageLevel *model.DamageLevel) error {
+	return r.client.Conn(ctx).Create(damageLevel).Error
+}
+
+func (r *damageLevelRepository) Update(ctx context.Context, damageLevel *model.DamageLevel) error {
+	return r.client.Conn(ctx).Save(damageLevel).Error
+}
+
+func (r *damageLevelRepository) Delete(ctx context.Context, id int32) error {
+	return r.client.Conn(ctx).Delete(&model.DamageLevel{}, id).Error
 }

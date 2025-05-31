@@ -27,7 +27,11 @@ import type {
 
 export const getListDamageLevelsResponseMock = (): HandlerDamageLevelResponse[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({description: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined])})))
 
+export const getCreateDamageLevelResponseMock = (overrideResponse: Partial< HandlerDamageLevelResponse > = {}): HandlerDamageLevelResponse => ({description: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), ...overrideResponse})
+
 export const getGetDamageLevelResponseMock = (overrideResponse: Partial< HandlerDamageLevelResponse > = {}): HandlerDamageLevelResponse => ({description: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), ...overrideResponse})
+
+export const getUpdateDamageLevelResponseMock = (overrideResponse: Partial< HandlerDamageLevelResponse > = {}): HandlerDamageLevelResponse => ({description: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), ...overrideResponse})
 
 export const getListDisastersResponseMock = (): HandlerListDisastersResponse[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({disasters: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({affected_area_size: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), disaster_code: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), disaster_type: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), estimated_damage_amount: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), id: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), impact_level: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), occurred_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), prefecture: faker.helpers.arrayElement([{name: faker.string.alpha(20), region: {name: faker.string.alpha(20)}}, undefined]), status: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), summary: faker.helpers.arrayElement([faker.string.alpha(20), undefined])})), undefined]), total: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])})))
 
@@ -62,12 +66,46 @@ export const getListDamageLevelsMockHandler = (overrideResponse?: HandlerDamageL
   })
 }
 
+export const getCreateDamageLevelMockHandler = (overrideResponse?: HandlerDamageLevelResponse | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<HandlerDamageLevelResponse> | HandlerDamageLevelResponse)) => {
+  return http.post('*/damage-levels', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getCreateDamageLevelResponseMock()),
+      { status: 201,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getDeleteDamageLevelMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void)) => {
+  return http.delete('*/damage-levels/:id', async (info) => {await delay(1000);
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+    return new HttpResponse(null,
+      { status: 204,
+        
+      })
+  })
+}
+
 export const getGetDamageLevelMockHandler = (overrideResponse?: HandlerDamageLevelResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<HandlerDamageLevelResponse> | HandlerDamageLevelResponse)) => {
   return http.get('*/damage-levels/:id', async (info) => {await delay(1000);
   
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
             ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
             : getGetDamageLevelResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getUpdateDamageLevelMockHandler = (overrideResponse?: HandlerDamageLevelResponse | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<HandlerDamageLevelResponse> | HandlerDamageLevelResponse)) => {
+  return http.put('*/damage-levels/:id', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getUpdateDamageLevelResponseMock()),
       { status: 200,
         headers: { 'Content-Type': 'application/json' }
       })
@@ -205,7 +243,10 @@ export const getGetSupportApplicationMockHandler = (overrideResponse?: HandlerSu
 }
 export const getApiMock = () => [
   getListDamageLevelsMockHandler(),
+  getCreateDamageLevelMockHandler(),
+  getDeleteDamageLevelMockHandler(),
   getGetDamageLevelMockHandler(),
+  getUpdateDamageLevelMockHandler(),
   getListDisastersMockHandler(),
   getCreateDisasterMockHandler(),
   getDeleteDisasterMockHandler(),

@@ -32,13 +32,17 @@ import type {
 } from 'axios';
 
 import type {
+  CreateDamageLevel400,
   CreateDisaster400,
   CreateSupportApplication400,
+  DeleteDamageLevel400,
+  DeleteDamageLevel404,
   DeleteDisaster404,
   GetDamageLevel404,
   GetDisaster404,
   GetPrefecture404,
   GetSupportApplication404,
+  HandlerCreateDamageLevelRequest,
   HandlerCreateDisasterRequest,
   HandlerCreateSupportApplicationRequest,
   HandlerDamageLevelResponse,
@@ -47,8 +51,11 @@ import type {
   HandlerListTimelinesResponse,
   HandlerPrefectureResponse,
   HandlerSupportApplicationResponse,
+  HandlerUpdateDamageLevelRequest,
   HandlerUpdateDisasterRequest,
   ListDisastersParams,
+  UpdateDamageLevel400,
+  UpdateDamageLevel404,
   UpdateDisaster400,
   UpdateDisaster404
 } from './model';
@@ -144,6 +151,129 @@ export function useListDamageLevels<TData = Awaited<ReturnType<typeof listDamage
 
 
 /**
+ * @summary 被害程度作成
+ */
+export const createDamageLevel = (
+    handlerCreateDamageLevelRequest: HandlerCreateDamageLevelRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerDamageLevelResponse>> => {
+    
+    
+    return axios.post(
+      `/damage-levels`,
+      handlerCreateDamageLevelRequest,options
+    );
+  }
+
+
+
+export const getCreateDamageLevelMutationOptions = <TError = AxiosError<CreateDamageLevel400>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createDamageLevel>>, TError,{data: HandlerCreateDamageLevelRequest}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof createDamageLevel>>, TError,{data: HandlerCreateDamageLevelRequest}, TContext> => {
+
+const mutationKey = ['createDamageLevel'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createDamageLevel>>, {data: HandlerCreateDamageLevelRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createDamageLevel(data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateDamageLevelMutationResult = NonNullable<Awaited<ReturnType<typeof createDamageLevel>>>
+    export type CreateDamageLevelMutationBody = HandlerCreateDamageLevelRequest
+    export type CreateDamageLevelMutationError = AxiosError<CreateDamageLevel400>
+
+    /**
+ * @summary 被害程度作成
+ */
+export const useCreateDamageLevel = <TError = AxiosError<CreateDamageLevel400>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createDamageLevel>>, TError,{data: HandlerCreateDamageLevelRequest}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createDamageLevel>>,
+        TError,
+        {data: HandlerCreateDamageLevelRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateDamageLevelMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary 被害程度削除
+ */
+export const deleteDamageLevel = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.delete(
+      `/damage-levels/${id}`,options
+    );
+  }
+
+
+
+export const getDeleteDamageLevelMutationOptions = <TError = AxiosError<DeleteDamageLevel400 | DeleteDamageLevel404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteDamageLevel>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteDamageLevel>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteDamageLevel'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteDamageLevel>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteDamageLevel(id,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteDamageLevelMutationResult = NonNullable<Awaited<ReturnType<typeof deleteDamageLevel>>>
+    
+    export type DeleteDamageLevelMutationError = AxiosError<DeleteDamageLevel400 | DeleteDamageLevel404>
+
+    /**
+ * @summary 被害程度削除
+ */
+export const useDeleteDamageLevel = <TError = AxiosError<DeleteDamageLevel400 | DeleteDamageLevel404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteDamageLevel>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteDamageLevel>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteDamageLevelMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
  * @summary 被害程度詳細取得
  */
 export const getDamageLevel = (
@@ -229,6 +359,69 @@ export function useGetDamageLevel<TData = Awaited<ReturnType<typeof getDamageLev
 
 
 
+/**
+ * @summary 被害程度更新
+ */
+export const updateDamageLevel = (
+    id: number,
+    handlerUpdateDamageLevelRequest: HandlerUpdateDamageLevelRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerDamageLevelResponse>> => {
+    
+    
+    return axios.put(
+      `/damage-levels/${id}`,
+      handlerUpdateDamageLevelRequest,options
+    );
+  }
+
+
+
+export const getUpdateDamageLevelMutationOptions = <TError = AxiosError<UpdateDamageLevel400 | UpdateDamageLevel404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateDamageLevel>>, TError,{id: number;data: HandlerUpdateDamageLevelRequest}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof updateDamageLevel>>, TError,{id: number;data: HandlerUpdateDamageLevelRequest}, TContext> => {
+
+const mutationKey = ['updateDamageLevel'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateDamageLevel>>, {id: number;data: HandlerUpdateDamageLevelRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateDamageLevel(id,data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateDamageLevelMutationResult = NonNullable<Awaited<ReturnType<typeof updateDamageLevel>>>
+    export type UpdateDamageLevelMutationBody = HandlerUpdateDamageLevelRequest
+    export type UpdateDamageLevelMutationError = AxiosError<UpdateDamageLevel400 | UpdateDamageLevel404>
+
+    /**
+ * @summary 被害程度更新
+ */
+export const useUpdateDamageLevel = <TError = AxiosError<UpdateDamageLevel400 | UpdateDamageLevel404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateDamageLevel>>, TError,{id: number;data: HandlerUpdateDamageLevelRequest}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateDamageLevel>>,
+        TError,
+        {id: number;data: HandlerUpdateDamageLevelRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateDamageLevelMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
 /**
  * @summary 災害マスタ一覧取得
  */
