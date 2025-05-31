@@ -81,6 +81,7 @@ func (h *organizationHandler) ListOrganizations(c *gin.Context) {
 	}
 
 	var response []*OrganizationResponse
+
 	for _, organization := range organizations {
 		resp := &OrganizationResponse{
 			ID:           organization.ID,
@@ -174,6 +175,7 @@ func (h *organizationHandler) CreateOrganization(c *gin.Context) {
 	if err != nil {
 		h.l.ErrorContext(c.Request.Context(), err, "Failed to create organization")
 		c.JSON(500, gin.H{"error": "Failed to create organization"})
+
 		return
 	}
 

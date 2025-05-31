@@ -52,15 +52,19 @@ func (r *disasterRepository) Find(ctx context.Context, params *DisasterSearchPar
 		if params.Name != "" {
 			q = q.Where(r.query.Disaster.Name.Like("%" + params.Name + "%"))
 		}
+
 		if params.DisasterType != "" {
 			q = q.Where(r.query.Disaster.DisasterType.Eq(params.DisasterType))
 		}
+
 		if params.Status != "" {
 			q = q.Where(r.query.Disaster.Status.Eq(params.Status))
 		}
+
 		if params.PrefectureID != 0 {
 			q = q.Where(r.query.Disaster.PrefectureID.Eq(params.PrefectureID))
 		}
+
 		if params.ImpactLevel != "" {
 			q = q.Where(r.query.Disaster.ImpactLevel.Eq(params.ImpactLevel))
 		}

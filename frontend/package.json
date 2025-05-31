@@ -10,6 +10,7 @@
     "generate": "orval"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-slot": "^1.2.3",
     "@tanstack/react-query-next-experimental": "^5.77.2",
     "class-variance-authority": "^0.7.1",
@@ -19,7 +20,9 @@
     "next": "15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-hook-form": "^7.56.4",
     "tailwind-merge": "^3.3.0",
+    "zod": "^3.25.42",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

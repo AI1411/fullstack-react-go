@@ -95,6 +95,7 @@ func (h *facilityEquipmentHandler) ListFacilityEquipments(c *gin.Context) {
 	}
 
 	var response []*FacilityEquipmentResponse
+
 	for _, facilityEquipment := range facilityEquipments {
 		resp := &FacilityEquipmentResponse{
 			ID:                  facilityEquipment.ID,
@@ -199,6 +200,7 @@ func (h *facilityEquipmentHandler) CreateFacilityEquipment(c *gin.Context) {
 	if err != nil {
 		h.l.ErrorContext(c.Request.Context(), err, "Failed to create facility equipment")
 		c.JSON(500, gin.H{"error": "Failed to create facility equipment"})
+
 		return
 	}
 

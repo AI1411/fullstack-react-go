@@ -87,6 +87,7 @@ func (h *notificationHandler) ListNotifications(c *gin.Context) {
 	}
 
 	var response []*NotificationResponse
+
 	for _, notification := range notifications {
 		resp := &NotificationResponse{
 			ID:                notification.ID,
@@ -188,6 +189,7 @@ func (h *notificationHandler) GetNotificationsByUserID(c *gin.Context) {
 	}
 
 	var response []*NotificationResponse
+
 	for _, notification := range notifications {
 		resp := &NotificationResponse{
 			ID:                notification.ID,
@@ -430,6 +432,7 @@ func (h *notificationHandler) MarkAsRead(c *gin.Context) {
 
 		h.l.InfoContext(ctx, "Notification already marked as read", "notification_id", id)
 		c.JSON(http.StatusOK, response)
+
 		return
 	}
 

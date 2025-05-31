@@ -59,6 +59,7 @@ func (h *userHandler) ListUsers(c *gin.Context) {
 	if err != nil {
 		h.logger.Error("Failed to get users", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get users"})
+
 		return
 	}
 
@@ -83,6 +84,7 @@ func (h *userHandler) GetUser(c *gin.Context) {
 	if err != nil {
 		h.logger.Error("Invalid user ID", "error", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+
 		return
 	}
 
@@ -90,6 +92,7 @@ func (h *userHandler) GetUser(c *gin.Context) {
 	if err != nil {
 		h.logger.Error("Failed to get user", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user"})
+
 		return
 	}
 
@@ -111,6 +114,7 @@ func (h *userHandler) CreateUser(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 		h.logger.Error("Invalid request body", "error", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
 		return
 	}
 
@@ -126,6 +130,7 @@ func (h *userHandler) CreateUser(c *gin.Context) {
 	if err := h.userUseCase.CreateUser(ctx, user); err != nil {
 		h.logger.Error("Failed to create user", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+
 		return
 	}
 
@@ -147,6 +152,7 @@ func (h *userHandler) UpdateUser(c *gin.Context) {
 	if err != nil {
 		h.logger.Error("Invalid user ID", "error", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+
 		return
 	}
 
@@ -154,6 +160,7 @@ func (h *userHandler) UpdateUser(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 		h.logger.Error("Invalid request body", "error", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
 		return
 	}
 
@@ -161,20 +168,24 @@ func (h *userHandler) UpdateUser(c *gin.Context) {
 	if err != nil {
 		h.logger.Error("Failed to get user", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user"})
+
 		return
 	}
 
 	now := time.Now()
 	user.Name = req.Name
 	user.Email = req.Email
+
 	if req.Password != "" {
 		user.Password = req.Password
 	}
+
 	user.UpdatedAt = &now
 
 	if err := h.userUseCase.UpdateUser(ctx, user); err != nil {
 		h.logger.Error("Failed to update user", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
+
 		return
 	}
 
@@ -196,12 +207,14 @@ func (h *userHandler) DeleteUser(c *gin.Context) {
 	if err != nil {
 		h.logger.Error("Invalid user ID", "error", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+
 		return
 	}
 
 	if err := h.userUseCase.DeleteUser(ctx, int32(id)); err != nil {
 		h.logger.Error("Failed to delete user", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete user"})
+
 		return
 	}
 

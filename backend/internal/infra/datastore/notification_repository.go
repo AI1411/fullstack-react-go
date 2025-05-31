@@ -72,6 +72,7 @@ func (r *notificationRepository) Delete(ctx context.Context, id int32) error {
 
 func (r *notificationRepository) MarkAsRead(ctx context.Context, id int32) error {
 	now := time.Now()
+
 	return r.client.Conn(ctx).Model(&model.Notification{}).
 		Where("id = ?", id).
 		Updates(map[string]interface{}{

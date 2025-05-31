@@ -147,6 +147,7 @@ func (h *damageLevelHandler) CreateDamageLevel(c *gin.Context) {
 	if err != nil {
 		h.l.ErrorContext(c.Request.Context(), err, "Failed to create damage level")
 		c.JSON(500, gin.H{"error": "Failed to create damage level"})
+
 		return
 	}
 
@@ -180,6 +181,7 @@ func (h *damageLevelHandler) UpdateDamageLevel(c *gin.Context) {
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Invalid damage level ID", "damage_level_id_str", idStr)
 		c.JSON(400, gin.H{"error": "Invalid damage level ID"})
+
 		return
 	}
 
@@ -194,6 +196,7 @@ func (h *damageLevelHandler) UpdateDamageLevel(c *gin.Context) {
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Damage level not found", "damage_level_id", id)
 		c.JSON(404, gin.H{"error": "Damage level not found"})
+
 		return
 	}
 
@@ -210,6 +213,7 @@ func (h *damageLevelHandler) UpdateDamageLevel(c *gin.Context) {
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Failed to update damage level", "damage_level_id", id)
 		c.JSON(500, gin.H{"error": "Failed to update damage level"})
+
 		return
 	}
 
@@ -240,6 +244,7 @@ func (h *damageLevelHandler) DeleteDamageLevel(c *gin.Context) {
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Invalid damage level ID", "damage_level_id_str", idStr)
 		c.JSON(400, gin.H{"error": "Invalid damage level ID"})
+
 		return
 	}
 
@@ -248,6 +253,7 @@ func (h *damageLevelHandler) DeleteDamageLevel(c *gin.Context) {
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Damage level not found for deletion", "damage_level_id", id)
 		c.JSON(404, gin.H{"error": "Damage level not found"})
+
 		return
 	}
 
@@ -255,6 +261,7 @@ func (h *damageLevelHandler) DeleteDamageLevel(c *gin.Context) {
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Failed to delete damage level", "damage_level_id", id)
 		c.JSON(500, gin.H{"error": "Failed to delete damage level"})
+
 		return
 	}
 

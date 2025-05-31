@@ -57,6 +57,7 @@ func (h *timelineHandler) GetTimelinesByDisasterID(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "disaster_id is required",
 		})
+
 		return
 	}
 
@@ -66,6 +67,7 @@ func (h *timelineHandler) GetTimelinesByDisasterID(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "failed to get timelines",
 		})
+
 		return
 	}
 
@@ -73,10 +75,12 @@ func (h *timelineHandler) GetTimelinesByDisasterID(c *gin.Context) {
 		c.JSON(http.StatusOK, ListTimelinesResponse{
 			Timelines: []*TimelineResponse{},
 		})
+
 		return
 	}
 
 	var response []*TimelineResponse
+
 	for _, timeline := range timelines {
 		var severity string
 		if timeline.Severity != nil {

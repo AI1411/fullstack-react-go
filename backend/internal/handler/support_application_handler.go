@@ -83,16 +83,20 @@ func (h *supportApplicationHandler) ListSupportApplications(c *gin.Context) {
 	}
 
 	var sas []*SupportApplicationResponse
+
 	for _, sa := range supportApplications {
 		var reviewedAt, approvedAt, completedAt *string
+
 		if sa.ReviewedAt != nil {
 			formatted := sa.ReviewedAt.Format(time.DateTime)
 			reviewedAt = &formatted
 		}
+
 		if sa.ApprovedAt != nil {
 			formatted := sa.ApprovedAt.Format(time.DateTime)
 			approvedAt = &formatted
 		}
+
 		if sa.CompletedAt != nil {
 			formatted := sa.CompletedAt.Format(time.DateTime)
 			completedAt = &formatted
@@ -145,14 +149,17 @@ func (h *supportApplicationHandler) GetSupportApplication(c *gin.Context) {
 	}
 
 	var reviewedAt, approvedAt, completedAt *string
+
 	if supportApplication.ReviewedAt != nil {
 		formatted := supportApplication.ReviewedAt.Format(time.DateTime)
 		reviewedAt = &formatted
 	}
+
 	if supportApplication.ApprovedAt != nil {
 		formatted := supportApplication.ApprovedAt.Format(time.DateTime)
 		approvedAt = &formatted
 	}
+
 	if supportApplication.CompletedAt != nil {
 		formatted := supportApplication.CompletedAt.Format(time.DateTime)
 		completedAt = &formatted
