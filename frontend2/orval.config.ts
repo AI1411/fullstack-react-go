@@ -2,8 +2,8 @@ module.exports = {
   backend: {
     output: {
       mode: "split",
-      target: "src/api/client.ts",
-      schemas: "src/api/model",
+      target: "src/api/generated/client.ts",
+      schemas: "src/api/generated/model",
       client: "react-query",
       mock: true,
       prettier: {
