@@ -173,6 +173,21 @@ func ProvideDamageLevelHandler(l *logger.Logger, usecase usecase.DamageLevelUseC
 	return handler.NewDamageLevelHandler(l, usecase)
 }
 
+// ProvideFacilityEquipmentRepository creates a new facility equipment repository
+func ProvideFacilityEquipmentRepository(dbClient db.Client) datastore.FacilityEquipmentRepository {
+	return datastore.NewFacilityEquipmentRepository(context.Background(), dbClient)
+}
+
+// ProvideFacilityEquipmentUseCase creates a new facility equipment use case
+func ProvideFacilityEquipmentUseCase(repo datastore.FacilityEquipmentRepository) usecase.FacilityEquipmentUseCase {
+	return usecase.NewFacilityEquipmentUseCase(repo)
+}
+
+// ProvideFacilityEquipmentHandler creates a new facility equipment handler
+func ProvideFacilityEquipmentHandler(l *logger.Logger, usecase usecase.FacilityEquipmentUseCase) handler.FacilityEquipment {
+	return handler.NewFacilityEquipmentHandler(l, usecase)
+}
+
 // RegisterRoutes registers all HTTP routes
 func RegisterRoutes(
 	lc fx.Lifecycle,
@@ -184,6 +199,7 @@ func RegisterRoutes(
 	timelineHandler handler.Timeline,
 	supportApplicationHandler handler.SupportApplication,
 	damageLevelHandler handler.DamageLevel,
+	facilityEquipmentHandler handler.FacilityEquipment,
 ) {
 	// Context for health check
 	ctx := context.Background()
@@ -231,6 +247,13 @@ func RegisterRoutes(
 	r.PUT("/damage-levels/:id", damageLevelHandler.UpdateDamageLevel)
 	r.DELETE("/damage-levels/:id", damageLevelHandler.DeleteDamageLevel)
 
+	// 施設設備関連のルート
+	r.GET("/facility-equipment", facilityEquipmentHandler.ListFacilityEquipments)
+	r.GET("/facility-equipment/:id", facilityEquipmentHandler.GetFacilityEquipment)
+	r.POST("/facility-equipment", facilityEquipmentHandler.CreateFacilityEquipment)
+	r.PUT("/facility-equipment/:id", facilityEquipmentHandler.UpdateFacilityEquipment)
+	r.DELETE("/facility-equipment/:id", facilityEquipmentHandler.DeleteFacilityEquipment)
+
 	// Swagger JSON エンドポイント
 	r.GET("/docs", func(c *gin.Context) {
 		c.Header("Content-Type", "application/json")
@@ -268,16 +291,19 @@ func main() {
 			ProvideTimelineRepository,
 			ProvideSupportApplicationRepository,
 			ProvideDamageLevelRepository,
+			ProvideFacilityEquipmentRepository,
 			ProvideDisasterUseCase,
 			ProvidePrefectureUseCase,
 			ProvideTimelineUseCase,
 			ProvideSupportApplicationUseCase,
 			ProvideDamageLevelUseCase,
+			ProvideFacilityEquipmentUseCase,
 			ProvideDisasterHandler,
 			ProvidePrefectureHandler,
 			ProvideTimelineHandler,
 			ProvideSupportApplicationHandler,
 			ProvideDamageLevelHandler,
+			ProvideFacilityEquipmentHandler,
 		),
 		// Register the lifecycle hooks
 		fx.Invoke(RegisterRoutes),

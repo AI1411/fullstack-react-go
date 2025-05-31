@@ -23,6 +23,7 @@ var (
 	DamageLevel        *damageLevel
 	Disaster           *disaster
 	DisasterDocument   *disasterDocument
+	FacilityEquipment  *facilityEquipment
 	FacilityType       *facilityType
 	GisDatum           *gisDatum
 	Notification       *notification
@@ -43,6 +44,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	DamageLevel = &Q.DamageLevel
 	Disaster = &Q.Disaster
 	DisasterDocument = &Q.DisasterDocument
+	FacilityEquipment = &Q.FacilityEquipment
 	FacilityType = &Q.FacilityType
 	GisDatum = &Q.GisDatum
 	Notification = &Q.Notification
@@ -64,6 +66,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		DamageLevel:        newDamageLevel(db, opts...),
 		Disaster:           newDisaster(db, opts...),
 		DisasterDocument:   newDisasterDocument(db, opts...),
+		FacilityEquipment:  newFacilityEquipment(db, opts...),
 		FacilityType:       newFacilityType(db, opts...),
 		GisDatum:           newGisDatum(db, opts...),
 		Notification:       newNotification(db, opts...),
@@ -86,6 +89,7 @@ type Query struct {
 	DamageLevel        damageLevel
 	Disaster           disaster
 	DisasterDocument   disasterDocument
+	FacilityEquipment  facilityEquipment
 	FacilityType       facilityType
 	GisDatum           gisDatum
 	Notification       notification
@@ -109,6 +113,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		DamageLevel:        q.DamageLevel.clone(db),
 		Disaster:           q.Disaster.clone(db),
 		DisasterDocument:   q.DisasterDocument.clone(db),
+		FacilityEquipment:  q.FacilityEquipment.clone(db),
 		FacilityType:       q.FacilityType.clone(db),
 		GisDatum:           q.GisDatum.clone(db),
 		Notification:       q.Notification.clone(db),
@@ -139,6 +144,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		DamageLevel:        q.DamageLevel.replaceDB(db),
 		Disaster:           q.Disaster.replaceDB(db),
 		DisasterDocument:   q.DisasterDocument.replaceDB(db),
+		FacilityEquipment:  q.FacilityEquipment.replaceDB(db),
 		FacilityType:       q.FacilityType.replaceDB(db),
 		GisDatum:           q.GisDatum.replaceDB(db),
 		Notification:       q.Notification.replaceDB(db),
@@ -159,6 +165,7 @@ type queryCtx struct {
 	DamageLevel        IDamageLevelDo
 	Disaster           IDisasterDo
 	DisasterDocument   IDisasterDocumentDo
+	FacilityEquipment  IFacilityEquipmentDo
 	FacilityType       IFacilityTypeDo
 	GisDatum           IGisDatumDo
 	Notification       INotificationDo
@@ -179,6 +186,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		DamageLevel:        q.DamageLevel.WithContext(ctx),
 		Disaster:           q.Disaster.WithContext(ctx),
 		DisasterDocument:   q.DisasterDocument.WithContext(ctx),
+		FacilityEquipment:  q.FacilityEquipment.WithContext(ctx),
 		FacilityType:       q.FacilityType.WithContext(ctx),
 		GisDatum:           q.GisDatum.WithContext(ctx),
 		Notification:       q.Notification.WithContext(ctx),

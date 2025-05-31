@@ -34,18 +34,24 @@ import type {
 import type {
   CreateDamageLevel400,
   CreateDisaster400,
+  CreateFacilityEquipment400,
   CreateSupportApplication400,
   DeleteDamageLevel400,
   DeleteDamageLevel404,
   DeleteDisaster404,
+  DeleteFacilityEquipment400,
+  DeleteFacilityEquipment404,
   GetDamageLevel404,
   GetDisaster404,
+  GetFacilityEquipment404,
   GetPrefecture404,
   GetSupportApplication404,
   HandlerCreateDamageLevelRequest,
   HandlerCreateDisasterRequest,
+  HandlerCreateFacilityEquipmentRequest,
   HandlerCreateSupportApplicationRequest,
   HandlerDamageLevelResponse,
+  HandlerFacilityEquipmentResponse,
   HandlerListDisastersResponse,
   HandlerListSupportApplicationsResponse,
   HandlerListTimelinesResponse,
@@ -53,11 +59,14 @@ import type {
   HandlerSupportApplicationResponse,
   HandlerUpdateDamageLevelRequest,
   HandlerUpdateDisasterRequest,
+  HandlerUpdateFacilityEquipmentRequest,
   ListDisastersParams,
   UpdateDamageLevel400,
   UpdateDamageLevel404,
   UpdateDisaster400,
-  UpdateDisaster404
+  UpdateDisaster404,
+  UpdateFacilityEquipment400,
+  UpdateFacilityEquipment404
 } from './model';
 
 
@@ -869,6 +878,364 @@ export function useGetDisastersIdTimelines<TData = Awaited<ReturnType<typeof get
 
 
 
+/**
+ * @summary 施設設備一覧取得
+ */
+export const listFacilityEquipments = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerFacilityEquipmentResponse[]>> => {
+    
+    
+    return axios.get(
+      `/facility-equipment`,options
+    );
+  }
+
+
+export const getListFacilityEquipmentsQueryKey = () => {
+    return [`/facility-equipment`] as const;
+    }
+
+    
+export const getListFacilityEquipmentsQueryOptions = <TData = Awaited<ReturnType<typeof listFacilityEquipments>>, TError = AxiosError<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listFacilityEquipments>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListFacilityEquipmentsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listFacilityEquipments>>> = ({ signal }) => listFacilityEquipments({ signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listFacilityEquipments>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type ListFacilityEquipmentsQueryResult = NonNullable<Awaited<ReturnType<typeof listFacilityEquipments>>>
+export type ListFacilityEquipmentsQueryError = AxiosError<unknown>
+
+
+export function useListFacilityEquipments<TData = Awaited<ReturnType<typeof listFacilityEquipments>>, TError = AxiosError<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listFacilityEquipments>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listFacilityEquipments>>,
+          TError,
+          Awaited<ReturnType<typeof listFacilityEquipments>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useListFacilityEquipments<TData = Awaited<ReturnType<typeof listFacilityEquipments>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listFacilityEquipments>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listFacilityEquipments>>,
+          TError,
+          Awaited<ReturnType<typeof listFacilityEquipments>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useListFacilityEquipments<TData = Awaited<ReturnType<typeof listFacilityEquipments>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listFacilityEquipments>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary 施設設備一覧取得
+ */
+
+export function useListFacilityEquipments<TData = Awaited<ReturnType<typeof listFacilityEquipments>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listFacilityEquipments>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getListFacilityEquipmentsQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary 施設設備作成
+ */
+export const createFacilityEquipment = (
+    handlerCreateFacilityEquipmentRequest: HandlerCreateFacilityEquipmentRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerFacilityEquipmentResponse>> => {
+    
+    
+    return axios.post(
+      `/facility-equipment`,
+      handlerCreateFacilityEquipmentRequest,options
+    );
+  }
+
+
+
+export const getCreateFacilityEquipmentMutationOptions = <TError = AxiosError<CreateFacilityEquipment400>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createFacilityEquipment>>, TError,{data: HandlerCreateFacilityEquipmentRequest}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof createFacilityEquipment>>, TError,{data: HandlerCreateFacilityEquipmentRequest}, TContext> => {
+
+const mutationKey = ['createFacilityEquipment'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createFacilityEquipment>>, {data: HandlerCreateFacilityEquipmentRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createFacilityEquipment(data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateFacilityEquipmentMutationResult = NonNullable<Awaited<ReturnType<typeof createFacilityEquipment>>>
+    export type CreateFacilityEquipmentMutationBody = HandlerCreateFacilityEquipmentRequest
+    export type CreateFacilityEquipmentMutationError = AxiosError<CreateFacilityEquipment400>
+
+    /**
+ * @summary 施設設備作成
+ */
+export const useCreateFacilityEquipment = <TError = AxiosError<CreateFacilityEquipment400>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createFacilityEquipment>>, TError,{data: HandlerCreateFacilityEquipmentRequest}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createFacilityEquipment>>,
+        TError,
+        {data: HandlerCreateFacilityEquipmentRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateFacilityEquipmentMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary 施設設備削除
+ */
+export const deleteFacilityEquipment = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.delete(
+      `/facility-equipment/${id}`,options
+    );
+  }
+
+
+
+export const getDeleteFacilityEquipmentMutationOptions = <TError = AxiosError<DeleteFacilityEquipment400 | DeleteFacilityEquipment404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteFacilityEquipment>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteFacilityEquipment>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteFacilityEquipment'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteFacilityEquipment>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteFacilityEquipment(id,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteFacilityEquipmentMutationResult = NonNullable<Awaited<ReturnType<typeof deleteFacilityEquipment>>>
+    
+    export type DeleteFacilityEquipmentMutationError = AxiosError<DeleteFacilityEquipment400 | DeleteFacilityEquipment404>
+
+    /**
+ * @summary 施設設備削除
+ */
+export const useDeleteFacilityEquipment = <TError = AxiosError<DeleteFacilityEquipment400 | DeleteFacilityEquipment404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteFacilityEquipment>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteFacilityEquipment>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteFacilityEquipmentMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary 施設設備詳細取得
+ */
+export const getFacilityEquipment = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerFacilityEquipmentResponse>> => {
+    
+    
+    return axios.get(
+      `/facility-equipment/${id}`,options
+    );
+  }
+
+
+export const getGetFacilityEquipmentQueryKey = (id: number,) => {
+    return [`/facility-equipment/${id}`] as const;
+    }
+
+    
+export const getGetFacilityEquipmentQueryOptions = <TData = Awaited<ReturnType<typeof getFacilityEquipment>>, TError = AxiosError<GetFacilityEquipment404>>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFacilityEquipment>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetFacilityEquipmentQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getFacilityEquipment>>> = ({ signal }) => getFacilityEquipment(id, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getFacilityEquipment>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetFacilityEquipmentQueryResult = NonNullable<Awaited<ReturnType<typeof getFacilityEquipment>>>
+export type GetFacilityEquipmentQueryError = AxiosError<GetFacilityEquipment404>
+
+
+export function useGetFacilityEquipment<TData = Awaited<ReturnType<typeof getFacilityEquipment>>, TError = AxiosError<GetFacilityEquipment404>>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFacilityEquipment>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getFacilityEquipment>>,
+          TError,
+          Awaited<ReturnType<typeof getFacilityEquipment>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetFacilityEquipment<TData = Awaited<ReturnType<typeof getFacilityEquipment>>, TError = AxiosError<GetFacilityEquipment404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFacilityEquipment>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getFacilityEquipment>>,
+          TError,
+          Awaited<ReturnType<typeof getFacilityEquipment>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetFacilityEquipment<TData = Awaited<ReturnType<typeof getFacilityEquipment>>, TError = AxiosError<GetFacilityEquipment404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFacilityEquipment>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary 施設設備詳細取得
+ */
+
+export function useGetFacilityEquipment<TData = Awaited<ReturnType<typeof getFacilityEquipment>>, TError = AxiosError<GetFacilityEquipment404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFacilityEquipment>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetFacilityEquipmentQueryOptions(id,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary 施設設備更新
+ */
+export const updateFacilityEquipment = (
+    id: number,
+    handlerUpdateFacilityEquipmentRequest: HandlerUpdateFacilityEquipmentRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerFacilityEquipmentResponse>> => {
+    
+    
+    return axios.put(
+      `/facility-equipment/${id}`,
+      handlerUpdateFacilityEquipmentRequest,options
+    );
+  }
+
+
+
+export const getUpdateFacilityEquipmentMutationOptions = <TError = AxiosError<UpdateFacilityEquipment400 | UpdateFacilityEquipment404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateFacilityEquipment>>, TError,{id: number;data: HandlerUpdateFacilityEquipmentRequest}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof updateFacilityEquipment>>, TError,{id: number;data: HandlerUpdateFacilityEquipmentRequest}, TContext> => {
+
+const mutationKey = ['updateFacilityEquipment'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateFacilityEquipment>>, {id: number;data: HandlerUpdateFacilityEquipmentRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateFacilityEquipment(id,data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateFacilityEquipmentMutationResult = NonNullable<Awaited<ReturnType<typeof updateFacilityEquipment>>>
+    export type UpdateFacilityEquipmentMutationBody = HandlerUpdateFacilityEquipmentRequest
+    export type UpdateFacilityEquipmentMutationError = AxiosError<UpdateFacilityEquipment400 | UpdateFacilityEquipment404>
+
+    /**
+ * @summary 施設設備更新
+ */
+export const useUpdateFacilityEquipment = <TError = AxiosError<UpdateFacilityEquipment400 | UpdateFacilityEquipment404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateFacilityEquipment>>, TError,{id: number;data: HandlerUpdateFacilityEquipmentRequest}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateFacilityEquipment>>,
+        TError,
+        {id: number;data: HandlerUpdateFacilityEquipmentRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateFacilityEquipmentMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
 /**
  * @summary 都道府県一覧取得
  */

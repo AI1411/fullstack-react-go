@@ -17,6 +17,7 @@ import {
 
 import type {
   HandlerDamageLevelResponse,
+  HandlerFacilityEquipmentResponse,
   HandlerListDisastersResponse,
   HandlerListSupportApplicationsResponse,
   HandlerListTimelinesResponse,
@@ -42,6 +43,14 @@ export const getGetDisasterResponseMock = (overrideResponse: Partial< HandlerLis
 export const getUpdateDisasterResponseMock = (overrideResponse: Partial< HandlerListDisastersResponse > = {}): HandlerListDisastersResponse => ({disasters: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({affected_area_size: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), disaster_code: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), disaster_type: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), estimated_damage_amount: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), id: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), impact_level: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), occurred_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), prefecture: faker.helpers.arrayElement([{name: faker.string.alpha(20), region: {name: faker.string.alpha(20)}}, undefined]), status: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), summary: faker.helpers.arrayElement([faker.string.alpha(20), undefined])})), undefined]), total: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
 
 export const getGetDisastersIdTimelinesResponseMock = (overrideResponse: Partial< HandlerListTimelinesResponse > = {}): HandlerListTimelinesResponse => ({timelines: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({description: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), disaster_id: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), event_name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), event_time: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), severity: faker.helpers.arrayElement([faker.string.alpha(20), undefined])})), undefined]), total: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
+
+export const getListFacilityEquipmentsResponseMock = (): HandlerFacilityEquipmentResponse[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({facility_type_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), facility_type_name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), installation_date: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), location_description: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), location_latitude: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), location_longitude: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), manufacturer: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), model_number: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), notes: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), status: faker.helpers.arrayElement([faker.string.alpha(20), undefined])})))
+
+export const getCreateFacilityEquipmentResponseMock = (overrideResponse: Partial< HandlerFacilityEquipmentResponse > = {}): HandlerFacilityEquipmentResponse => ({facility_type_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), facility_type_name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), installation_date: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), location_description: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), location_latitude: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), location_longitude: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), manufacturer: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), model_number: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), notes: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), status: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), ...overrideResponse})
+
+export const getGetFacilityEquipmentResponseMock = (overrideResponse: Partial< HandlerFacilityEquipmentResponse > = {}): HandlerFacilityEquipmentResponse => ({facility_type_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), facility_type_name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), installation_date: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), location_description: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), location_latitude: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), location_longitude: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), manufacturer: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), model_number: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), notes: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), status: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), ...overrideResponse})
+
+export const getUpdateFacilityEquipmentResponseMock = (overrideResponse: Partial< HandlerFacilityEquipmentResponse > = {}): HandlerFacilityEquipmentResponse => ({facility_type_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), facility_type_name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), installation_date: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), location_description: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), location_latitude: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), location_longitude: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), manufacturer: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), model_number: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), notes: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), status: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), ...overrideResponse})
 
 export const getListPrefecturesResponseMock = (): HandlerPrefectureResponse[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), region_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])})))
 
@@ -182,6 +191,64 @@ export const getGetDisastersIdTimelinesMockHandler = (overrideResponse?: Handler
   })
 }
 
+export const getListFacilityEquipmentsMockHandler = (overrideResponse?: HandlerFacilityEquipmentResponse[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<HandlerFacilityEquipmentResponse[]> | HandlerFacilityEquipmentResponse[])) => {
+  return http.get('*/facility-equipment', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getListFacilityEquipmentsResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getCreateFacilityEquipmentMockHandler = (overrideResponse?: HandlerFacilityEquipmentResponse | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<HandlerFacilityEquipmentResponse> | HandlerFacilityEquipmentResponse)) => {
+  return http.post('*/facility-equipment', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getCreateFacilityEquipmentResponseMock()),
+      { status: 201,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getDeleteFacilityEquipmentMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void)) => {
+  return http.delete('*/facility-equipment/:id', async (info) => {await delay(1000);
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+    return new HttpResponse(null,
+      { status: 204,
+        
+      })
+  })
+}
+
+export const getGetFacilityEquipmentMockHandler = (overrideResponse?: HandlerFacilityEquipmentResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<HandlerFacilityEquipmentResponse> | HandlerFacilityEquipmentResponse)) => {
+  return http.get('*/facility-equipment/:id', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getGetFacilityEquipmentResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getUpdateFacilityEquipmentMockHandler = (overrideResponse?: HandlerFacilityEquipmentResponse | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<HandlerFacilityEquipmentResponse> | HandlerFacilityEquipmentResponse)) => {
+  return http.put('*/facility-equipment/:id', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getUpdateFacilityEquipmentResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
 export const getListPrefecturesMockHandler = (overrideResponse?: HandlerPrefectureResponse[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<HandlerPrefectureResponse[]> | HandlerPrefectureResponse[])) => {
   return http.get('*/prefectures', async (info) => {await delay(1000);
   
@@ -253,6 +320,11 @@ export const getApiMock = () => [
   getGetDisasterMockHandler(),
   getUpdateDisasterMockHandler(),
   getGetDisastersIdTimelinesMockHandler(),
+  getListFacilityEquipmentsMockHandler(),
+  getCreateFacilityEquipmentMockHandler(),
+  getDeleteFacilityEquipmentMockHandler(),
+  getGetFacilityEquipmentMockHandler(),
+  getUpdateFacilityEquipmentMockHandler(),
   getListPrefecturesMockHandler(),
   getGetPrefectureMockHandler(),
   getListSupportApplicationsMockHandler(),

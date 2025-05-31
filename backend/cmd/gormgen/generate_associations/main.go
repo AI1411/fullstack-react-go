@@ -95,6 +95,10 @@ func main() {
 		g.GenerateModel(
 			model.TableNameUserOrganization,
 		),
+		g.GenerateModel(
+			model.TableNameFacilityEquipment,
+			gen.FieldRelateModel(field.BelongsTo, "FacilityType", model.FacilityType{}, nil),
+		),
 	}
 
 	g.ApplyBasic(allModels...)
