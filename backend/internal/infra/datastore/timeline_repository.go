@@ -1,3 +1,4 @@
+//go:generate mockgen -source=timeline_repository.go -destination=../../../tests/mock/datastore/timeline_repository.mock.go
 package datastore
 
 import (

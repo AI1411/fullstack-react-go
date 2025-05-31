@@ -1,3 +1,4 @@
+//go:generate mockgen -source=prefecture_repository.go -destination=../../../tests/mock/datastore/prefecture_repository.mock.go
 package datastore
 
 import (

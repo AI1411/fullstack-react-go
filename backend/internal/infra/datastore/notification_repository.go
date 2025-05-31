@@ -1,3 +1,4 @@
+//go:generate mockgen -source=notification_repository.go -destination=../../../tests/mock/datastore/notification_repository.mock.go
 package datastore
 
 import (
