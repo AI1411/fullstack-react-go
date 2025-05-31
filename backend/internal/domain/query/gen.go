@@ -27,6 +27,7 @@ var (
 	FacilityType       *facilityType
 	GisDatum           *gisDatum
 	Notification       *notification
+	Organization       *organization
 	Prefecture         *prefecture
 	Region             *region
 	Role               *role
@@ -48,6 +49,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	FacilityType = &Q.FacilityType
 	GisDatum = &Q.GisDatum
 	Notification = &Q.Notification
+	Organization = &Q.Organization
 	Prefecture = &Q.Prefecture
 	Region = &Q.Region
 	Role = &Q.Role
@@ -70,6 +72,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		FacilityType:       newFacilityType(db, opts...),
 		GisDatum:           newGisDatum(db, opts...),
 		Notification:       newNotification(db, opts...),
+		Organization:       newOrganization(db, opts...),
 		Prefecture:         newPrefecture(db, opts...),
 		Region:             newRegion(db, opts...),
 		Role:               newRole(db, opts...),
@@ -93,6 +96,7 @@ type Query struct {
 	FacilityType       facilityType
 	GisDatum           gisDatum
 	Notification       notification
+	Organization       organization
 	Prefecture         prefecture
 	Region             region
 	Role               role
@@ -117,6 +121,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		FacilityType:       q.FacilityType.clone(db),
 		GisDatum:           q.GisDatum.clone(db),
 		Notification:       q.Notification.clone(db),
+		Organization:       q.Organization.clone(db),
 		Prefecture:         q.Prefecture.clone(db),
 		Region:             q.Region.clone(db),
 		Role:               q.Role.clone(db),
@@ -148,6 +153,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		FacilityType:       q.FacilityType.replaceDB(db),
 		GisDatum:           q.GisDatum.replaceDB(db),
 		Notification:       q.Notification.replaceDB(db),
+		Organization:       q.Organization.replaceDB(db),
 		Prefecture:         q.Prefecture.replaceDB(db),
 		Region:             q.Region.replaceDB(db),
 		Role:               q.Role.replaceDB(db),
@@ -169,6 +175,7 @@ type queryCtx struct {
 	FacilityType       IFacilityTypeDo
 	GisDatum           IGisDatumDo
 	Notification       INotificationDo
+	Organization       IOrganizationDo
 	Prefecture         IPrefectureDo
 	Region             IRegionDo
 	Role               IRoleDo
@@ -190,6 +197,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		FacilityType:       q.FacilityType.WithContext(ctx),
 		GisDatum:           q.GisDatum.WithContext(ctx),
 		Notification:       q.Notification.WithContext(ctx),
+		Organization:       q.Organization.WithContext(ctx),
 		Prefecture:         q.Prefecture.WithContext(ctx),
 		Region:             q.Region.WithContext(ctx),
 		Role:               q.Role.WithContext(ctx),

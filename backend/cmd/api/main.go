@@ -47,17 +47,26 @@ type Module struct {
 	PrefectureRepo            datastore.PrefectureRepository
 	TimelineRepo              datastore.TimelineRepository
 	SupportApplicationRepo    datastore.SupportApplicationRepository
+	DamageLevelRepo           datastore.DamageLevelRepository
+	FacilityEquipmentRepo     datastore.FacilityEquipmentRepository
 	NotificationRepo          datastore.NotificationRepository
+	OrganizationRepo          datastore.OrganizationRepository
 	DisasterUsecase           usecase.DisasterUseCase
 	PrefectureUsecase         usecase.PrefectureUseCase
 	TimelineUsecase           usecase.TimelineUseCase
 	SupportApplicationUsecase usecase.SupportApplicationUseCase
+	DamageLevelUsecase        usecase.DamageLevelUseCase
+	FacilityEquipmentUsecase  usecase.FacilityEquipmentUseCase
 	NotificationUsecase       usecase.NotificationUseCase
+	OrganizationUsecase       usecase.OrganizationUseCase
 	DisasterHandler           handler.Disaster
 	PrefectureHandler         handler.Prefecture
 	TimelineHandler           handler.Timeline
 	SupportApplicationHandler handler.SupportApplication
+	DamageLevelHandler        handler.DamageLevel
+	FacilityEquipmentHandler  handler.FacilityEquipment
 	NotificationHandler       handler.Notification
+	OrganizationHandler       handler.Organization
 }
 
 // ProvideLogger creates a new logger instance
@@ -206,6 +215,22 @@ func ProvideNotificationHandler(l *logger.Logger, usecase usecase.NotificationUs
 	return handler.NewNotificationHandler(l, usecase)
 }
 
+// ProvideOrganizationRepository creates a new organization repository
+func ProvideOrganizationRepository(client db.Client) datastore.OrganizationRepository {
+	ctx := context.Background()
+	return datastore.NewOrganizationRepository(ctx, client)
+}
+
+// ProvideOrganizationUseCase creates a new organization usecase
+func ProvideOrganizationUseCase(repo datastore.OrganizationRepository) usecase.OrganizationUseCase {
+	return usecase.NewOrganizationUseCase(repo)
+}
+
+// ProvideOrganizationHandler creates a new organization handler
+func ProvideOrganizationHandler(l *logger.Logger, usecase usecase.OrganizationUseCase) handler.Organization {
+	return handler.NewOrganizationHandler(l, usecase)
+}
+
 // RegisterRoutes registers all HTTP routes
 func RegisterRoutes(
 	lc fx.Lifecycle,
@@ -219,10 +244,10 @@ func RegisterRoutes(
 	damageLevelHandler handler.DamageLevel,
 	facilityEquipmentHandler handler.FacilityEquipment,
 	notificationHandler handler.Notification,
+	organizationHandler handler.Organization,
 ) {
 	// Context for health check
 	ctx := context.Background()
-
 	// ヘルスチェックエンドポイント
 	r.GET("/health", func(c *gin.Context) {
 		if err := dbClient.Ping(ctx); err != nil {
@@ -282,6 +307,13 @@ func RegisterRoutes(
 	r.DELETE("/notifications/:id", notificationHandler.DeleteNotification)
 	r.PUT("/notifications/:id/read", notificationHandler.MarkAsRead)
 
+	// 組織関連のルート
+	r.GET("/organizations", organizationHandler.ListOrganizations)
+	r.GET("/organizations/:id", organizationHandler.GetOrganization)
+	r.POST("/organizations", organizationHandler.CreateOrganization)
+	r.PUT("/organizations/:id", organizationHandler.UpdateOrganization)
+	r.DELETE("/organizations/:id", organizationHandler.DeleteOrganization)
+
 	// Swagger JSON エンドポイント
 	r.GET("/docs", func(c *gin.Context) {
 		c.Header("Content-Type", "application/json")
@@ -321,6 +353,7 @@ func main() {
 			ProvideDamageLevelRepository,
 			ProvideFacilityEquipmentRepository,
 			ProvideNotificationRepository,
+			ProvideOrganizationRepository,
 			ProvideDisasterUseCase,
 			ProvidePrefectureUseCase,
 			ProvideTimelineUseCase,
@@ -328,6 +361,7 @@ func main() {
 			ProvideDamageLevelUseCase,
 			ProvideFacilityEquipmentUseCase,
 			ProvideNotificationUseCase,
+			ProvideOrganizationUseCase,
 			ProvideDisasterHandler,
 			ProvidePrefectureHandler,
 			ProvideTimelineHandler,
@@ -335,6 +369,7 @@ func main() {
 			ProvideDamageLevelHandler,
 			ProvideFacilityEquipmentHandler,
 			ProvideNotificationHandler,
+			ProvideOrganizationHandler,
 		),
 		// Register the lifecycle hooks
 		fx.Invoke(RegisterRoutes),
