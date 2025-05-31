@@ -1,20 +1,20 @@
 // Custom React Query hooks for prefecture-related API endpoints
 import { useQuery } from '@tanstack/react-query'
-import { getPrefectures, getPrefectureById } from '../generated/client'
+import { getPrefecture, listPrefectures } from '../generated/client'
 
 // Hook for fetching all prefectures
 export const usePrefectures = () => {
   return useQuery({
     queryKey: ['prefectures'],
-    queryFn: () => getPrefectures(),
+    queryFn: () => listPrefectures(),
   })
 }
 
 // Hook for fetching a single prefecture by ID
-export const usePrefecture = (id: string) => {
+export const usePrefecture = (id: number) => {
   return useQuery({
     queryKey: ['prefecture', id],
-    queryFn: () => getPrefectureById({ id }),
+    queryFn: () => getPrefecture(id),
     enabled: !!id,
   })
 }
@@ -23,6 +23,6 @@ export const usePrefecture = (id: string) => {
 export const usePrefecturesWithDisasters = () => {
   return useQuery({
     queryKey: ['prefectures', 'with-disasters'],
-    queryFn: () => getPrefectures({ withDisasters: true }),
+    queryFn: () => listPrefectures({ params: { withDisasters: true } }),
   })
 }

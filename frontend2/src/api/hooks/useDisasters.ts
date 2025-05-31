@@ -7,9 +7,10 @@ import {
   listDisasters,
   updateDisaster,
 } from "../generated/client"
+import type { HandlerDisasterResponse, HandlerUpdateDisasterRequest, ListDisastersParams } from "../generated/model"
 
 // Hook for fetching all disasters
-export const useDisasters = (params?: { page?: number; limit?: number }) => {
+export const useDisasters = (params?: ListDisastersParams) => {
   return useQuery({
     queryKey: ["disasters", params],
     queryFn: () => listDisasters(params),
@@ -43,11 +44,13 @@ export const useUpdateDisaster = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: updateDisaster,
-    onSuccess: (data) => {
+    mutationFn: ({ id, data }: { id: string; data: HandlerUpdateDisasterRequest }) => 
+      updateDisaster(id, data),
+    onSuccess: (response) => {
+      const disaster = response.data as HandlerDisasterResponse
       // Invalidate specific queries
       queryClient.invalidateQueries({ queryKey: ["disasters"] })
-      queryClient.invalidateQueries({ queryKey: ["disaster", data.id] })
+      queryClient.invalidateQueries({ queryKey: ["disaster", disaster.id] })
     },
   })
 }
@@ -57,11 +60,11 @@ export const useDeleteDisaster = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: deleteDisaster,
-    onSuccess: (_, variables) => {
+    mutationFn: ({ id }: { id: string }) => deleteDisaster(id),
+    onSuccess: (_, { id }) => {
       // Invalidate specific queries
       queryClient.invalidateQueries({ queryKey: ["disasters"] })
-      queryClient.invalidateQueries({ queryKey: ["disaster", variables.id] })
+      queryClient.invalidateQueries({ queryKey: ["disaster", id] })
     },
   })
 }

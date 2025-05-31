@@ -1,5 +1,6 @@
 // Request and response interceptors for Axios
-import { AxiosInstance, AxiosError, AxiosResponse } from 'axios'
+import type { AxiosInstance, AxiosResponse } from 'axios'
+import { AxiosError } from 'axios'
 import { refreshToken } from '../../features/auth/hooks/useAuth'
 
 // Add request and response interceptors to an Axios instance
