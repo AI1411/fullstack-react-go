@@ -32,29 +32,426 @@ import type {
 } from 'axios';
 
 import type {
+  CreateDamageLevel400,
   CreateDisaster400,
+  CreateFacilityEquipment400,
+  CreateNotification400,
+  CreateOrganization400,
   CreateSupportApplication400,
+  DeleteDamageLevel400,
+  DeleteDamageLevel404,
   DeleteDisaster404,
+  DeleteFacilityEquipment400,
+  DeleteFacilityEquipment404,
+  DeleteNotification400,
+  DeleteNotification404,
+  DeleteOrganization400,
+  DeleteOrganization404,
+  GetDamageLevel404,
   GetDisaster404,
+  GetFacilityEquipment404,
+  GetNotification404,
+  GetNotificationsByUserID404,
+  GetOrganization404,
   GetPrefecture404,
   GetSupportApplication404,
+  HandlerCreateDamageLevelRequest,
   HandlerCreateDisasterRequest,
+  HandlerCreateFacilityEquipmentRequest,
+  HandlerCreateNotificationRequest,
+  HandlerCreateOrganizationRequest,
   HandlerCreateSupportApplicationRequest,
+  HandlerDamageLevelResponse,
+  HandlerFacilityEquipmentResponse,
   HandlerListDisastersResponse,
   HandlerListSupportApplicationsResponse,
   HandlerListTimelinesResponse,
+  HandlerNotificationResponse,
+  HandlerOrganizationResponse,
   HandlerPrefectureResponse,
   HandlerSupportApplicationResponse,
+  HandlerUpdateDamageLevelRequest,
   HandlerUpdateDisasterRequest,
+  HandlerUpdateFacilityEquipmentRequest,
+  HandlerUpdateNotificationRequest,
+  HandlerUpdateOrganizationRequest,
   ListDisastersParams,
+  MarkAsRead400,
+  MarkAsRead404,
+  UpdateDamageLevel400,
+  UpdateDamageLevel404,
   UpdateDisaster400,
-  UpdateDisaster404
+  UpdateDisaster404,
+  UpdateFacilityEquipment400,
+  UpdateFacilityEquipment404,
+  UpdateNotification400,
+  UpdateNotification404,
+  UpdateOrganization400,
+  UpdateOrganization404
 } from './model';
 
 
 
 
 
+/**
+ * @summary 被害程度一覧取得
+ */
+export const listDamageLevels = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerDamageLevelResponse[]>> => {
+    
+    
+    return axios.get(
+      `/damage-levels`,options
+    );
+  }
+
+
+export const getListDamageLevelsQueryKey = () => {
+    return [`/damage-levels`] as const;
+    }
+
+    
+export const getListDamageLevelsQueryOptions = <TData = Awaited<ReturnType<typeof listDamageLevels>>, TError = AxiosError<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDamageLevels>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListDamageLevelsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listDamageLevels>>> = ({ signal }) => listDamageLevels({ signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listDamageLevels>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type ListDamageLevelsQueryResult = NonNullable<Awaited<ReturnType<typeof listDamageLevels>>>
+export type ListDamageLevelsQueryError = AxiosError<unknown>
+
+
+export function useListDamageLevels<TData = Awaited<ReturnType<typeof listDamageLevels>>, TError = AxiosError<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDamageLevels>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listDamageLevels>>,
+          TError,
+          Awaited<ReturnType<typeof listDamageLevels>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useListDamageLevels<TData = Awaited<ReturnType<typeof listDamageLevels>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDamageLevels>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listDamageLevels>>,
+          TError,
+          Awaited<ReturnType<typeof listDamageLevels>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useListDamageLevels<TData = Awaited<ReturnType<typeof listDamageLevels>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDamageLevels>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary 被害程度一覧取得
+ */
+
+export function useListDamageLevels<TData = Awaited<ReturnType<typeof listDamageLevels>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDamageLevels>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getListDamageLevelsQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary 被害程度作成
+ */
+export const createDamageLevel = (
+    handlerCreateDamageLevelRequest: HandlerCreateDamageLevelRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerDamageLevelResponse>> => {
+    
+    
+    return axios.post(
+      `/damage-levels`,
+      handlerCreateDamageLevelRequest,options
+    );
+  }
+
+
+
+export const getCreateDamageLevelMutationOptions = <TError = AxiosError<CreateDamageLevel400>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createDamageLevel>>, TError,{data: HandlerCreateDamageLevelRequest}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof createDamageLevel>>, TError,{data: HandlerCreateDamageLevelRequest}, TContext> => {
+
+const mutationKey = ['createDamageLevel'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createDamageLevel>>, {data: HandlerCreateDamageLevelRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createDamageLevel(data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateDamageLevelMutationResult = NonNullable<Awaited<ReturnType<typeof createDamageLevel>>>
+    export type CreateDamageLevelMutationBody = HandlerCreateDamageLevelRequest
+    export type CreateDamageLevelMutationError = AxiosError<CreateDamageLevel400>
+
+    /**
+ * @summary 被害程度作成
+ */
+export const useCreateDamageLevel = <TError = AxiosError<CreateDamageLevel400>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createDamageLevel>>, TError,{data: HandlerCreateDamageLevelRequest}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createDamageLevel>>,
+        TError,
+        {data: HandlerCreateDamageLevelRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateDamageLevelMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary 被害程度削除
+ */
+export const deleteDamageLevel = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.delete(
+      `/damage-levels/${id}`,options
+    );
+  }
+
+
+
+export const getDeleteDamageLevelMutationOptions = <TError = AxiosError<DeleteDamageLevel400 | DeleteDamageLevel404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteDamageLevel>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteDamageLevel>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteDamageLevel'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteDamageLevel>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteDamageLevel(id,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteDamageLevelMutationResult = NonNullable<Awaited<ReturnType<typeof deleteDamageLevel>>>
+    
+    export type DeleteDamageLevelMutationError = AxiosError<DeleteDamageLevel400 | DeleteDamageLevel404>
+
+    /**
+ * @summary 被害程度削除
+ */
+export const useDeleteDamageLevel = <TError = AxiosError<DeleteDamageLevel400 | DeleteDamageLevel404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteDamageLevel>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteDamageLevel>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteDamageLevelMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary 被害程度詳細取得
+ */
+export const getDamageLevel = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerDamageLevelResponse>> => {
+    
+    
+    return axios.get(
+      `/damage-levels/${id}`,options
+    );
+  }
+
+
+export const getGetDamageLevelQueryKey = (id: number,) => {
+    return [`/damage-levels/${id}`] as const;
+    }
+
+    
+export const getGetDamageLevelQueryOptions = <TData = Awaited<ReturnType<typeof getDamageLevel>>, TError = AxiosError<GetDamageLevel404>>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDamageLevel>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetDamageLevelQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDamageLevel>>> = ({ signal }) => getDamageLevel(id, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getDamageLevel>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetDamageLevelQueryResult = NonNullable<Awaited<ReturnType<typeof getDamageLevel>>>
+export type GetDamageLevelQueryError = AxiosError<GetDamageLevel404>
+
+
+export function useGetDamageLevel<TData = Awaited<ReturnType<typeof getDamageLevel>>, TError = AxiosError<GetDamageLevel404>>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDamageLevel>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDamageLevel>>,
+          TError,
+          Awaited<ReturnType<typeof getDamageLevel>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetDamageLevel<TData = Awaited<ReturnType<typeof getDamageLevel>>, TError = AxiosError<GetDamageLevel404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDamageLevel>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDamageLevel>>,
+          TError,
+          Awaited<ReturnType<typeof getDamageLevel>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetDamageLevel<TData = Awaited<ReturnType<typeof getDamageLevel>>, TError = AxiosError<GetDamageLevel404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDamageLevel>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary 被害程度詳細取得
+ */
+
+export function useGetDamageLevel<TData = Awaited<ReturnType<typeof getDamageLevel>>, TError = AxiosError<GetDamageLevel404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDamageLevel>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetDamageLevelQueryOptions(id,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary 被害程度更新
+ */
+export const updateDamageLevel = (
+    id: number,
+    handlerUpdateDamageLevelRequest: HandlerUpdateDamageLevelRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerDamageLevelResponse>> => {
+    
+    
+    return axios.put(
+      `/damage-levels/${id}`,
+      handlerUpdateDamageLevelRequest,options
+    );
+  }
+
+
+
+export const getUpdateDamageLevelMutationOptions = <TError = AxiosError<UpdateDamageLevel400 | UpdateDamageLevel404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateDamageLevel>>, TError,{id: number;data: HandlerUpdateDamageLevelRequest}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof updateDamageLevel>>, TError,{id: number;data: HandlerUpdateDamageLevelRequest}, TContext> => {
+
+const mutationKey = ['updateDamageLevel'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateDamageLevel>>, {id: number;data: HandlerUpdateDamageLevelRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateDamageLevel(id,data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateDamageLevelMutationResult = NonNullable<Awaited<ReturnType<typeof updateDamageLevel>>>
+    export type UpdateDamageLevelMutationBody = HandlerUpdateDamageLevelRequest
+    export type UpdateDamageLevelMutationError = AxiosError<UpdateDamageLevel400 | UpdateDamageLevel404>
+
+    /**
+ * @summary 被害程度更新
+ */
+export const useUpdateDamageLevel = <TError = AxiosError<UpdateDamageLevel400 | UpdateDamageLevel404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateDamageLevel>>, TError,{id: number;data: HandlerUpdateDamageLevelRequest}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateDamageLevel>>,
+        TError,
+        {id: number;data: HandlerUpdateDamageLevelRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateDamageLevelMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
 /**
  * @summary 災害マスタ一覧取得
  */
@@ -502,6 +899,1227 @@ export function useGetDisastersIdTimelines<TData = Awaited<ReturnType<typeof get
 
 
 
+/**
+ * @summary 施設設備一覧取得
+ */
+export const listFacilityEquipments = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerFacilityEquipmentResponse[]>> => {
+    
+    
+    return axios.get(
+      `/facility-equipment`,options
+    );
+  }
+
+
+export const getListFacilityEquipmentsQueryKey = () => {
+    return [`/facility-equipment`] as const;
+    }
+
+    
+export const getListFacilityEquipmentsQueryOptions = <TData = Awaited<ReturnType<typeof listFacilityEquipments>>, TError = AxiosError<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listFacilityEquipments>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListFacilityEquipmentsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listFacilityEquipments>>> = ({ signal }) => listFacilityEquipments({ signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listFacilityEquipments>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type ListFacilityEquipmentsQueryResult = NonNullable<Awaited<ReturnType<typeof listFacilityEquipments>>>
+export type ListFacilityEquipmentsQueryError = AxiosError<unknown>
+
+
+export function useListFacilityEquipments<TData = Awaited<ReturnType<typeof listFacilityEquipments>>, TError = AxiosError<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listFacilityEquipments>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listFacilityEquipments>>,
+          TError,
+          Awaited<ReturnType<typeof listFacilityEquipments>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useListFacilityEquipments<TData = Awaited<ReturnType<typeof listFacilityEquipments>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listFacilityEquipments>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listFacilityEquipments>>,
+          TError,
+          Awaited<ReturnType<typeof listFacilityEquipments>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useListFacilityEquipments<TData = Awaited<ReturnType<typeof listFacilityEquipments>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listFacilityEquipments>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary 施設設備一覧取得
+ */
+
+export function useListFacilityEquipments<TData = Awaited<ReturnType<typeof listFacilityEquipments>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listFacilityEquipments>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getListFacilityEquipmentsQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary 施設設備作成
+ */
+export const createFacilityEquipment = (
+    handlerCreateFacilityEquipmentRequest: HandlerCreateFacilityEquipmentRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerFacilityEquipmentResponse>> => {
+    
+    
+    return axios.post(
+      `/facility-equipment`,
+      handlerCreateFacilityEquipmentRequest,options
+    );
+  }
+
+
+
+export const getCreateFacilityEquipmentMutationOptions = <TError = AxiosError<CreateFacilityEquipment400>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createFacilityEquipment>>, TError,{data: HandlerCreateFacilityEquipmentRequest}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof createFacilityEquipment>>, TError,{data: HandlerCreateFacilityEquipmentRequest}, TContext> => {
+
+const mutationKey = ['createFacilityEquipment'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createFacilityEquipment>>, {data: HandlerCreateFacilityEquipmentRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createFacilityEquipment(data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateFacilityEquipmentMutationResult = NonNullable<Awaited<ReturnType<typeof createFacilityEquipment>>>
+    export type CreateFacilityEquipmentMutationBody = HandlerCreateFacilityEquipmentRequest
+    export type CreateFacilityEquipmentMutationError = AxiosError<CreateFacilityEquipment400>
+
+    /**
+ * @summary 施設設備作成
+ */
+export const useCreateFacilityEquipment = <TError = AxiosError<CreateFacilityEquipment400>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createFacilityEquipment>>, TError,{data: HandlerCreateFacilityEquipmentRequest}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createFacilityEquipment>>,
+        TError,
+        {data: HandlerCreateFacilityEquipmentRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateFacilityEquipmentMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary 施設設備削除
+ */
+export const deleteFacilityEquipment = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.delete(
+      `/facility-equipment/${id}`,options
+    );
+  }
+
+
+
+export const getDeleteFacilityEquipmentMutationOptions = <TError = AxiosError<DeleteFacilityEquipment400 | DeleteFacilityEquipment404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteFacilityEquipment>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteFacilityEquipment>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteFacilityEquipment'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteFacilityEquipment>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteFacilityEquipment(id,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteFacilityEquipmentMutationResult = NonNullable<Awaited<ReturnType<typeof deleteFacilityEquipment>>>
+    
+    export type DeleteFacilityEquipmentMutationError = AxiosError<DeleteFacilityEquipment400 | DeleteFacilityEquipment404>
+
+    /**
+ * @summary 施設設備削除
+ */
+export const useDeleteFacilityEquipment = <TError = AxiosError<DeleteFacilityEquipment400 | DeleteFacilityEquipment404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteFacilityEquipment>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteFacilityEquipment>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteFacilityEquipmentMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary 施設設備詳細取得
+ */
+export const getFacilityEquipment = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerFacilityEquipmentResponse>> => {
+    
+    
+    return axios.get(
+      `/facility-equipment/${id}`,options
+    );
+  }
+
+
+export const getGetFacilityEquipmentQueryKey = (id: number,) => {
+    return [`/facility-equipment/${id}`] as const;
+    }
+
+    
+export const getGetFacilityEquipmentQueryOptions = <TData = Awaited<ReturnType<typeof getFacilityEquipment>>, TError = AxiosError<GetFacilityEquipment404>>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFacilityEquipment>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetFacilityEquipmentQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getFacilityEquipment>>> = ({ signal }) => getFacilityEquipment(id, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getFacilityEquipment>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetFacilityEquipmentQueryResult = NonNullable<Awaited<ReturnType<typeof getFacilityEquipment>>>
+export type GetFacilityEquipmentQueryError = AxiosError<GetFacilityEquipment404>
+
+
+export function useGetFacilityEquipment<TData = Awaited<ReturnType<typeof getFacilityEquipment>>, TError = AxiosError<GetFacilityEquipment404>>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFacilityEquipment>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getFacilityEquipment>>,
+          TError,
+          Awaited<ReturnType<typeof getFacilityEquipment>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetFacilityEquipment<TData = Awaited<ReturnType<typeof getFacilityEquipment>>, TError = AxiosError<GetFacilityEquipment404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFacilityEquipment>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getFacilityEquipment>>,
+          TError,
+          Awaited<ReturnType<typeof getFacilityEquipment>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetFacilityEquipment<TData = Awaited<ReturnType<typeof getFacilityEquipment>>, TError = AxiosError<GetFacilityEquipment404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFacilityEquipment>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary 施設設備詳細取得
+ */
+
+export function useGetFacilityEquipment<TData = Awaited<ReturnType<typeof getFacilityEquipment>>, TError = AxiosError<GetFacilityEquipment404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFacilityEquipment>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetFacilityEquipmentQueryOptions(id,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary 施設設備更新
+ */
+export const updateFacilityEquipment = (
+    id: number,
+    handlerUpdateFacilityEquipmentRequest: HandlerUpdateFacilityEquipmentRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerFacilityEquipmentResponse>> => {
+    
+    
+    return axios.put(
+      `/facility-equipment/${id}`,
+      handlerUpdateFacilityEquipmentRequest,options
+    );
+  }
+
+
+
+export const getUpdateFacilityEquipmentMutationOptions = <TError = AxiosError<UpdateFacilityEquipment400 | UpdateFacilityEquipment404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateFacilityEquipment>>, TError,{id: number;data: HandlerUpdateFacilityEquipmentRequest}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof updateFacilityEquipment>>, TError,{id: number;data: HandlerUpdateFacilityEquipmentRequest}, TContext> => {
+
+const mutationKey = ['updateFacilityEquipment'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateFacilityEquipment>>, {id: number;data: HandlerUpdateFacilityEquipmentRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateFacilityEquipment(id,data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateFacilityEquipmentMutationResult = NonNullable<Awaited<ReturnType<typeof updateFacilityEquipment>>>
+    export type UpdateFacilityEquipmentMutationBody = HandlerUpdateFacilityEquipmentRequest
+    export type UpdateFacilityEquipmentMutationError = AxiosError<UpdateFacilityEquipment400 | UpdateFacilityEquipment404>
+
+    /**
+ * @summary 施設設備更新
+ */
+export const useUpdateFacilityEquipment = <TError = AxiosError<UpdateFacilityEquipment400 | UpdateFacilityEquipment404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateFacilityEquipment>>, TError,{id: number;data: HandlerUpdateFacilityEquipmentRequest}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateFacilityEquipment>>,
+        TError,
+        {id: number;data: HandlerUpdateFacilityEquipmentRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateFacilityEquipmentMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary 通知一覧取得
+ */
+export const listNotifications = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerNotificationResponse[]>> => {
+    
+    
+    return axios.get(
+      `/notifications`,options
+    );
+  }
+
+
+export const getListNotificationsQueryKey = () => {
+    return [`/notifications`] as const;
+    }
+
+    
+export const getListNotificationsQueryOptions = <TData = Awaited<ReturnType<typeof listNotifications>>, TError = AxiosError<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listNotifications>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListNotificationsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listNotifications>>> = ({ signal }) => listNotifications({ signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listNotifications>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type ListNotificationsQueryResult = NonNullable<Awaited<ReturnType<typeof listNotifications>>>
+export type ListNotificationsQueryError = AxiosError<unknown>
+
+
+export function useListNotifications<TData = Awaited<ReturnType<typeof listNotifications>>, TError = AxiosError<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listNotifications>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listNotifications>>,
+          TError,
+          Awaited<ReturnType<typeof listNotifications>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useListNotifications<TData = Awaited<ReturnType<typeof listNotifications>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listNotifications>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listNotifications>>,
+          TError,
+          Awaited<ReturnType<typeof listNotifications>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useListNotifications<TData = Awaited<ReturnType<typeof listNotifications>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listNotifications>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary 通知一覧取得
+ */
+
+export function useListNotifications<TData = Awaited<ReturnType<typeof listNotifications>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listNotifications>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getListNotificationsQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary 通知作成
+ */
+export const createNotification = (
+    handlerCreateNotificationRequest: HandlerCreateNotificationRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerNotificationResponse>> => {
+    
+    
+    return axios.post(
+      `/notifications`,
+      handlerCreateNotificationRequest,options
+    );
+  }
+
+
+
+export const getCreateNotificationMutationOptions = <TError = AxiosError<CreateNotification400>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createNotification>>, TError,{data: HandlerCreateNotificationRequest}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof createNotification>>, TError,{data: HandlerCreateNotificationRequest}, TContext> => {
+
+const mutationKey = ['createNotification'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createNotification>>, {data: HandlerCreateNotificationRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createNotification(data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateNotificationMutationResult = NonNullable<Awaited<ReturnType<typeof createNotification>>>
+    export type CreateNotificationMutationBody = HandlerCreateNotificationRequest
+    export type CreateNotificationMutationError = AxiosError<CreateNotification400>
+
+    /**
+ * @summary 通知作成
+ */
+export const useCreateNotification = <TError = AxiosError<CreateNotification400>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createNotification>>, TError,{data: HandlerCreateNotificationRequest}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createNotification>>,
+        TError,
+        {data: HandlerCreateNotificationRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateNotificationMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary 通知削除
+ */
+export const deleteNotification = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.delete(
+      `/notifications/${id}`,options
+    );
+  }
+
+
+
+export const getDeleteNotificationMutationOptions = <TError = AxiosError<DeleteNotification400 | DeleteNotification404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteNotification>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteNotification>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteNotification'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteNotification>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteNotification(id,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteNotificationMutationResult = NonNullable<Awaited<ReturnType<typeof deleteNotification>>>
+    
+    export type DeleteNotificationMutationError = AxiosError<DeleteNotification400 | DeleteNotification404>
+
+    /**
+ * @summary 通知削除
+ */
+export const useDeleteNotification = <TError = AxiosError<DeleteNotification400 | DeleteNotification404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteNotification>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteNotification>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteNotificationMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary 通知詳細取得
+ */
+export const getNotification = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerNotificationResponse>> => {
+    
+    
+    return axios.get(
+      `/notifications/${id}`,options
+    );
+  }
+
+
+export const getGetNotificationQueryKey = (id: number,) => {
+    return [`/notifications/${id}`] as const;
+    }
+
+    
+export const getGetNotificationQueryOptions = <TData = Awaited<ReturnType<typeof getNotification>>, TError = AxiosError<GetNotification404>>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotification>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetNotificationQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getNotification>>> = ({ signal }) => getNotification(id, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getNotification>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetNotificationQueryResult = NonNullable<Awaited<ReturnType<typeof getNotification>>>
+export type GetNotificationQueryError = AxiosError<GetNotification404>
+
+
+export function useGetNotification<TData = Awaited<ReturnType<typeof getNotification>>, TError = AxiosError<GetNotification404>>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotification>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNotification>>,
+          TError,
+          Awaited<ReturnType<typeof getNotification>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetNotification<TData = Awaited<ReturnType<typeof getNotification>>, TError = AxiosError<GetNotification404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotification>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNotification>>,
+          TError,
+          Awaited<ReturnType<typeof getNotification>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetNotification<TData = Awaited<ReturnType<typeof getNotification>>, TError = AxiosError<GetNotification404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotification>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary 通知詳細取得
+ */
+
+export function useGetNotification<TData = Awaited<ReturnType<typeof getNotification>>, TError = AxiosError<GetNotification404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotification>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetNotificationQueryOptions(id,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary 通知更新
+ */
+export const updateNotification = (
+    id: number,
+    handlerUpdateNotificationRequest: HandlerUpdateNotificationRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerNotificationResponse>> => {
+    
+    
+    return axios.put(
+      `/notifications/${id}`,
+      handlerUpdateNotificationRequest,options
+    );
+  }
+
+
+
+export const getUpdateNotificationMutationOptions = <TError = AxiosError<UpdateNotification400 | UpdateNotification404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateNotification>>, TError,{id: number;data: HandlerUpdateNotificationRequest}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof updateNotification>>, TError,{id: number;data: HandlerUpdateNotificationRequest}, TContext> => {
+
+const mutationKey = ['updateNotification'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateNotification>>, {id: number;data: HandlerUpdateNotificationRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateNotification(id,data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateNotificationMutationResult = NonNullable<Awaited<ReturnType<typeof updateNotification>>>
+    export type UpdateNotificationMutationBody = HandlerUpdateNotificationRequest
+    export type UpdateNotificationMutationError = AxiosError<UpdateNotification400 | UpdateNotification404>
+
+    /**
+ * @summary 通知更新
+ */
+export const useUpdateNotification = <TError = AxiosError<UpdateNotification400 | UpdateNotification404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateNotification>>, TError,{id: number;data: HandlerUpdateNotificationRequest}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateNotification>>,
+        TError,
+        {id: number;data: HandlerUpdateNotificationRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateNotificationMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary 通知を既読にする
+ */
+export const markAsRead = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerNotificationResponse>> => {
+    
+    
+    return axios.put(
+      `/notifications/${id}/read`,undefined,options
+    );
+  }
+
+
+
+export const getMarkAsReadMutationOptions = <TError = AxiosError<MarkAsRead400 | MarkAsRead404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markAsRead>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof markAsRead>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['markAsRead'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof markAsRead>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  markAsRead(id,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MarkAsReadMutationResult = NonNullable<Awaited<ReturnType<typeof markAsRead>>>
+    
+    export type MarkAsReadMutationError = AxiosError<MarkAsRead400 | MarkAsRead404>
+
+    /**
+ * @summary 通知を既読にする
+ */
+export const useMarkAsRead = <TError = AxiosError<MarkAsRead400 | MarkAsRead404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markAsRead>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof markAsRead>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getMarkAsReadMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary ユーザーIDによる通知一覧取得
+ */
+export const getNotificationsByUserID = (
+    userId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerNotificationResponse[]>> => {
+    
+    
+    return axios.get(
+      `/notifications/user/${userId}`,options
+    );
+  }
+
+
+export const getGetNotificationsByUserIDQueryKey = (userId: number,) => {
+    return [`/notifications/user/${userId}`] as const;
+    }
+
+    
+export const getGetNotificationsByUserIDQueryOptions = <TData = Awaited<ReturnType<typeof getNotificationsByUserID>>, TError = AxiosError<GetNotificationsByUserID404>>(userId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotificationsByUserID>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetNotificationsByUserIDQueryKey(userId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getNotificationsByUserID>>> = ({ signal }) => getNotificationsByUserID(userId, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(userId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getNotificationsByUserID>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetNotificationsByUserIDQueryResult = NonNullable<Awaited<ReturnType<typeof getNotificationsByUserID>>>
+export type GetNotificationsByUserIDQueryError = AxiosError<GetNotificationsByUserID404>
+
+
+export function useGetNotificationsByUserID<TData = Awaited<ReturnType<typeof getNotificationsByUserID>>, TError = AxiosError<GetNotificationsByUserID404>>(
+ userId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotificationsByUserID>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNotificationsByUserID>>,
+          TError,
+          Awaited<ReturnType<typeof getNotificationsByUserID>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetNotificationsByUserID<TData = Awaited<ReturnType<typeof getNotificationsByUserID>>, TError = AxiosError<GetNotificationsByUserID404>>(
+ userId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotificationsByUserID>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getNotificationsByUserID>>,
+          TError,
+          Awaited<ReturnType<typeof getNotificationsByUserID>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetNotificationsByUserID<TData = Awaited<ReturnType<typeof getNotificationsByUserID>>, TError = AxiosError<GetNotificationsByUserID404>>(
+ userId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotificationsByUserID>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary ユーザーIDによる通知一覧取得
+ */
+
+export function useGetNotificationsByUserID<TData = Awaited<ReturnType<typeof getNotificationsByUserID>>, TError = AxiosError<GetNotificationsByUserID404>>(
+ userId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotificationsByUserID>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetNotificationsByUserIDQueryOptions(userId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary 組織一覧取得
+ */
+export const listOrganizations = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerOrganizationResponse[]>> => {
+    
+    
+    return axios.get(
+      `/organizations`,options
+    );
+  }
+
+
+export const getListOrganizationsQueryKey = () => {
+    return [`/organizations`] as const;
+    }
+
+    
+export const getListOrganizationsQueryOptions = <TData = Awaited<ReturnType<typeof listOrganizations>>, TError = AxiosError<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOrganizations>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListOrganizationsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listOrganizations>>> = ({ signal }) => listOrganizations({ signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listOrganizations>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type ListOrganizationsQueryResult = NonNullable<Awaited<ReturnType<typeof listOrganizations>>>
+export type ListOrganizationsQueryError = AxiosError<unknown>
+
+
+export function useListOrganizations<TData = Awaited<ReturnType<typeof listOrganizations>>, TError = AxiosError<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOrganizations>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listOrganizations>>,
+          TError,
+          Awaited<ReturnType<typeof listOrganizations>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useListOrganizations<TData = Awaited<ReturnType<typeof listOrganizations>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOrganizations>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listOrganizations>>,
+          TError,
+          Awaited<ReturnType<typeof listOrganizations>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useListOrganizations<TData = Awaited<ReturnType<typeof listOrganizations>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOrganizations>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary 組織一覧取得
+ */
+
+export function useListOrganizations<TData = Awaited<ReturnType<typeof listOrganizations>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOrganizations>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getListOrganizationsQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary 組織作成
+ */
+export const createOrganization = (
+    handlerCreateOrganizationRequest: HandlerCreateOrganizationRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerOrganizationResponse>> => {
+    
+    
+    return axios.post(
+      `/organizations`,
+      handlerCreateOrganizationRequest,options
+    );
+  }
+
+
+
+export const getCreateOrganizationMutationOptions = <TError = AxiosError<CreateOrganization400>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createOrganization>>, TError,{data: HandlerCreateOrganizationRequest}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof createOrganization>>, TError,{data: HandlerCreateOrganizationRequest}, TContext> => {
+
+const mutationKey = ['createOrganization'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createOrganization>>, {data: HandlerCreateOrganizationRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createOrganization(data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateOrganizationMutationResult = NonNullable<Awaited<ReturnType<typeof createOrganization>>>
+    export type CreateOrganizationMutationBody = HandlerCreateOrganizationRequest
+    export type CreateOrganizationMutationError = AxiosError<CreateOrganization400>
+
+    /**
+ * @summary 組織作成
+ */
+export const useCreateOrganization = <TError = AxiosError<CreateOrganization400>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createOrganization>>, TError,{data: HandlerCreateOrganizationRequest}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createOrganization>>,
+        TError,
+        {data: HandlerCreateOrganizationRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateOrganizationMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary 組織削除
+ */
+export const deleteOrganization = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    
+    return axios.delete(
+      `/organizations/${id}`,options
+    );
+  }
+
+
+
+export const getDeleteOrganizationMutationOptions = <TError = AxiosError<DeleteOrganization400 | DeleteOrganization404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteOrganization>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteOrganization>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteOrganization'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteOrganization>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteOrganization(id,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteOrganizationMutationResult = NonNullable<Awaited<ReturnType<typeof deleteOrganization>>>
+    
+    export type DeleteOrganizationMutationError = AxiosError<DeleteOrganization400 | DeleteOrganization404>
+
+    /**
+ * @summary 組織削除
+ */
+export const useDeleteOrganization = <TError = AxiosError<DeleteOrganization400 | DeleteOrganization404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteOrganization>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteOrganization>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteOrganizationMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary 組織詳細取得
+ */
+export const getOrganization = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerOrganizationResponse>> => {
+    
+    
+    return axios.get(
+      `/organizations/${id}`,options
+    );
+  }
+
+
+export const getGetOrganizationQueryKey = (id: number,) => {
+    return [`/organizations/${id}`] as const;
+    }
+
+    
+export const getGetOrganizationQueryOptions = <TData = Awaited<ReturnType<typeof getOrganization>>, TError = AxiosError<GetOrganization404>>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrganization>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetOrganizationQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getOrganization>>> = ({ signal }) => getOrganization(id, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getOrganization>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetOrganizationQueryResult = NonNullable<Awaited<ReturnType<typeof getOrganization>>>
+export type GetOrganizationQueryError = AxiosError<GetOrganization404>
+
+
+export function useGetOrganization<TData = Awaited<ReturnType<typeof getOrganization>>, TError = AxiosError<GetOrganization404>>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrganization>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getOrganization>>,
+          TError,
+          Awaited<ReturnType<typeof getOrganization>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetOrganization<TData = Awaited<ReturnType<typeof getOrganization>>, TError = AxiosError<GetOrganization404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrganization>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getOrganization>>,
+          TError,
+          Awaited<ReturnType<typeof getOrganization>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetOrganization<TData = Awaited<ReturnType<typeof getOrganization>>, TError = AxiosError<GetOrganization404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrganization>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary 組織詳細取得
+ */
+
+export function useGetOrganization<TData = Awaited<ReturnType<typeof getOrganization>>, TError = AxiosError<GetOrganization404>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrganization>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetOrganizationQueryOptions(id,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary 組織更新
+ */
+export const updateOrganization = (
+    id: number,
+    handlerUpdateOrganizationRequest: HandlerUpdateOrganizationRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerOrganizationResponse>> => {
+    
+    
+    return axios.put(
+      `/organizations/${id}`,
+      handlerUpdateOrganizationRequest,options
+    );
+  }
+
+
+
+export const getUpdateOrganizationMutationOptions = <TError = AxiosError<UpdateOrganization400 | UpdateOrganization404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateOrganization>>, TError,{id: number;data: HandlerUpdateOrganizationRequest}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof updateOrganization>>, TError,{id: number;data: HandlerUpdateOrganizationRequest}, TContext> => {
+
+const mutationKey = ['updateOrganization'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateOrganization>>, {id: number;data: HandlerUpdateOrganizationRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateOrganization(id,data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateOrganizationMutationResult = NonNullable<Awaited<ReturnType<typeof updateOrganization>>>
+    export type UpdateOrganizationMutationBody = HandlerUpdateOrganizationRequest
+    export type UpdateOrganizationMutationError = AxiosError<UpdateOrganization400 | UpdateOrganization404>
+
+    /**
+ * @summary 組織更新
+ */
+export const useUpdateOrganization = <TError = AxiosError<UpdateOrganization400 | UpdateOrganization404>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateOrganization>>, TError,{id: number;data: HandlerUpdateOrganizationRequest}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateOrganization>>,
+        TError,
+        {id: number;data: HandlerUpdateOrganizationRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateOrganizationMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
 /**
  * @summary 都道府県一覧取得
  */

@@ -1,0 +1,1 @@
+export { FacilityEquipmentFeature } from "./components/FacilityEquipmentFeature"

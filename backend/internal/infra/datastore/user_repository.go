@@ -1,0 +1,59 @@
+package datastore
+
+import (
+	"context"
+
+	"github.com/AI1411/fullstack-react-go/internal/domain/model"
+	"github.com/AI1411/fullstack-react-go/internal/infra/db"
+)
+
+type UserRepository interface {
+	Find(ctx context.Context) ([]*model.User, error)
+	FindByID(ctx context.Context, id int32) (*model.User, error)
+	Create(ctx context.Context, user *model.User) error
+	Update(ctx context.Context, user *model.User) error
+	Delete(ctx context.Context, id int32) error
+}
+
+type userRepository struct {
+	client db.Client
+}
+
+func NewUserRepository(
+	ctx context.Context,
+	client db.Client,
+) UserRepository {
+	return &userRepository{
+		client: client,
+	}
+}
+
+func (r *userRepository) Find(ctx context.Context) ([]*model.User, error) {
+	var users []*model.User
+	if err := r.client.Conn(ctx).Find(&users).Error; err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func (r *userRepository) FindByID(ctx context.Context, id int32) (*model.User, error) {
+	var user model.User
+	if err := r.client.Conn(ctx).Where("id = ?", id).First(&user).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (r *userRepository) Create(ctx context.Context, user *model.User) error {
+	return r.client.Conn(ctx).Create(user).Error
+}
+
+func (r *userRepository) Update(ctx context.Context, user *model.User) error {
+	return r.client.Conn(ctx).Save(user).Error
+}
+
+func (r *userRepository) Delete(ctx context.Context, id int32) error {
+	return r.client.Conn(ctx).Delete(&model.User{}, id).Error
+}

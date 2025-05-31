@@ -47,14 +47,26 @@ type Module struct {
 	PrefectureRepo            datastore.PrefectureRepository
 	TimelineRepo              datastore.TimelineRepository
 	SupportApplicationRepo    datastore.SupportApplicationRepository
+	DamageLevelRepo           datastore.DamageLevelRepository
+	FacilityEquipmentRepo     datastore.FacilityEquipmentRepository
+	NotificationRepo          datastore.NotificationRepository
+	OrganizationRepo          datastore.OrganizationRepository
 	DisasterUsecase           usecase.DisasterUseCase
 	PrefectureUsecase         usecase.PrefectureUseCase
 	TimelineUsecase           usecase.TimelineUseCase
 	SupportApplicationUsecase usecase.SupportApplicationUseCase
+	DamageLevelUsecase        usecase.DamageLevelUseCase
+	FacilityEquipmentUsecase  usecase.FacilityEquipmentUseCase
+	NotificationUsecase       usecase.NotificationUseCase
+	OrganizationUsecase       usecase.OrganizationUseCase
 	DisasterHandler           handler.Disaster
 	PrefectureHandler         handler.Prefecture
 	TimelineHandler           handler.Timeline
 	SupportApplicationHandler handler.SupportApplication
+	DamageLevelHandler        handler.DamageLevel
+	FacilityEquipmentHandler  handler.FacilityEquipment
+	NotificationHandler       handler.Notification
+	OrganizationHandler       handler.Organization
 }
 
 // ProvideLogger creates a new logger instance
@@ -158,6 +170,83 @@ func ProvideSupportApplicationHandler(l *logger.Logger, usecase usecase.SupportA
 	return handler.NewSupportApplicationHandler(l, usecase)
 }
 
+// ProvideDamageLevelRepository creates a new damage level repository
+func ProvideDamageLevelRepository(dbClient db.Client) datastore.DamageLevelRepository {
+	return datastore.NewDamageLevelRepository(context.Background(), dbClient)
+}
+
+// ProvideDamageLevelUseCase creates a new damage level usecase
+func ProvideDamageLevelUseCase(repo datastore.DamageLevelRepository) usecase.DamageLevelUseCase {
+	return usecase.NewDamageLevelUseCase(repo)
+}
+
+// ProvideDamageLevelHandler creates a new damage level handler
+func ProvideDamageLevelHandler(l *logger.Logger, usecase usecase.DamageLevelUseCase) handler.DamageLevel {
+	return handler.NewDamageLevelHandler(l, usecase)
+}
+
+// ProvideFacilityEquipmentRepository creates a new facility equipment repository
+func ProvideFacilityEquipmentRepository(dbClient db.Client) datastore.FacilityEquipmentRepository {
+	return datastore.NewFacilityEquipmentRepository(context.Background(), dbClient)
+}
+
+// ProvideFacilityEquipmentUseCase creates a new facility equipment use case
+func ProvideFacilityEquipmentUseCase(repo datastore.FacilityEquipmentRepository) usecase.FacilityEquipmentUseCase {
+	return usecase.NewFacilityEquipmentUseCase(repo)
+}
+
+// ProvideFacilityEquipmentHandler creates a new facility equipment handler
+func ProvideFacilityEquipmentHandler(l *logger.Logger, usecase usecase.FacilityEquipmentUseCase) handler.FacilityEquipment {
+	return handler.NewFacilityEquipmentHandler(l, usecase)
+}
+
+// ProvideNotificationRepository creates a new notification repository
+func ProvideNotificationRepository(dbClient db.Client) datastore.NotificationRepository {
+	return datastore.NewNotificationRepository(context.Background(), dbClient)
+}
+
+// ProvideNotificationUseCase creates a new notification use case
+func ProvideNotificationUseCase(repo datastore.NotificationRepository) usecase.NotificationUseCase {
+	return usecase.NewNotificationUseCase(repo)
+}
+
+// ProvideNotificationHandler creates a new notification handler
+func ProvideNotificationHandler(l *logger.Logger, usecase usecase.NotificationUseCase) handler.Notification {
+	return handler.NewNotificationHandler(l, usecase)
+}
+
+// ProvideOrganizationRepository creates a new organization repository
+func ProvideOrganizationRepository(client db.Client) datastore.OrganizationRepository {
+	ctx := context.Background()
+	return datastore.NewOrganizationRepository(ctx, client)
+}
+
+// ProvideOrganizationUseCase creates a new organization usecase
+func ProvideOrganizationUseCase(repo datastore.OrganizationRepository) usecase.OrganizationUseCase {
+	return usecase.NewOrganizationUseCase(repo)
+}
+
+// ProvideOrganizationHandler creates a new organization handler
+func ProvideOrganizationHandler(l *logger.Logger, usecase usecase.OrganizationUseCase) handler.Organization {
+	return handler.NewOrganizationHandler(l, usecase)
+}
+
+// ProvideUserRepository creates a new user repository
+func ProvideUserRepository(client db.Client) datastore.UserRepository {
+	ctx := context.Background()
+	return datastore.NewUserRepository(ctx, client)
+}
+
+// ProvideUserUseCase creates a new user usecase
+func ProvideUserUseCase(repo datastore.UserRepository) usecase.UserUseCase {
+	return usecase.NewUserUseCase(repo)
+}
+
+// ProvideUserHandler creates a new user handler
+func ProvideUserHandler(l *logger.Logger, usecase usecase.UserUseCase) handler.User {
+	return handler.NewUserHandler(l, usecase)
+}
+
 // RegisterRoutes registers all HTTP routes
 func RegisterRoutes(
 	lc fx.Lifecycle,
@@ -168,10 +257,14 @@ func RegisterRoutes(
 	prefectureHandler handler.Prefecture,
 	timelineHandler handler.Timeline,
 	supportApplicationHandler handler.SupportApplication,
+	damageLevelHandler handler.DamageLevel,
+	facilityEquipmentHandler handler.FacilityEquipment,
+	notificationHandler handler.Notification,
+	organizationHandler handler.Organization,
+	userHandler handler.User,
 ) {
 	// Context for health check
 	ctx := context.Background()
-
 	// ヘルスチェックエンドポイント
 	r.GET("/health", func(c *gin.Context) {
 		if err := dbClient.Ping(ctx); err != nil {
@@ -207,6 +300,43 @@ func RegisterRoutes(
 	r.GET("/support-applications", supportApplicationHandler.ListSupportApplications)
 	r.GET("/support-applications/:id", supportApplicationHandler.GetSupportApplication)
 	r.POST("/support-applications", supportApplicationHandler.CreateSupportApplication)
+
+	// 被害程度関連のルート
+	r.GET("/damage-levels", damageLevelHandler.ListDamageLevels)
+	r.GET("/damage-levels/:id", damageLevelHandler.GetDamageLevel)
+	r.POST("/damage-levels", damageLevelHandler.CreateDamageLevel)
+	r.PUT("/damage-levels/:id", damageLevelHandler.UpdateDamageLevel)
+	r.DELETE("/damage-levels/:id", damageLevelHandler.DeleteDamageLevel)
+
+	// 施設設備関連のルート
+	r.GET("/facility-equipment", facilityEquipmentHandler.ListFacilityEquipments)
+	r.GET("/facility-equipment/:id", facilityEquipmentHandler.GetFacilityEquipment)
+	r.POST("/facility-equipment", facilityEquipmentHandler.CreateFacilityEquipment)
+	r.PUT("/facility-equipment/:id", facilityEquipmentHandler.UpdateFacilityEquipment)
+	r.DELETE("/facility-equipment/:id", facilityEquipmentHandler.DeleteFacilityEquipment)
+
+	// 通知関連のルート
+	r.GET("/notifications", notificationHandler.ListNotifications)
+	r.GET("/notifications/:id", notificationHandler.GetNotification)
+	r.GET("/notifications/user/:user_id", notificationHandler.GetNotificationsByUserID)
+	r.POST("/notifications", notificationHandler.CreateNotification)
+	r.PUT("/notifications/:id", notificationHandler.UpdateNotification)
+	r.DELETE("/notifications/:id", notificationHandler.DeleteNotification)
+	r.PUT("/notifications/:id/read", notificationHandler.MarkAsRead)
+
+	// 組織関連のルート
+	r.GET("/organizations", organizationHandler.ListOrganizations)
+	r.GET("/organizations/:id", organizationHandler.GetOrganization)
+	r.POST("/organizations", organizationHandler.CreateOrganization)
+	r.PUT("/organizations/:id", organizationHandler.UpdateOrganization)
+	r.DELETE("/organizations/:id", organizationHandler.DeleteOrganization)
+
+	// ユーザー関連のルート
+	r.GET("/users", userHandler.ListUsers)
+	r.GET("/users/:id", userHandler.GetUser)
+	r.POST("/users", userHandler.CreateUser)
+	r.PUT("/users/:id", userHandler.UpdateUser)
+	r.DELETE("/users/:id", userHandler.DeleteUser)
 
 	// Swagger JSON エンドポイント
 	r.GET("/docs", func(c *gin.Context) {
@@ -244,14 +374,29 @@ func main() {
 			ProvidePrefectureRepository,
 			ProvideTimelineRepository,
 			ProvideSupportApplicationRepository,
+			ProvideDamageLevelRepository,
+			ProvideFacilityEquipmentRepository,
+			ProvideNotificationRepository,
+			ProvideOrganizationRepository,
+			ProvideUserRepository,
 			ProvideDisasterUseCase,
 			ProvidePrefectureUseCase,
 			ProvideTimelineUseCase,
 			ProvideSupportApplicationUseCase,
+			ProvideDamageLevelUseCase,
+			ProvideFacilityEquipmentUseCase,
+			ProvideNotificationUseCase,
+			ProvideOrganizationUseCase,
+			ProvideUserUseCase,
 			ProvideDisasterHandler,
 			ProvidePrefectureHandler,
 			ProvideTimelineHandler,
 			ProvideSupportApplicationHandler,
+			ProvideDamageLevelHandler,
+			ProvideFacilityEquipmentHandler,
+			ProvideNotificationHandler,
+			ProvideOrganizationHandler,
+			ProvideUserHandler,
 		),
 		// Register the lifecycle hooks
 		fx.Invoke(RegisterRoutes),

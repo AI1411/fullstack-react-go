@@ -68,6 +68,40 @@ func main() {
 		g.GenerateModel(
 			model.TableNameSupportApplication,
 		),
+		g.GenerateModel(
+			model.TableNameDamageLevel,
+		),
+		g.GenerateModel(
+			model.TableNameAssessment,
+		),
+		g.GenerateModel(
+			model.TableNameAssessmentComment,
+		),
+		g.GenerateModel(
+			model.TableNameAssessmentItem,
+		),
+		g.GenerateModel(
+			model.TableNameFacilityType,
+		),
+		g.GenerateModel(
+			model.TableNameGisDatum,
+		),
+		g.GenerateModel(
+			model.TableNameNotification,
+		),
+		g.GenerateModel(
+			model.TableNameRole,
+		),
+		g.GenerateModel(
+			model.TableNameUserOrganization,
+		),
+		g.GenerateModel(
+			model.TableNameFacilityEquipment,
+			gen.FieldRelateModel(field.BelongsTo, "FacilityType", model.FacilityType{}, nil),
+		),
+		g.GenerateModel(
+			model.TableNameOrganization,
+		),
 	}
 
 	g.ApplyBasic(allModels...)

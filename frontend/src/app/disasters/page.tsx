@@ -4,6 +4,7 @@ import { useListDisasters } from "@/api/client"
 import {
   type HandlerDisasterResponse,
   type HandlerListDisastersResponse,
+  type ListDisastersParams,
 } from "@/api/model"
 import Footer from "@/components/layout/footer/page"
 import Header from "@/components/layout/header/page"
@@ -67,12 +68,12 @@ export default function DisasterInfoPage() {
   const [searchDateTo, setSearchDateTo] = useState("")
 
   // 検索パラメータの状態管理
-  const [searchParams, setSearchParams] = useState({
+  const [searchParams, setSearchParams] = useState<ListDisastersParams>({
     name: "",
     disaster_type: "",
     status: "",
-    date_from: "",
-    date_to: "",
+    start_date: "",
+    end_date: "",
   })
 
   // 検索実行関数
@@ -81,8 +82,8 @@ export default function DisasterInfoPage() {
       name: searchName,
       disaster_type: searchDisasterType,
       status: searchStatus,
-      date_from: searchDateFrom,
-      date_to: searchDateTo,
+      start_date: searchDateFrom,
+      end_date: searchDateTo,
     })
   }
 
@@ -97,8 +98,8 @@ export default function DisasterInfoPage() {
       name: "",
       disaster_type: "",
       status: "",
-      date_from: "",
-      date_to: "",
+      start_date: "",
+      end_date: "",
     })
   }
 
@@ -109,10 +110,7 @@ export default function DisasterInfoPage() {
     isError,
     error,
     refetch,
-  } = useListDisasters<{ data: HandlerListDisastersResponse }>({
-    axios: {
-      params: searchParams,
-    },
+  } = useListDisasters<HandlerListDisastersResponse>(searchParams, {
     query: {
       retry: 3,
       staleTime: 5 * 60 * 1000, // 5分間キャッシュ
@@ -124,14 +122,12 @@ export default function DisasterInfoPage() {
     return <div>読み込み中</div>
   }
 
-  if (error) {
-    return <div>データの取得に失敗しました</div>
+  if (isError) {
+    const apiError = handleError(error)
+    return <ErrorDisplay message={apiError.message} onRetry={refetch} />
   }
 
-  const disasters = disastersResponse?.data?.disasters || []
-
-  // エラーハンドリング
-  const apiError = isError ? handleError(error) : null
+  const disasters = disastersResponse?.disasters || []
 
   return (
     <div className="layout-container flex h-full grow flex-col">
@@ -296,14 +292,6 @@ export default function DisasterInfoPage() {
               </div>
             )}
 
-            {isError && apiError && (
-              <ErrorDisplay
-                title="災害情報の取得に失敗しました"
-                message={apiError.message}
-                onRetry={() => refetch()}
-                className="mb-4"
-              />
-            )}
             {!isLoading &&
               !isError &&
               (disasters.length === 0 ? (
