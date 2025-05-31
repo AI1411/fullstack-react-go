@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -8,5 +8,5 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
       </header>
       {children}
     </div>
-  );
-};
+  )
+}

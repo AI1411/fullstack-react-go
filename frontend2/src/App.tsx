@@ -1,7 +1,7 @@
-import { useParams } from "@tanstack/react-router";
+import { useParams } from "@tanstack/react-router"
 
 export const Hello = () => {
-  const { helloId } = useParams({ from: "/$helloId" });
+  const { helloId } = useParams({ from: "/$helloId" })
   return (
     <div>
       <h1>Hello World</h1>
@@ -10,5 +10,5 @@ export const Hello = () => {
         The current helloId is: <strong>{helloId}</strong>
       </p>
     </div>
-  );
-};
+  )
+}
