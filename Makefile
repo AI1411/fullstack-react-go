@@ -102,3 +102,6 @@ test-coverage: ## テストカバレッジ計測
 quality: lint vet staticcheck sec ## コード品質チェック（全ツール）
 
 ci: fmt quality test ## CI環境で実行するチェック
+
+mockgen: ## モックを生成
+	docker compose exec gen-api go generate ./...
