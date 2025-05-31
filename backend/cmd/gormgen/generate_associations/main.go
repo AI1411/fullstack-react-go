@@ -53,7 +53,14 @@ func main() {
 			gen.FieldRelateModel(field.HasMany, "DisasterDocuments", model.DisasterDocument{}, nil),
 		),
 
-		g.GenerateModel(model.TableNameUser),
+		g.GenerateModel(
+			model.TableNameUser,
+			gen.FieldRelateModel(field.Many2Many, "Organizations", model.Organization{}, &field.RelateConfig{
+				GORMTag: field.GormTag{
+					"many2many": []string{"user_organizations"},
+				},
+			}),
+		),
 
 		g.GenerateModel(
 			model.TableNameTimeline,
@@ -94,6 +101,8 @@ func main() {
 		),
 		g.GenerateModel(
 			model.TableNameUserOrganization,
+			gen.FieldRelateModel(field.BelongsTo, "User", model.User{}, nil),
+			gen.FieldRelateModel(field.BelongsTo, "Organization", model.Organization{}, nil),
 		),
 		g.GenerateModel(
 			model.TableNameFacilityEquipment,
@@ -101,6 +110,11 @@ func main() {
 		),
 		g.GenerateModel(
 			model.TableNameOrganization,
+			gen.FieldRelateModel(field.Many2Many, "Users", model.User{}, &field.RelateConfig{
+				GORMTag: field.GormTag{
+					"many2many": []string{"user_organizations"},
+				},
+			}),
 		),
 	}
 

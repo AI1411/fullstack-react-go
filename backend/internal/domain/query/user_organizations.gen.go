@@ -33,6 +33,17 @@ func newUserOrganization(db *gorm.DB, opts ...gen.DOOption) userOrganization {
 	_userOrganization.IsPrimary = field.NewBool(tableName, "is_primary")
 	_userOrganization.CreatedAt = field.NewTime(tableName, "created_at")
 	_userOrganization.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_userOrganization.User = userOrganizationBelongsToUser{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("User", "model.User"),
+	}
+
+	_userOrganization.Organization = userOrganizationBelongsToOrganization{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Organization", "model.Organization"),
+	}
 
 	_userOrganization.fillFieldMap()
 
@@ -48,6 +59,9 @@ type userOrganization struct {
 	IsPrimary      field.Bool  // 主所属フラグ - ユーザーの主所属組織かどうか
 	CreatedAt      field.Time  // 作成日時 - レコード作成日時
 	UpdatedAt      field.Time  // 更新日時 - レコード最終更新日時
+	User           userOrganizationBelongsToUser
+
+	Organization userOrganizationBelongsToOrganization
 
 	fieldMap map[string]field.Expr
 }
@@ -85,22 +99,191 @@ func (u *userOrganization) GetFieldByName(fieldName string) (field.OrderExpr, bo
 }
 
 func (u *userOrganization) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 5)
+	u.fieldMap = make(map[string]field.Expr, 7)
 	u.fieldMap["user_id"] = u.UserID
 	u.fieldMap["organization_id"] = u.OrganizationID
 	u.fieldMap["is_primary"] = u.IsPrimary
 	u.fieldMap["created_at"] = u.CreatedAt
 	u.fieldMap["updated_at"] = u.UpdatedAt
+
 }
 
 func (u userOrganization) clone(db *gorm.DB) userOrganization {
 	u.userOrganizationDo.ReplaceConnPool(db.Statement.ConnPool)
+	u.User.db = db.Session(&gorm.Session{Initialized: true})
+	u.User.db.Statement.ConnPool = db.Statement.ConnPool
+	u.Organization.db = db.Session(&gorm.Session{Initialized: true})
+	u.Organization.db.Statement.ConnPool = db.Statement.ConnPool
 	return u
 }
 
 func (u userOrganization) replaceDB(db *gorm.DB) userOrganization {
 	u.userOrganizationDo.ReplaceDB(db)
+	u.User.db = db.Session(&gorm.Session{})
+	u.Organization.db = db.Session(&gorm.Session{})
 	return u
+}
+
+type userOrganizationBelongsToUser struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a userOrganizationBelongsToUser) Where(conds ...field.Expr) *userOrganizationBelongsToUser {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a userOrganizationBelongsToUser) WithContext(ctx context.Context) *userOrganizationBelongsToUser {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a userOrganizationBelongsToUser) Session(session *gorm.Session) *userOrganizationBelongsToUser {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a userOrganizationBelongsToUser) Model(m *model.UserOrganization) *userOrganizationBelongsToUserTx {
+	return &userOrganizationBelongsToUserTx{a.db.Model(m).Association(a.Name())}
+}
+
+func (a userOrganizationBelongsToUser) Unscoped() *userOrganizationBelongsToUser {
+	a.db = a.db.Unscoped()
+	return &a
+}
+
+type userOrganizationBelongsToUserTx struct{ tx *gorm.Association }
+
+func (a userOrganizationBelongsToUserTx) Find() (result *model.User, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a userOrganizationBelongsToUserTx) Append(values ...*model.User) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a userOrganizationBelongsToUserTx) Replace(values ...*model.User) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a userOrganizationBelongsToUserTx) Delete(values ...*model.User) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a userOrganizationBelongsToUserTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a userOrganizationBelongsToUserTx) Count() int64 {
+	return a.tx.Count()
+}
+
+func (a userOrganizationBelongsToUserTx) Unscoped() *userOrganizationBelongsToUserTx {
+	a.tx = a.tx.Unscoped()
+	return &a
+}
+
+type userOrganizationBelongsToOrganization struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a userOrganizationBelongsToOrganization) Where(conds ...field.Expr) *userOrganizationBelongsToOrganization {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a userOrganizationBelongsToOrganization) WithContext(ctx context.Context) *userOrganizationBelongsToOrganization {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a userOrganizationBelongsToOrganization) Session(session *gorm.Session) *userOrganizationBelongsToOrganization {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a userOrganizationBelongsToOrganization) Model(m *model.UserOrganization) *userOrganizationBelongsToOrganizationTx {
+	return &userOrganizationBelongsToOrganizationTx{a.db.Model(m).Association(a.Name())}
+}
+
+func (a userOrganizationBelongsToOrganization) Unscoped() *userOrganizationBelongsToOrganization {
+	a.db = a.db.Unscoped()
+	return &a
+}
+
+type userOrganizationBelongsToOrganizationTx struct{ tx *gorm.Association }
+
+func (a userOrganizationBelongsToOrganizationTx) Find() (result *model.Organization, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a userOrganizationBelongsToOrganizationTx) Append(values ...*model.Organization) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a userOrganizationBelongsToOrganizationTx) Replace(values ...*model.Organization) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a userOrganizationBelongsToOrganizationTx) Delete(values ...*model.Organization) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a userOrganizationBelongsToOrganizationTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a userOrganizationBelongsToOrganizationTx) Count() int64 {
+	return a.tx.Count()
+}
+
+func (a userOrganizationBelongsToOrganizationTx) Unscoped() *userOrganizationBelongsToOrganizationTx {
+	a.tx = a.tx.Unscoped()
+	return &a
 }
 
 type userOrganizationDo struct{ gen.DO }

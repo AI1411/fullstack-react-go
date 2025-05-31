@@ -37,6 +37,11 @@ func newOrganization(db *gorm.DB, opts ...gen.DOOption) organization {
 	_organization.CreatedAt = field.NewTime(tableName, "created_at")
 	_organization.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_organization.DeletedAt = field.NewField(tableName, "deleted_at")
+	_organization.Users = organizationManyToManyUsers{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Users", "model.User"),
+	}
 
 	_organization.fillFieldMap()
 
@@ -56,6 +61,7 @@ type organization struct {
 	CreatedAt    field.Time   // 作成日時 - レコード作成日時
 	UpdatedAt    field.Time   // 更新日時 - レコード最終更新日時
 	DeletedAt    field.Field  // 削除日時 - 論理削除用のタイムスタンプ
+	Users        organizationManyToManyUsers
 
 	fieldMap map[string]field.Expr
 }
@@ -97,7 +103,7 @@ func (o *organization) GetFieldByName(fieldName string) (field.OrderExpr, bool) 
 }
 
 func (o *organization) fillFieldMap() {
-	o.fieldMap = make(map[string]field.Expr, 9)
+	o.fieldMap = make(map[string]field.Expr, 10)
 	o.fieldMap["id"] = o.ID
 	o.fieldMap["name"] = o.Name
 	o.fieldMap["type"] = o.Type
@@ -107,16 +113,101 @@ func (o *organization) fillFieldMap() {
 	o.fieldMap["created_at"] = o.CreatedAt
 	o.fieldMap["updated_at"] = o.UpdatedAt
 	o.fieldMap["deleted_at"] = o.DeletedAt
+
 }
 
 func (o organization) clone(db *gorm.DB) organization {
 	o.organizationDo.ReplaceConnPool(db.Statement.ConnPool)
+	o.Users.db = db.Session(&gorm.Session{Initialized: true})
+	o.Users.db.Statement.ConnPool = db.Statement.ConnPool
 	return o
 }
 
 func (o organization) replaceDB(db *gorm.DB) organization {
 	o.organizationDo.ReplaceDB(db)
+	o.Users.db = db.Session(&gorm.Session{})
 	return o
+}
+
+type organizationManyToManyUsers struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a organizationManyToManyUsers) Where(conds ...field.Expr) *organizationManyToManyUsers {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a organizationManyToManyUsers) WithContext(ctx context.Context) *organizationManyToManyUsers {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a organizationManyToManyUsers) Session(session *gorm.Session) *organizationManyToManyUsers {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a organizationManyToManyUsers) Model(m *model.Organization) *organizationManyToManyUsersTx {
+	return &organizationManyToManyUsersTx{a.db.Model(m).Association(a.Name())}
+}
+
+func (a organizationManyToManyUsers) Unscoped() *organizationManyToManyUsers {
+	a.db = a.db.Unscoped()
+	return &a
+}
+
+type organizationManyToManyUsersTx struct{ tx *gorm.Association }
+
+func (a organizationManyToManyUsersTx) Find() (result []*model.User, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a organizationManyToManyUsersTx) Append(values ...*model.User) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a organizationManyToManyUsersTx) Replace(values ...*model.User) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a organizationManyToManyUsersTx) Delete(values ...*model.User) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a organizationManyToManyUsersTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a organizationManyToManyUsersTx) Count() int64 {
+	return a.tx.Count()
+}
+
+func (a organizationManyToManyUsersTx) Unscoped() *organizationManyToManyUsersTx {
+	a.tx = a.tx.Unscoped()
+	return &a
 }
 
 type organizationDo struct{ gen.DO }

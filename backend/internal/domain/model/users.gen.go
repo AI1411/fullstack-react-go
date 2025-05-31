@@ -14,13 +14,14 @@ const TableNameUser = "users"
 
 // User mapped from table <users>
 type User struct {
-	ID        int32          `gorm:"column:id;type:integer;primaryKey;autoIncrement:true" json:"id"`
-	Name      string         `gorm:"column:name;type:character varying(255);not null" json:"name"`
-	Email     string         `gorm:"column:email;type:character varying(255);not null;index:idx_users_email,priority:1" json:"email"`
-	Password  string         `gorm:"column:password;type:character varying(255);not null" json:"password"`
-	CreatedAt *time.Time     `gorm:"column:created_at;type:timestamp with time zone;default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt *time.Time     `gorm:"column:updated_at;type:timestamp with time zone;default:CURRENT_TIMESTAMP" json:"updated_at"`
-	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp with time zone;index:idx_users_deleted_at,priority:1" json:"deleted_at"`
+	ID            int32          `gorm:"column:id;type:integer;primaryKey;autoIncrement:true" json:"id"`
+	Name          string         `gorm:"column:name;type:character varying(255);not null" json:"name"`
+	Email         string         `gorm:"column:email;type:character varying(255);not null;index:idx_users_email,priority:1" json:"email"`
+	Password      string         `gorm:"column:password;type:character varying(255);not null" json:"password"`
+	CreatedAt     *time.Time     `gorm:"column:created_at;type:timestamp with time zone;default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt     *time.Time     `gorm:"column:updated_at;type:timestamp with time zone;default:CURRENT_TIMESTAMP" json:"updated_at"`
+	DeletedAt     gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp with time zone;index:idx_users_deleted_at,priority:1" json:"deleted_at"`
+	Organizations []Organization `gorm:"many2many:user_organizations" json:"organizations"`
 }
 
 // TableName User's table name

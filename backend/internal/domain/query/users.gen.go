@@ -35,6 +35,11 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 	_user.CreatedAt = field.NewTime(tableName, "created_at")
 	_user.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_user.DeletedAt = field.NewField(tableName, "deleted_at")
+	_user.Organizations = userManyToManyOrganizations{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Organizations", "model.Organization"),
+	}
 
 	_user.fillFieldMap()
 
@@ -44,14 +49,15 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 type user struct {
 	userDo
 
-	ALL       field.Asterisk
-	ID        field.Int32
-	Name      field.String
-	Email     field.String
-	Password  field.String
-	CreatedAt field.Time
-	UpdatedAt field.Time
-	DeletedAt field.Field
+	ALL           field.Asterisk
+	ID            field.Int32
+	Name          field.String
+	Email         field.String
+	Password      field.String
+	CreatedAt     field.Time
+	UpdatedAt     field.Time
+	DeletedAt     field.Field
+	Organizations userManyToManyOrganizations
 
 	fieldMap map[string]field.Expr
 }
@@ -91,7 +97,7 @@ func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (u *user) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 7)
+	u.fieldMap = make(map[string]field.Expr, 8)
 	u.fieldMap["id"] = u.ID
 	u.fieldMap["name"] = u.Name
 	u.fieldMap["email"] = u.Email
@@ -99,16 +105,101 @@ func (u *user) fillFieldMap() {
 	u.fieldMap["created_at"] = u.CreatedAt
 	u.fieldMap["updated_at"] = u.UpdatedAt
 	u.fieldMap["deleted_at"] = u.DeletedAt
+
 }
 
 func (u user) clone(db *gorm.DB) user {
 	u.userDo.ReplaceConnPool(db.Statement.ConnPool)
+	u.Organizations.db = db.Session(&gorm.Session{Initialized: true})
+	u.Organizations.db.Statement.ConnPool = db.Statement.ConnPool
 	return u
 }
 
 func (u user) replaceDB(db *gorm.DB) user {
 	u.userDo.ReplaceDB(db)
+	u.Organizations.db = db.Session(&gorm.Session{})
 	return u
+}
+
+type userManyToManyOrganizations struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a userManyToManyOrganizations) Where(conds ...field.Expr) *userManyToManyOrganizations {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a userManyToManyOrganizations) WithContext(ctx context.Context) *userManyToManyOrganizations {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a userManyToManyOrganizations) Session(session *gorm.Session) *userManyToManyOrganizations {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a userManyToManyOrganizations) Model(m *model.User) *userManyToManyOrganizationsTx {
+	return &userManyToManyOrganizationsTx{a.db.Model(m).Association(a.Name())}
+}
+
+func (a userManyToManyOrganizations) Unscoped() *userManyToManyOrganizations {
+	a.db = a.db.Unscoped()
+	return &a
+}
+
+type userManyToManyOrganizationsTx struct{ tx *gorm.Association }
+
+func (a userManyToManyOrganizationsTx) Find() (result []*model.Organization, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a userManyToManyOrganizationsTx) Append(values ...*model.Organization) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a userManyToManyOrganizationsTx) Replace(values ...*model.Organization) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a userManyToManyOrganizationsTx) Delete(values ...*model.Organization) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a userManyToManyOrganizationsTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a userManyToManyOrganizationsTx) Count() int64 {
+	return a.tx.Count()
+}
+
+func (a userManyToManyOrganizationsTx) Unscoped() *userManyToManyOrganizationsTx {
+	a.tx = a.tx.Unscoped()
+	return &a
 }
 
 type userDo struct{ gen.DO }
