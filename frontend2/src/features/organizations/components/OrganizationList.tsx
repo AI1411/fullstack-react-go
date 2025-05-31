@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router"
 import type { Organization } from "../hooks/useOrganizations"
 
 type OrganizationListProps = {
@@ -46,7 +47,12 @@ export const OrganizationList = ({
                 {organization.id}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {organization.name}
+                <Link
+                  to={`/organizations/${organization.id}`}
+                  className="text-[#197fe5] hover:underline"
+                >
+                  {organization.name}
+                </Link>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {organization.description}

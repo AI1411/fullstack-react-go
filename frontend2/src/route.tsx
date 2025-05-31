@@ -13,7 +13,9 @@ import { ApplicationDetail } from "./routes/ApplicationDetail"
 import { FacilityEquipment } from "./routes/FacilityEquipment"
 import { DamageLevel } from "./routes/DamageLevel"
 import { User } from "./routes/User"
+import { UserDetail } from "./routes/UserDetail"
 import { Organization } from "./routes/Organization"
+import { OrganizationDetail } from "./routes/OrganizationDetail"
 import { Hello } from "./App"
 
 // Root route with layout
@@ -84,6 +86,20 @@ const organizationRoute = createRoute({
   component: Organization,
 })
 
+// User detail route
+const userDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/users/$userId",
+  component: UserDetail,
+})
+
+// Organization detail route
+const organizationDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/organizations/$organizationId",
+  component: OrganizationDetail,
+})
+
 // Legacy hello route
 const helloRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -100,7 +116,9 @@ const routeTree = rootRoute.addChildren([
   facilityEquipmentRoute,
   damageLevelRoute,
   userRoute,
+  userDetailRoute,
   organizationRoute,
+  organizationDetailRoute,
   helloRoute,
 ])
 
