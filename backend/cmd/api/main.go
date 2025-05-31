@@ -231,6 +231,22 @@ func ProvideOrganizationHandler(l *logger.Logger, usecase usecase.OrganizationUs
 	return handler.NewOrganizationHandler(l, usecase)
 }
 
+// ProvideUserRepository creates a new user repository
+func ProvideUserRepository(client db.Client) datastore.UserRepository {
+	ctx := context.Background()
+	return datastore.NewUserRepository(ctx, client)
+}
+
+// ProvideUserUseCase creates a new user usecase
+func ProvideUserUseCase(repo datastore.UserRepository) usecase.UserUseCase {
+	return usecase.NewUserUseCase(repo)
+}
+
+// ProvideUserHandler creates a new user handler
+func ProvideUserHandler(l *logger.Logger, usecase usecase.UserUseCase) handler.User {
+	return handler.NewUserHandler(l, usecase)
+}
+
 // RegisterRoutes registers all HTTP routes
 func RegisterRoutes(
 	lc fx.Lifecycle,
@@ -245,6 +261,7 @@ func RegisterRoutes(
 	facilityEquipmentHandler handler.FacilityEquipment,
 	notificationHandler handler.Notification,
 	organizationHandler handler.Organization,
+	userHandler handler.User,
 ) {
 	// Context for health check
 	ctx := context.Background()
@@ -314,6 +331,13 @@ func RegisterRoutes(
 	r.PUT("/organizations/:id", organizationHandler.UpdateOrganization)
 	r.DELETE("/organizations/:id", organizationHandler.DeleteOrganization)
 
+	// ユーザー関連のルート
+	r.GET("/users", userHandler.ListUsers)
+	r.GET("/users/:id", userHandler.GetUser)
+	r.POST("/users", userHandler.CreateUser)
+	r.PUT("/users/:id", userHandler.UpdateUser)
+	r.DELETE("/users/:id", userHandler.DeleteUser)
+
 	// Swagger JSON エンドポイント
 	r.GET("/docs", func(c *gin.Context) {
 		c.Header("Content-Type", "application/json")
@@ -354,6 +378,7 @@ func main() {
 			ProvideFacilityEquipmentRepository,
 			ProvideNotificationRepository,
 			ProvideOrganizationRepository,
+			ProvideUserRepository,
 			ProvideDisasterUseCase,
 			ProvidePrefectureUseCase,
 			ProvideTimelineUseCase,
@@ -362,6 +387,7 @@ func main() {
 			ProvideFacilityEquipmentUseCase,
 			ProvideNotificationUseCase,
 			ProvideOrganizationUseCase,
+			ProvideUserUseCase,
 			ProvideDisasterHandler,
 			ProvidePrefectureHandler,
 			ProvideTimelineHandler,
@@ -370,6 +396,7 @@ func main() {
 			ProvideFacilityEquipmentHandler,
 			ProvideNotificationHandler,
 			ProvideOrganizationHandler,
+			ProvideUserHandler,
 		),
 		// Register the lifecycle hooks
 		fx.Invoke(RegisterRoutes),

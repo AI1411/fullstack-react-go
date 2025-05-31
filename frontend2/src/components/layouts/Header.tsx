@@ -61,6 +61,18 @@ export const Header = () => {
           >
             被害程度
           </Link>
+          <Link
+            className="text-[#111418] text-sm font-medium leading-normal"
+            to="/users"
+          >
+            ユーザー
+          </Link>
+          <Link
+            className="text-[#111418] text-sm font-medium leading-normal"
+            to="/organizations"
+          >
+            組織
+          </Link>
         </div>
         <button className="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#f0f2f4] text-[#111418] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
           <div className="text-[#111418]">
