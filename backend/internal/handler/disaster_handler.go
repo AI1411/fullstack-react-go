@@ -249,9 +249,6 @@ func (h *disasterHandler) CreateDisaster(c *gin.Context) {
 
 	// Set default status if not provided
 	status := req.Status
-	if status == "" {
-		status = "pending"
-	}
 
 	disaster := &model.Disaster{
 		DisasterCode:          req.DisasterCode,
