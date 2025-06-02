@@ -5,9 +5,9 @@
  * 農業災害の報告と支援申請を管理するためのAPI
  * OpenAPI spec version: 1.0
  */
-import type { HandlerTimelineResponse } from "./handlerTimelineResponse"
+import type { HandlerTimelineResponse } from './handlerTimelineResponse';
 
 export interface HandlerListTimelinesResponse {
-  timelines?: HandlerTimelineResponse[]
-  total?: number
+  timelines?: HandlerTimelineResponse[];
+  total?: number;
 }

@@ -5,9 +5,9 @@
  * 農業災害の報告と支援申請を管理するためのAPI
  * OpenAPI spec version: 1.0
  */
-import type { HandlerSupportApplicationResponse } from "./handlerSupportApplicationResponse"
+import type { HandlerSupportApplicationResponse } from './handlerSupportApplicationResponse';
 
 export interface HandlerListSupportApplicationsResponse {
-  support_applications?: HandlerSupportApplicationResponse[]
-  total?: number
+  support_applications?: HandlerSupportApplicationResponse[];
+  total?: number;
 }

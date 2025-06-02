@@ -5,18 +5,22 @@
  * 農業災害の報告と支援申請を管理するためのAPI
  * OpenAPI spec version: 1.0
  */
-import type { HandlerPrefectureItem } from "./handlerPrefectureItem"
+import type { HandlerPrefectureItem } from './handlerPrefectureItem';
 
 export interface HandlerDisasterResponse {
-  affected_area_size?: number
-  disaster_code?: string
-  disaster_type?: string
-  estimated_damage_amount?: number
-  id?: string
-  impact_level?: string
-  name?: string
-  occurred_at?: string
-  prefecture?: HandlerPrefectureItem
-  status?: string
-  summary?: string
+  address?: string;
+  affected_area_size?: number;
+  disaster_code?: string;
+  disaster_type?: string;
+  estimated_damage_amount?: number;
+  id?: string;
+  impact_level?: string;
+  latitude?: number;
+  longitude?: number;
+  name?: string;
+  occurred_at?: string;
+  place_id?: string;
+  prefecture?: HandlerPrefectureItem;
+  status?: string;
+  summary?: string;
 }

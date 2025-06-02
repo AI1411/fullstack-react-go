@@ -1,6 +1,8 @@
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api"
 import { Link, useParams } from "@tanstack/react-router"
 import type { HandlerDisasterResponse } from "../../../api/generated/model"
 import { useDisaster } from "../../../api/hooks/useDisasters"
+import { useGoogleAPI } from "../../../providers/GoogleAPIprovider"
 import {
   formatDate,
   getStatusBadgeClass,
@@ -10,6 +12,9 @@ import {
 export const DisasterDetail = () => {
   // Get the disaster ID from the URL parameters
   const { disasterId } = useParams({ from: "/disasters/$disasterId" })
+
+  // Get Google Maps API key from provider
+  const { apiKey } = useGoogleAPI()
 
   // Fetch the disaster details
   const { data: disasterResponse, isLoading, error } = useDisaster(disasterId)
@@ -21,6 +26,11 @@ export const DisasterDetail = () => {
       currency: "JPY",
       maximumFractionDigits: 0,
     }).format(value || 0)
+  }
+
+  const containerStyle = {
+    width: "100%",
+    height: "600px",
   }
 
   // Format area size
@@ -37,6 +47,11 @@ export const DisasterDetail = () => {
   }
 
   const disaster = disasterResponse?.data as HandlerDisasterResponse
+
+  const center = {
+    lat: disaster.latitude || 35.6895, // デフォルトは東京の緯度
+    lng: disaster.longitude || 139.6917, // デフォルトは東京の経度
+  }
 
   if (!disaster) {
     return <div className="p-4">災害情報が見つかりませんでした</div>
@@ -116,6 +131,13 @@ export const DisasterDetail = () => {
             </p>
           </div>
         )}
+      </div>
+      <div className="border rounded-lg overflow-hidden">
+        <LoadScript googleMapsApiKey={apiKey}>
+          <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
+            <Marker position={center} />
+          </GoogleMap>
+        </LoadScript>
       </div>
     </div>
   )

@@ -7,11 +7,11 @@
  */
 
 export interface HandlerCreateSupportApplicationRequest {
-  applicant_name: string
-  application_date: string
-  application_id: string
-  disaster_name: string
-  notes?: string
-  requested_amount: number
-  status?: string
+  applicant_name: string;
+  application_date: string;
+  application_id: string;
+  disaster_name: string;
+  notes?: string;
+  requested_amount: number;
+  status?: string;
 }

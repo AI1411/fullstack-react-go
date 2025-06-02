@@ -39,6 +39,10 @@ func newDisaster(db *gorm.DB, opts ...gen.DOOption) disaster {
 	_disaster.ImpactLevel = field.NewString(tableName, "impact_level")
 	_disaster.AffectedAreaSize = field.NewFloat64(tableName, "affected_area_size")
 	_disaster.EstimatedDamageAmount = field.NewFloat64(tableName, "estimated_damage_amount")
+	_disaster.Latitude = field.NewFloat64(tableName, "latitude")
+	_disaster.Longitude = field.NewFloat64(tableName, "longitude")
+	_disaster.Address = field.NewString(tableName, "address")
+	_disaster.PlaceID = field.NewString(tableName, "place_id")
 	_disaster.CreatedAt = field.NewTime(tableName, "created_at")
 	_disaster.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_disaster.DeletedAt = field.NewField(tableName, "deleted_at")
@@ -80,6 +84,10 @@ type disaster struct {
 	ImpactLevel           field.String  // 被害レベル - 軽微, 中程度, 深刻, 甚大などの被害度合い
 	AffectedAreaSize      field.Float64 // 被害面積 - ヘクタール (ha) 単位での被害エリアの広さ
 	EstimatedDamageAmount field.Float64 // 被害推定金額 - 円単位での被害総額
+	Latitude              field.Float64 // 緯度 - 災害発生地点の緯度座標
+	Longitude             field.Float64 // 経度 - 災害発生地点の経度座標
+	Address               field.String  // 住所 - Google Maps APIから取得した住所情報
+	PlaceID               field.String  // Google Place ID - Google Maps APIの場所識別子
 	CreatedAt             field.Time    // 作成日時 - レコード作成日時
 	UpdatedAt             field.Time    // 更新日時 - レコード最終更新日時
 	DeletedAt             field.Field   // 削除日時 - 論理削除用のタイムスタンプ
@@ -115,6 +123,10 @@ func (d *disaster) updateTableName(table string) *disaster {
 	d.ImpactLevel = field.NewString(table, "impact_level")
 	d.AffectedAreaSize = field.NewFloat64(table, "affected_area_size")
 	d.EstimatedDamageAmount = field.NewFloat64(table, "estimated_damage_amount")
+	d.Latitude = field.NewFloat64(table, "latitude")
+	d.Longitude = field.NewFloat64(table, "longitude")
+	d.Address = field.NewString(table, "address")
+	d.PlaceID = field.NewString(table, "place_id")
 	d.CreatedAt = field.NewTime(table, "created_at")
 	d.UpdatedAt = field.NewTime(table, "updated_at")
 	d.DeletedAt = field.NewField(table, "deleted_at")
@@ -134,7 +146,7 @@ func (d *disaster) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (d *disaster) fillFieldMap() {
-	d.fieldMap = make(map[string]field.Expr, 17)
+	d.fieldMap = make(map[string]field.Expr, 21)
 	d.fieldMap["id"] = d.ID
 	d.fieldMap["disaster_code"] = d.DisasterCode
 	d.fieldMap["name"] = d.Name
@@ -146,6 +158,10 @@ func (d *disaster) fillFieldMap() {
 	d.fieldMap["impact_level"] = d.ImpactLevel
 	d.fieldMap["affected_area_size"] = d.AffectedAreaSize
 	d.fieldMap["estimated_damage_amount"] = d.EstimatedDamageAmount
+	d.fieldMap["latitude"] = d.Latitude
+	d.fieldMap["longitude"] = d.Longitude
+	d.fieldMap["address"] = d.Address
+	d.fieldMap["place_id"] = d.PlaceID
 	d.fieldMap["created_at"] = d.CreatedAt
 	d.fieldMap["updated_at"] = d.UpdatedAt
 	d.fieldMap["deleted_at"] = d.DeletedAt

@@ -57,6 +57,10 @@ type DisasterResponse struct {
 	ImpactLevel           string         `json:"impact_level"`
 	AffectedAreaSize      *float64       `json:"affected_area_size"`
 	EstimatedDamageAmount *float64       `json:"estimated_damage_amount"`
+	Latitude              *float64       `json:"latitude"`
+	Longitude             *float64       `json:"longitude"`
+	Address               *string        `json:"address"`
+	PlaceID               *string        `json:"place_id"`
 }
 
 type ListDisastersResponse struct {
@@ -170,6 +174,10 @@ func (h *disasterHandler) ListDisasters(c *gin.Context) {
 			ImpactLevel:           disaster.ImpactLevel,
 			AffectedAreaSize:      disaster.AffectedAreaSize,
 			EstimatedDamageAmount: disaster.EstimatedDamageAmount,
+			Latitude:              disaster.Latitude,
+			Longitude:             disaster.Longitude,
+			Address:               disaster.Address,
+			PlaceID:               disaster.PlaceID,
 		})
 	}
 
@@ -217,6 +225,10 @@ func (h *disasterHandler) GetDisaster(c *gin.Context) {
 		ImpactLevel:           disaster.ImpactLevel,
 		AffectedAreaSize:      disaster.AffectedAreaSize,
 		EstimatedDamageAmount: disaster.EstimatedDamageAmount,
+		Latitude:              disaster.Latitude,
+		Longitude:             disaster.Longitude,
+		Address:               disaster.Address,
+		PlaceID:               disaster.PlaceID,
 	}
 
 	h.l.InfoContext(ctx, "Successfully retrieved disaster", "disaster_id", id)

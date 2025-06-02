@@ -5,9 +5,9 @@
  * 農業災害の報告と支援申請を管理するためのAPI
  * OpenAPI spec version: 1.0
  */
-import type { HandlerRegionItem } from "./handlerRegionItem"
+import type { HandlerRegionItem } from './handlerRegionItem';
 
 export interface HandlerPrefectureItem {
-  name: string
-  region: HandlerRegionItem
+  name: string;
+  region: HandlerRegionItem;
 }

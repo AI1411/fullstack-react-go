@@ -7,10 +7,10 @@
  */
 
 export interface HandlerTimelineResponse {
-  description?: string
-  disaster_id?: string
-  event_name?: string
-  event_time?: string
-  id?: number
-  severity?: string
+  description?: string;
+  disaster_id?: string;
+  event_name?: string;
+  event_time?: string;
+  id?: number;
+  severity?: string;
 }

@@ -1,3 +1,5 @@
+-- PostGIS不使用版（GEOGRAPHY型を使わない代替案）
+
 -- 既存のENUM型を削除して再作成
 DROP TYPE IF EXISTS disaster_status CASCADE;
 CREATE TYPE disaster_status AS ENUM ('pending', 'under_review', 'in_progress', 'completed');
@@ -17,15 +19,22 @@ CREATE TABLE IF NOT EXISTS disasters
     impact_level            VARCHAR(20)              NOT NULL,
     affected_area_size      DECIMAL(10, 2),
     estimated_damage_amount DECIMAL(15, 2),
+    latitude                DECIMAL(10, 8)           NULL,
+    longitude               DECIMAL(11, 8)           NULL,
+    address                 TEXT                     NULL,
+    place_id                VARCHAR(255)             NULL,
     created_at              TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at              TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at              TIMESTAMP WITH TIME ZONE
 );
 
+-- インデックス作成
 CREATE INDEX idx_disasters_prefecture_id ON disasters (prefecture_id);
 CREATE INDEX idx_disasters_disaster_type ON disasters (disaster_type);
 CREATE INDEX idx_disasters_status ON disasters (status);
 CREATE INDEX idx_disasters_occurred_at ON disasters (occurred_at);
+CREATE INDEX idx_disasters_latitude_longitude ON disasters (latitude, longitude);
+CREATE INDEX idx_disasters_place_id ON disasters (place_id);
 
 -- テーブルとカラムにコメントを追加
 COMMENT ON TABLE disasters IS '農業災害情報管理テーブル - 各種災害の詳細情報を格納';
@@ -40,6 +49,10 @@ COMMENT ON COLUMN disasters.status IS '状態 - pending(未着手), under_review
 COMMENT ON COLUMN disasters.impact_level IS '被害レベル - 軽微, 中程度, 深刻, 甚大などの被害度合い';
 COMMENT ON COLUMN disasters.affected_area_size IS '被害面積 - ヘクタール (ha) 単位での被害エリアの広さ';
 COMMENT ON COLUMN disasters.estimated_damage_amount IS '被害推定金額 - 円単位での被害総額';
+COMMENT ON COLUMN disasters.latitude IS '緯度 - 災害発生地点の緯度座標';
+COMMENT ON COLUMN disasters.longitude IS '経度 - 災害発生地点の経度座標';
+COMMENT ON COLUMN disasters.address IS '住所 - Google Maps APIから取得した住所情報';
+COMMENT ON COLUMN disasters.place_id IS 'Google Place ID - Google Maps APIの場所識別子';
 COMMENT ON COLUMN disasters.created_at IS '作成日時 - レコード作成日時';
 COMMENT ON COLUMN disasters.updated_at IS '更新日時 - レコード最終更新日時';
 COMMENT ON COLUMN disasters.deleted_at IS '削除日時 - 論理削除用のタイムスタンプ';

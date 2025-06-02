@@ -6,4 +6,4 @@
  * OpenAPI spec version: 1.0
  */
 
-export type GetDisaster404 = { [key: string]: string }
+export type GetDisaster404 = {[key: string]: string};

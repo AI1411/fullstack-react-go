@@ -7,5 +7,5 @@
  */
 
 export interface HandlerRegionItem {
-  name: string
+  name: string;
 }

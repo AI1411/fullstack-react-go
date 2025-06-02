@@ -1,26 +1,30 @@
 import {
+  Outlet,
   createRootRoute,
   createRoute,
   createRouter,
-  Outlet,
 } from "@tanstack/react-router"
+import { Hello } from "./App"
 import { Layout } from "./components/layouts/Header"
-import { Home } from "./routes/Home"
-import { Disasters } from "./routes/Disasters"
-import { DisasterDetail } from "./routes/DisasterDetail"
 import { Application } from "./routes/Application"
 import { ApplicationDetail } from "./routes/ApplicationDetail"
-import { FacilityEquipment } from "./routes/FacilityEquipment"
 import { DamageLevel } from "./routes/DamageLevel"
-import { User } from "./routes/User"
-import { UserDetail } from "./routes/UserDetail"
+import { DisasterDetail } from "./routes/DisasterDetail"
+import { Disasters } from "./routes/Disasters"
+import { FacilityEquipment } from "./routes/FacilityEquipment"
+import { Home } from "./routes/Home"
 import { Organization } from "./routes/Organization"
 import { OrganizationDetail } from "./routes/OrganizationDetail"
-import { Hello } from "./App"
+import { User } from "./routes/User"
+import { UserDetail } from "./routes/UserDetail"
 
 // Root route with layout
 const rootRoute = createRootRoute({
-  component: () => <Layout><Outlet /></Layout>,
+  component: () => (
+    <Layout>
+      <Outlet />
+    </Layout>
+  ),
 })
 
 // Home route

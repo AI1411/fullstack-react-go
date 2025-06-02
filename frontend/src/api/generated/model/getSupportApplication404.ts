@@ -6,4 +6,4 @@
  * OpenAPI spec version: 1.0
  */
 
-export type GetSupportApplication404 = { [key: string]: string }
+export type GetSupportApplication404 = {[key: string]: string};

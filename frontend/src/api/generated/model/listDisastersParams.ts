@@ -7,28 +7,28 @@
  */
 
 export type ListDisastersParams = {
-  /**
-   * 災害名
-   */
-  name?: string
-  /**
-   * 災害種別
-   */
-  disaster_type?: string
-  /**
-   * ステータス
-   */
-  status?: string
-  /**
-   * 都道府県ID
-   */
-  prefecture_id?: number
-  /**
-   * 開始日 (RFC3339形式)
-   */
-  start_date?: string
-  /**
-   * 終了日 (RFC3339形式)
-   */
-  end_date?: string
-}
+/**
+ * 災害名
+ */
+name?: string;
+/**
+ * 災害種別
+ */
+disaster_type?: string;
+/**
+ * ステータス
+ */
+status?: string;
+/**
+ * 都道府県ID
+ */
+prefecture_id?: number;
+/**
+ * 開始日 (RFC3339形式)
+ */
+start_date?: string;
+/**
+ * 終了日 (RFC3339形式)
+ */
+end_date?: string;
+};
