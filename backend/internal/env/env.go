@@ -10,8 +10,18 @@ import (
 
 type Values struct {
 	DB
+	Auth
 	Env        string `default:"local" split_words:"true"`
 	ServerPort string `required:"true" split_words:"true"`
+}
+
+type Auth struct {
+	OIDCIssuer       string `split_words:"true"`
+	OIDCClientID     string `split_words:"true"`
+	OIDCClientSecret string `split_words:"true"`
+	OIDCRedirectURL  string `split_words:"true"`
+	JWTSecret        string `split_words:"true" default:"secret"`
+	JWTExpiration    int    `split_words:"true" default:"3600"`
 }
 
 type DB struct {

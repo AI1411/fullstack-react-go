@@ -3,9 +3,10 @@ module github.com/AI1411/fullstack-react-go
 go 1.24
 
 require (
+	github.com/coreos/go-oidc/v3 v3.10.0
 	github.com/gin-contrib/cors v1.7.5
 	github.com/gin-gonic/gin v1.10.1
-	github.com/google/go-cmp v0.6.0
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/uuid v1.6.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/pkg/errors v0.9.1
@@ -13,6 +14,7 @@ require (
 	github.com/swaggo/swag v1.16.4
 	go.uber.org/fx v1.21.0
 	go.uber.org/mock v0.5.2
+	golang.org/x/oauth2 v0.21.0
 	gorm.io/driver/postgres v1.5.11
 	gorm.io/gen v0.3.27
 	gorm.io/gorm v1.30.0
@@ -30,6 +32,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/gin-contrib/sse v1.0.0 // indirect
+	github.com/go-jose/go-jose/v4 v4.0.1 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.6 // indirect
 	github.com/go-openapi/spec v0.20.4 // indirect

@@ -12,6 +12,7 @@ import (
 type UserRepository interface {
 	Find(ctx context.Context) ([]*model.User, error)
 	FindByID(ctx context.Context, id int32) (*model.User, error)
+	FindByEmail(ctx context.Context, email string) (*model.User, error)
 	Create(ctx context.Context, user *model.User) error
 	Update(ctx context.Context, user *model.User) error
 	Delete(ctx context.Context, id int32) error
@@ -59,6 +60,18 @@ func (r *userRepository) Create(ctx context.Context, user *model.User) error {
 
 func (r *userRepository) Update(ctx context.Context, user *model.User) error {
 	return r.client.Conn(ctx).Save(user).Error
+}
+
+func (r *userRepository) FindByEmail(ctx context.Context, email string) (*model.User, error) {
+	user, err := r.query.User.
+		Where(r.query.User.Email.Eq(email)).
+		Preload(r.query.User.Organizations).
+		First()
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (r *userRepository) Delete(ctx context.Context, id int32) error {

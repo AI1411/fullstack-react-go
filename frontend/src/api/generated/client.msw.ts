@@ -16,6 +16,7 @@ import {
 } from 'msw';
 
 import type {
+  Callback200,
   HandlerDamageLevelResponse,
   HandlerFacilityEquipmentResponse,
   HandlerListDisastersResponse,
@@ -25,9 +26,18 @@ import type {
   HandlerOrganizationResponse,
   HandlerPrefectureResponse,
   HandlerSupportApplicationResponse,
-  HandlerUserResponse
+  HandlerUserResponse,
+  Logout200
 } from './model';
 
+
+export const getCallbackResponseMock = (): Callback200 => ({
+        [faker.string.alphanumeric(5)]: faker.string.alpha(20)
+      })
+
+export const getLogoutResponseMock = (): Logout200 => ({
+        [faker.string.alphanumeric(5)]: faker.string.alpha(20)
+      })
 
 export const getListDamageLevelsResponseMock = (): HandlerDamageLevelResponse[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({description: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined])})))
 
@@ -93,6 +103,40 @@ export const getGetUserResponseMock = (overrideResponse: Partial< HandlerUserRes
 
 export const getUpdateUserResponseMock = (overrideResponse: Partial< HandlerUserResponse > = {}): HandlerUserResponse => ({created_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), email: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), organizations: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({created_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), description: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), parent_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), prefecture_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), type: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), updated_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), users: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({created_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), email: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), organizations: faker.helpers.arrayElement([[], undefined]), updated_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined])})), undefined])})), undefined]), updated_at: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), ...overrideResponse})
 
+
+export const getCallbackMockHandler = (overrideResponse?: Callback200 | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<Callback200> | Callback200)) => {
+  return http.get('*/auth/callback', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getCallbackResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
+
+export const getLoginMockHandler = (overrideResponse?: unknown | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<unknown> | unknown)) => {
+  return http.get('*/auth/login', async (info) => {await delay(1000);
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+    return new HttpResponse(null,
+      { status: 200,
+        
+      })
+  })
+}
+
+export const getLogoutMockHandler = (overrideResponse?: Logout200 | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<Logout200> | Logout200)) => {
+  return http.post('*/auth/logout', async (info) => {await delay(1000);
+  
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getLogoutResponseMock()),
+      { status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+  })
+}
 
 export const getListDamageLevelsMockHandler = (overrideResponse?: HandlerDamageLevelResponse[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<HandlerDamageLevelResponse[]> | HandlerDamageLevelResponse[])) => {
   return http.get('*/damage-levels', async (info) => {await delay(1000);
@@ -538,6 +582,9 @@ export const getUpdateUserMockHandler = (overrideResponse?: HandlerUserResponse 
   })
 }
 export const getApiMock = () => [
+  getCallbackMockHandler(),
+  getLoginMockHandler(),
+  getLogoutMockHandler(),
   getListDamageLevelsMockHandler(),
   getCreateDamageLevelMockHandler(),
   getDeleteDamageLevelMockHandler(),

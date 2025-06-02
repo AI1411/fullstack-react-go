@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 
+	"github.com/AI1411/fullstack-react-go/internal/env"
 	"github.com/AI1411/fullstack-react-go/internal/handler"
 	"github.com/AI1411/fullstack-react-go/internal/infra/datastore"
 	"github.com/AI1411/fullstack-react-go/internal/infra/db"
@@ -41,6 +42,7 @@ type Module struct {
 	fx.Out
 
 	Logger                    *logger.Logger
+	EnvValues                 *env.Values
 	DBClient                  db.Client
 	GinEngine                 *gin.Engine
 	DisasterRepo              datastore.DisasterRepository
@@ -67,11 +69,20 @@ type Module struct {
 	FacilityEquipmentHandler  handler.FacilityEquipment
 	NotificationHandler       handler.Notification
 	OrganizationHandler       handler.Organization
+	UserRepo                  datastore.UserRepository
+	UserUsecase               usecase.UserUseCase
+	UserHandler               handler.User
+	AuthHandler               handler.Auth
 }
 
 // ProvideLogger creates a new logger instance
 func ProvideLogger() *logger.Logger {
 	return logger.New(logger.DefaultConfig())
+}
+
+// ProvideEnvValues creates a new env values instance
+func ProvideEnvValues() (*env.Values, error) {
+	return env.NewValues()
 }
 
 // ProvideDBClient creates a new database client
@@ -247,12 +258,18 @@ func ProvideUserHandler(l *logger.Logger, usecase usecase.UserUseCase) handler.U
 	return handler.NewUserHandler(l, usecase)
 }
 
+// ProvideAuthHandler creates a new auth handler
+func ProvideAuthHandler(ctx context.Context, l *logger.Logger, usecase usecase.UserUseCase, env *env.Values) (handler.Auth, error) {
+	return handler.NewAuthHandler(ctx, l, usecase, env)
+}
+
 // RegisterRoutes registers all HTTP routes
 func RegisterRoutes(
 	lc fx.Lifecycle,
 	r *gin.Engine,
 	l *logger.Logger,
 	dbClient db.Client,
+	env *env.Values,
 	disasterHandler handler.Disaster,
 	prefectureHandler handler.Prefecture,
 	timelineHandler handler.Timeline,
@@ -262,6 +279,7 @@ func RegisterRoutes(
 	notificationHandler handler.Notification,
 	organizationHandler handler.Organization,
 	userHandler handler.User,
+	authHandler handler.Auth,
 ) {
 	// Context for health check
 	ctx := context.Background()
@@ -338,6 +356,11 @@ func RegisterRoutes(
 	r.PUT("/users/:id", userHandler.UpdateUser)
 	r.DELETE("/users/:id", userHandler.DeleteUser)
 
+	// 認証関連のルート
+	r.GET("/auth/login", authHandler.Login)
+	r.GET("/auth/callback", authHandler.Callback)
+	r.POST("/auth/logout", authHandler.Logout)
+
 	// Swagger JSON エンドポイント
 	r.GET("/docs", func(c *gin.Context) {
 		c.Header("Content-Type", "application/json")
@@ -363,11 +386,18 @@ func RegisterRoutes(
 	})
 }
 
+// ProvideAppContext provides a background context for the application
+func ProvideAppContext() context.Context {
+	return context.Background()
+}
+
 func main() {
 	app := fx.New(
 		// Provide all the constructors needed by the application
 		fx.Provide(
+			ProvideAppContext,
 			ProvideLogger,
+			ProvideEnvValues,
 			ProvideDBClient,
 			ProvideGinEngine,
 			ProvideDisasterRepository,
@@ -397,6 +427,7 @@ func main() {
 			ProvideNotificationHandler,
 			ProvideOrganizationHandler,
 			ProvideUserHandler,
+			ProvideAuthHandler,
 		),
 		// Register the lifecycle hooks
 		fx.Invoke(RegisterRoutes),

@@ -32,6 +32,10 @@ import type {
 } from 'axios';
 
 import type {
+  Callback200,
+  Callback400,
+  Callback500,
+  CallbackParams,
   CreateDamageLevel400,
   CreateDisaster400,
   CreateFacilityEquipment400,
@@ -86,6 +90,7 @@ import type {
   HandlerUserResponse,
   ListDisastersParams,
   ListUsers500,
+  Logout200,
   MarkAsRead400,
   MarkAsRead404,
   UpdateDamageLevel400,
@@ -106,6 +111,244 @@ import type {
 
 
 
+/**
+ * OIDCプロバイダーからのコールバックを処理します
+ * @summary OIDCコールバック
+ */
+export const callback = (
+    params: CallbackParams, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<Callback200>> => {
+    
+    
+    return axios.default.get(
+      `/auth/callback`,{
+    ...options,
+        params: {...params, ...options?.params},}
+    );
+  }
+
+
+export const getCallbackQueryKey = (params: CallbackParams,) => {
+    return [`/auth/callback`, ...(params ? [params]: [])] as const;
+    }
+
+    
+export const getCallbackQueryOptions = <TData = Awaited<ReturnType<typeof callback>>, TError = AxiosError<Callback400 | Callback500>>(params: CallbackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof callback>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getCallbackQueryKey(params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof callback>>> = ({ signal }) => callback(params, { signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof callback>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type CallbackQueryResult = NonNullable<Awaited<ReturnType<typeof callback>>>
+export type CallbackQueryError = AxiosError<Callback400 | Callback500>
+
+
+export function useCallback<TData = Awaited<ReturnType<typeof callback>>, TError = AxiosError<Callback400 | Callback500>>(
+ params: CallbackParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof callback>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof callback>>,
+          TError,
+          Awaited<ReturnType<typeof callback>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useCallback<TData = Awaited<ReturnType<typeof callback>>, TError = AxiosError<Callback400 | Callback500>>(
+ params: CallbackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof callback>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof callback>>,
+          TError,
+          Awaited<ReturnType<typeof callback>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useCallback<TData = Awaited<ReturnType<typeof callback>>, TError = AxiosError<Callback400 | Callback500>>(
+ params: CallbackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof callback>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary OIDCコールバック
+ */
+
+export function useCallback<TData = Awaited<ReturnType<typeof callback>>, TError = AxiosError<Callback400 | Callback500>>(
+ params: CallbackParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof callback>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getCallbackQueryOptions(params,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * OIDCプロバイダーへのログインを開始します
+ * @summary OIDCログイン
+ */
+export const login = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<unknown>> => {
+    
+    
+    return axios.default.get(
+      `/auth/login`,options
+    );
+  }
+
+
+export const getLoginQueryKey = () => {
+    return [`/auth/login`] as const;
+    }
+
+    
+export const getLoginQueryOptions = <TData = Awaited<ReturnType<typeof login>>, TError = AxiosError<void>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof login>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getLoginQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof login>>> = ({ signal }) => login({ signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof login>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type LoginQueryResult = NonNullable<Awaited<ReturnType<typeof login>>>
+export type LoginQueryError = AxiosError<void>
+
+
+export function useLogin<TData = Awaited<ReturnType<typeof login>>, TError = AxiosError<void>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof login>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof login>>,
+          TError,
+          Awaited<ReturnType<typeof login>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useLogin<TData = Awaited<ReturnType<typeof login>>, TError = AxiosError<void>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof login>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof login>>,
+          TError,
+          Awaited<ReturnType<typeof login>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useLogin<TData = Awaited<ReturnType<typeof login>>, TError = AxiosError<void>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof login>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary OIDCログイン
+ */
+
+export function useLogin<TData = Awaited<ReturnType<typeof login>>, TError = AxiosError<void>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof login>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getLoginQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * ユーザーをログアウトします
+ * @summary ログアウト
+ */
+export const logout = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<Logout200>> => {
+    
+    
+    return axios.default.post(
+      `/auth/logout`,undefined,options
+    );
+  }
+
+
+
+export const getLogoutMutationOptions = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext> => {
+
+const mutationKey = ['logout'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof logout>>, void> = () => {
+          
+
+          return  logout(axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type LogoutMutationResult = NonNullable<Awaited<ReturnType<typeof logout>>>
+    
+    export type LogoutMutationError = AxiosError<unknown>
+
+    /**
+ * @summary ログアウト
+ */
+export const useLogout = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof logout>>,
+        TError,
+        void,
+        TContext
+      > => {
+
+      const mutationOptions = getLogoutMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
 /**
  * @summary 被害程度一覧取得
  */

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   backend: {
     output: {
       mode: "split",
@@ -9,7 +9,7 @@ module.exports = {
       prettier: {
         semi: false,
         singleQuote: true,
-        trailingComma: 'es5',
+        trailingComma: "es5",
       },
     },
     input: {
