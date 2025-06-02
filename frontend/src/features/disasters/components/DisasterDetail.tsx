@@ -1,4 +1,4 @@
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api"
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api"
 import { Link, useParams } from "@tanstack/react-router"
 import type { HandlerDisasterResponse } from "../../../api/generated/model"
 import { useDisaster } from "../../../api/hooks/useDisasters"
@@ -15,6 +15,12 @@ export const DisasterDetail = () => {
 
   // Get Google Maps API key from provider
   const { apiKey } = useGoogleAPI()
+
+  // Load Google Maps API
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: apiKey,
+    id: 'google-map-script'
+  })
 
   // Fetch the disaster details
   const { data: disasterResponse, isLoading, error } = useDisaster(disasterId)
@@ -133,11 +139,15 @@ export const DisasterDetail = () => {
         )}
       </div>
       <div className="border rounded-lg overflow-hidden">
-        <LoadScript googleMapsApiKey={apiKey}>
+        {isLoaded ? (
           <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
             <Marker position={center} />
           </GoogleMap>
-        </LoadScript>
+        ) : (
+          <div style={containerStyle} className="flex items-center justify-center bg-gray-100">
+            <p>地図を読み込み中...</p>
+          </div>
+        )}
       </div>
     </div>
   )
