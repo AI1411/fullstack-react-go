@@ -4,7 +4,18 @@ export interface Disaster {
   disaster_type?: string
   status?: string
   occurred_at?: string
-  // Add other fields as needed
+  latitude?: number
+  longitude?: number
+  address?: string
+  affected_area_size?: number
+  estimated_damage_amount?: number
+  impact_level?: string
+  place_id?: string
+  prefecture?: {
+    id?: string
+    name?: string
+  }
+  summary?: string
 }
 
 export interface DisasterSearchParams {
