@@ -29,7 +29,6 @@ var (
 	Notification       *notification
 	Organization       *organization
 	Prefecture         *prefecture
-	Region             *region
 	Role               *role
 	SupportApplication *supportApplication
 	Timeline           *timeline
@@ -51,7 +50,6 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	Notification = &Q.Notification
 	Organization = &Q.Organization
 	Prefecture = &Q.Prefecture
-	Region = &Q.Region
 	Role = &Q.Role
 	SupportApplication = &Q.SupportApplication
 	Timeline = &Q.Timeline
@@ -74,7 +72,6 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		Notification:       newNotification(db, opts...),
 		Organization:       newOrganization(db, opts...),
 		Prefecture:         newPrefecture(db, opts...),
-		Region:             newRegion(db, opts...),
 		Role:               newRole(db, opts...),
 		SupportApplication: newSupportApplication(db, opts...),
 		Timeline:           newTimeline(db, opts...),
@@ -98,7 +95,6 @@ type Query struct {
 	Notification       notification
 	Organization       organization
 	Prefecture         prefecture
-	Region             region
 	Role               role
 	SupportApplication supportApplication
 	Timeline           timeline
@@ -123,7 +119,6 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		Notification:       q.Notification.clone(db),
 		Organization:       q.Organization.clone(db),
 		Prefecture:         q.Prefecture.clone(db),
-		Region:             q.Region.clone(db),
 		Role:               q.Role.clone(db),
 		SupportApplication: q.SupportApplication.clone(db),
 		Timeline:           q.Timeline.clone(db),
@@ -155,7 +150,6 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		Notification:       q.Notification.replaceDB(db),
 		Organization:       q.Organization.replaceDB(db),
 		Prefecture:         q.Prefecture.replaceDB(db),
-		Region:             q.Region.replaceDB(db),
 		Role:               q.Role.replaceDB(db),
 		SupportApplication: q.SupportApplication.replaceDB(db),
 		Timeline:           q.Timeline.replaceDB(db),
@@ -177,7 +171,6 @@ type queryCtx struct {
 	Notification       INotificationDo
 	Organization       IOrganizationDo
 	Prefecture         IPrefectureDo
-	Region             IRegionDo
 	Role               IRoleDo
 	SupportApplication ISupportApplicationDo
 	Timeline           ITimelineDo
@@ -199,7 +192,6 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		Notification:       q.Notification.WithContext(ctx),
 		Organization:       q.Organization.WithContext(ctx),
 		Prefecture:         q.Prefecture.WithContext(ctx),
-		Region:             q.Region.WithContext(ctx),
 		Role:               q.Role.WithContext(ctx),
 		SupportApplication: q.SupportApplication.WithContext(ctx),
 		Timeline:           q.Timeline.WithContext(ctx),

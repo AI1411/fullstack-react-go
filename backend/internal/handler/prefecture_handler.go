@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -31,9 +30,8 @@ func NewPrefectureHandler(
 }
 
 type PrefectureResponse struct {
-	ID       int32  `json:"id"`
-	Name     string `json:"name"`
-	RegionID int32  `json:"region_id"`
+	ID   int32  `json:"id"`
+	Name string `json:"name"`
 }
 
 // ListPrefectures @title 都道府県一覧取得
@@ -57,14 +55,30 @@ func (h *prefectureHandler) ListPrefectures(c *gin.Context) {
 	var response []*PrefectureResponse
 	for _, prefecture := range prefectures {
 		response = append(response, &PrefectureResponse{
-			ID:       prefecture.ID,
-			Name:     prefecture.Name,
-			RegionID: prefecture.RegionID,
+			ID:   prefecture.ID,
+			Name: prefecture.Name,
 		})
 	}
 
 	h.l.InfoContext(ctx, "Successfully listed prefectures", "count", len(response))
 	c.JSON(http.StatusOK, response)
+}
+
+type GetPrefectureResponse struct {
+	ID             int32           `json:"id"`
+	Name           string          `json:"name"`
+	Municipalities []*Municipality `json:"municipalities"`
+}
+
+type Municipality struct {
+	ID                    int32  `json:"id"`
+	PrefectureCode        string `json:"prefecture_code"`
+	OrganizationCode      string `json:"organization_code"`
+	PrefectureNameKanji   string `json:"prefecture_name_kanji"`
+	MunicipalityNameKanji string `json:"municipality_name_kanji"`
+	PrefectureNameKana    string `json:"prefecture_name_kana"`
+	MunicipalityNameKana  string `json:"municipality_name_kana"`
+	IsActive              bool   `json:"is_active"`
 }
 
 // GetPrefecture @title 都道府県詳細取得
@@ -78,31 +92,35 @@ func (h *prefectureHandler) ListPrefectures(c *gin.Context) {
 // @Failure 404 {object} map[string]string
 // @Router /prefectures/{id} [get]
 func (h *prefectureHandler) GetPrefecture(c *gin.Context) {
-	idStr := c.Param("id")
 	ctx := c.Request.Context()
+	code := c.Param("code")
 
-	id, err := strconv.ParseInt(idStr, 10, 32)
+	prefecture, err := h.prefectureUseCase.GetPrefectureByID(ctx, code)
 	if err != nil {
-		h.l.ErrorContext(ctx, err, "Invalid prefecture ID", "prefecture_id_str", idStr)
-		c.JSON(400, gin.H{"error": "Invalid prefecture ID"})
-
-		return
-	}
-
-	prefecture, err := h.prefectureUseCase.GetPrefectureByID(ctx, int32(id))
-	if err != nil {
-		h.l.ErrorContext(ctx, err, "Prefecture not found", "prefecture_id", id)
+		h.l.ErrorContext(ctx, err, "Prefecture not found", "prefecture_code", code)
 		c.JSON(404, gin.H{"error": "Prefecture not found"})
 
 		return
 	}
 
-	response := &PrefectureResponse{
-		ID:       prefecture.ID,
-		Name:     prefecture.Name,
-		RegionID: prefecture.RegionID,
+	response := &GetPrefectureResponse{
+		ID:             prefecture.ID,
+		Name:           prefecture.Name,
+		Municipalities: make([]*Municipality, len(prefecture.Municipalities)),
 	}
 
-	h.l.InfoContext(ctx, "Successfully retrieved prefecture", "prefecture_id", id)
+	for i, municipality := range prefecture.Municipalities {
+		response.Municipalities[i] = &Municipality{
+			ID:                    municipality.ID,
+			PrefectureCode:        municipality.PrefectureCode,
+			OrganizationCode:      municipality.OrganizationCode,
+			PrefectureNameKanji:   municipality.PrefectureNameKanji,
+			MunicipalityNameKanji: municipality.MunicipalityNameKanji,
+			PrefectureNameKana:    municipality.PrefectureNameKana,
+			MunicipalityNameKana:  municipality.MunicipalityNameKana,
+			IsActive:              municipality.IsActive,
+		}
+	}
+
 	c.JSON(http.StatusOK, response)
 }

@@ -29,7 +29,7 @@ type DB struct {
 	DatabaseUsername      string        `required:"true" split_words:"true"`
 	DatabasePassword      string        `required:"true" split_words:"true"`
 	DatabaseName          string        `required:"true" split_words:"true"`
-	DatabasePort          string        `default:"3306" split_words:"true"`
+	DatabasePort          string        `required:"true" split_words:"true"`
 	ConnectionMaxOpen     int           `default:"10" split_words:"true"`
 	ConnectionMaxIdle     int           `default:"2" split_words:"true"`
 	ConnectionMaxLifetime time.Duration `default:"300s" split_words:"true"`

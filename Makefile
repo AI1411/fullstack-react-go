@@ -105,3 +105,6 @@ ci: fmt quality test ## CI環境で実行するチェック
 
 mockgen: ## モックを生成
 	docker compose exec gen-api go generate ./...
+
+seeder: ## シーダーを実行
+	docker compose exec gen-api go run ./cmd/seed/municipality/main.go

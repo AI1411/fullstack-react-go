@@ -38,13 +38,14 @@ func main() {
 	allModels := []interface{}{
 		// ユーザーモデル
 		g.GenerateModel(
-			model.TableNameRegion,
-			gen.FieldRelateModel(field.HasMany, "Prefectures", model.Prefecture{}, nil),
-		),
-		g.GenerateModel(
 			model.TableNamePrefecture,
 			gen.FieldRelateModel(field.HasMany, "Disasters", model.Disaster{}, nil),
-			gen.FieldRelateModel(field.BelongsTo, "Region", model.Region{}, nil),
+			gen.FieldRelateModel(field.HasMany, "Municipalities", model.Municipality{}, &field.RelateConfig{
+				GORMTag: field.GormTag{
+					"foreignKey": []string{"PrefectureCode"},
+					"references": []string{"Code"},
+				},
+			}),
 		),
 		g.GenerateModel(
 			model.TableNameDisaster,

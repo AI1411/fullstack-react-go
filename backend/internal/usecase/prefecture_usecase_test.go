@@ -37,19 +37,16 @@ func TestPrefectureUseCase_ListPrefectures(t *testing.T) {
 			mockSetup: func(mockRepo *mockdatastore.MockPrefectureRepository) {
 				prefectures := []*model.Prefecture{
 					{
-						ID:       1,
-						Name:     "北海道",
-						RegionID: 1,
+						ID:   1,
+						Name: "北海道",
 					},
 					{
-						ID:       13,
-						Name:     "東京都",
-						RegionID: 3,
+						ID:   13,
+						Name: "東京都",
 					},
 					{
-						ID:       27,
-						Name:     "大阪府",
-						RegionID: 5,
+						ID:   27,
+						Name: "大阪府",
 					},
 				}
 				mockRepo.EXPECT().Find(gomock.Any()).Return(prefectures, nil)
@@ -106,9 +103,8 @@ func TestPrefectureUseCase_GetPrefectureByID(t *testing.T) {
 			id:   13,
 			mockSetup: func(mockRepo *mockdatastore.MockPrefectureRepository) {
 				prefecture := &model.Prefecture{
-					ID:       13,
-					Name:     "東京都",
-					RegionID: 3,
+					ID:   13,
+					Name: "東京都",
 				}
 				mockRepo.EXPECT().FindByID(gomock.Any(), int32(13)).Return(prefecture, nil)
 			},

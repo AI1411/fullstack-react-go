@@ -11,7 +11,7 @@ import (
 
 type PrefectureRepository interface {
 	Find(ctx context.Context) ([]*model.Prefecture, error)
-	FindByID(ctx context.Context, id int32) (*model.Prefecture, error)
+	FindByID(ctx context.Context, code string) (*model.Prefecture, error)
 }
 
 type prefectureRepository struct {
@@ -38,8 +38,12 @@ func (r *prefectureRepository) Find(ctx context.Context) ([]*model.Prefecture, e
 	return prefectures, nil
 }
 
-func (r *prefectureRepository) FindByID(ctx context.Context, id int32) (*model.Prefecture, error) {
-	prefecture, err := r.query.WithContext(ctx).Prefecture.Where(r.query.Prefecture.ID.Eq(id)).First()
+func (r *prefectureRepository) FindByID(ctx context.Context, code string) (*model.Prefecture, error) {
+	prefecture, err := r.query.WithContext(ctx).
+		Prefecture.
+		Where(r.query.Prefecture.Code.Eq(code)).
+		Preload(r.query.Prefecture.Municipalities).
+		First()
 	if err != nil {
 		return nil, err
 	}

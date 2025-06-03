@@ -5,7 +5,7 @@
 ## マイグレーションファイル一覧
 
 1. `000001_create_users_table.up.sql` - ユーザーテーブルの作成
-2. `000002_create_prefectures_and_regions_tables.up.sql` - 都道府県と地域のマスターテーブルの作成
+2. `000002_create_prefectures_tables.up.sql` - 都道府県と地域のマスターテーブルの作成
 3. `000003_create_disasters_table.up.sql` - 災害情報テーブルの作成
 4. `000004_create_timeline_table.up.sql` - タイムラインテーブルの作成
 5. `000005_create_disaster_documents_table.up.sql` - 災害関連書類テーブルの作成

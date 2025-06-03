@@ -8,11 +8,11 @@ const TableNamePrefecture = "prefectures"
 
 // Prefecture mapped from table <prefectures>
 type Prefecture struct {
-	ID        int32      `gorm:"column:id;type:integer;primaryKey;autoIncrement:true;comment:都道府県名" json:"id"`                                    // 都道府県名
-	Name      string     `gorm:"column:name;type:character varying(10);not null;index:idx_prefectures_name,priority:1;comment:都道府県名" json:"name"` // 都道府県名
-	RegionID  int32      `gorm:"column:region_id;type:integer;not null;index:idx_prefectures_region_id,priority:1;comment:地域ID" json:"region_id"` // 地域ID
-	Disasters []Disaster `json:"disasters"`
-	Region    Region     `json:"region"`
+	ID             int32          `gorm:"column:id;type:integer;primaryKey;autoIncrement:true;comment:都道府県名" json:"id"` // 都道府県名
+	Code           string         `gorm:"column:code;type:character varying(2);not null;index:idx_prefectures_code,priority:1" json:"code"`
+	Name           string         `gorm:"column:name;type:character varying(10);not null;index:idx_prefectures_name,priority:1;comment:都道府県名" json:"name"` // 都道府県名
+	Disasters      []Disaster     `json:"disasters"`
+	Municipalities []Municipality `gorm:"foreignKey:PrefectureCode;references:Code" json:"municipalities"`
 }
 
 // TableName Prefecture's table name

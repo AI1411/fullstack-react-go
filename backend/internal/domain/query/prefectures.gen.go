@@ -29,18 +29,18 @@ func newPrefecture(db *gorm.DB, opts ...gen.DOOption) prefecture {
 	tableName := _prefecture.prefectureDo.TableName()
 	_prefecture.ALL = field.NewAsterisk(tableName)
 	_prefecture.ID = field.NewInt32(tableName, "id")
+	_prefecture.Code = field.NewString(tableName, "code")
 	_prefecture.Name = field.NewString(tableName, "name")
-	_prefecture.RegionID = field.NewInt32(tableName, "region_id")
 	_prefecture.Disasters = prefectureHasManyDisasters{
 		db: db.Session(&gorm.Session{}),
 
 		RelationField: field.NewRelation("Disasters", "model.Disaster"),
 	}
 
-	_prefecture.Region = prefectureBelongsToRegion{
+	_prefecture.Municipalities = prefectureHasManyMunicipalities{
 		db: db.Session(&gorm.Session{}),
 
-		RelationField: field.NewRelation("Region", "model.Region"),
+		RelationField: field.NewRelation("Municipalities", "model.Municipality"),
 	}
 
 	_prefecture.fillFieldMap()
@@ -52,12 +52,12 @@ type prefecture struct {
 	prefectureDo
 
 	ALL       field.Asterisk
-	ID        field.Int32  // 都道府県名
+	ID        field.Int32 // 都道府県名
+	Code      field.String
 	Name      field.String // 都道府県名
-	RegionID  field.Int32  // 地域ID
 	Disasters prefectureHasManyDisasters
 
-	Region prefectureBelongsToRegion
+	Municipalities prefectureHasManyMunicipalities
 
 	fieldMap map[string]field.Expr
 }
@@ -75,8 +75,8 @@ func (p prefecture) As(alias string) *prefecture {
 func (p *prefecture) updateTableName(table string) *prefecture {
 	p.ALL = field.NewAsterisk(table)
 	p.ID = field.NewInt32(table, "id")
+	p.Code = field.NewString(table, "code")
 	p.Name = field.NewString(table, "name")
-	p.RegionID = field.NewInt32(table, "region_id")
 
 	p.fillFieldMap()
 
@@ -95,8 +95,8 @@ func (p *prefecture) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 func (p *prefecture) fillFieldMap() {
 	p.fieldMap = make(map[string]field.Expr, 5)
 	p.fieldMap["id"] = p.ID
+	p.fieldMap["code"] = p.Code
 	p.fieldMap["name"] = p.Name
-	p.fieldMap["region_id"] = p.RegionID
 
 }
 
@@ -104,15 +104,15 @@ func (p prefecture) clone(db *gorm.DB) prefecture {
 	p.prefectureDo.ReplaceConnPool(db.Statement.ConnPool)
 	p.Disasters.db = db.Session(&gorm.Session{Initialized: true})
 	p.Disasters.db.Statement.ConnPool = db.Statement.ConnPool
-	p.Region.db = db.Session(&gorm.Session{Initialized: true})
-	p.Region.db.Statement.ConnPool = db.Statement.ConnPool
+	p.Municipalities.db = db.Session(&gorm.Session{Initialized: true})
+	p.Municipalities.db.Statement.ConnPool = db.Statement.ConnPool
 	return p
 }
 
 func (p prefecture) replaceDB(db *gorm.DB) prefecture {
 	p.prefectureDo.ReplaceDB(db)
 	p.Disasters.db = db.Session(&gorm.Session{})
-	p.Region.db = db.Session(&gorm.Session{})
+	p.Municipalities.db = db.Session(&gorm.Session{})
 	return p
 }
 
@@ -197,13 +197,13 @@ func (a prefectureHasManyDisastersTx) Unscoped() *prefectureHasManyDisastersTx {
 	return &a
 }
 
-type prefectureBelongsToRegion struct {
+type prefectureHasManyMunicipalities struct {
 	db *gorm.DB
 
 	field.RelationField
 }
 
-func (a prefectureBelongsToRegion) Where(conds ...field.Expr) *prefectureBelongsToRegion {
+func (a prefectureHasManyMunicipalities) Where(conds ...field.Expr) *prefectureHasManyMunicipalities {
 	if len(conds) == 0 {
 		return &a
 	}
@@ -216,32 +216,32 @@ func (a prefectureBelongsToRegion) Where(conds ...field.Expr) *prefectureBelongs
 	return &a
 }
 
-func (a prefectureBelongsToRegion) WithContext(ctx context.Context) *prefectureBelongsToRegion {
+func (a prefectureHasManyMunicipalities) WithContext(ctx context.Context) *prefectureHasManyMunicipalities {
 	a.db = a.db.WithContext(ctx)
 	return &a
 }
 
-func (a prefectureBelongsToRegion) Session(session *gorm.Session) *prefectureBelongsToRegion {
+func (a prefectureHasManyMunicipalities) Session(session *gorm.Session) *prefectureHasManyMunicipalities {
 	a.db = a.db.Session(session)
 	return &a
 }
 
-func (a prefectureBelongsToRegion) Model(m *model.Prefecture) *prefectureBelongsToRegionTx {
-	return &prefectureBelongsToRegionTx{a.db.Model(m).Association(a.Name())}
+func (a prefectureHasManyMunicipalities) Model(m *model.Prefecture) *prefectureHasManyMunicipalitiesTx {
+	return &prefectureHasManyMunicipalitiesTx{a.db.Model(m).Association(a.Name())}
 }
 
-func (a prefectureBelongsToRegion) Unscoped() *prefectureBelongsToRegion {
+func (a prefectureHasManyMunicipalities) Unscoped() *prefectureHasManyMunicipalities {
 	a.db = a.db.Unscoped()
 	return &a
 }
 
-type prefectureBelongsToRegionTx struct{ tx *gorm.Association }
+type prefectureHasManyMunicipalitiesTx struct{ tx *gorm.Association }
 
-func (a prefectureBelongsToRegionTx) Find() (result *model.Region, err error) {
+func (a prefectureHasManyMunicipalitiesTx) Find() (result []*model.Municipality, err error) {
 	return result, a.tx.Find(&result)
 }
 
-func (a prefectureBelongsToRegionTx) Append(values ...*model.Region) (err error) {
+func (a prefectureHasManyMunicipalitiesTx) Append(values ...*model.Municipality) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -249,7 +249,7 @@ func (a prefectureBelongsToRegionTx) Append(values ...*model.Region) (err error)
 	return a.tx.Append(targetValues...)
 }
 
-func (a prefectureBelongsToRegionTx) Replace(values ...*model.Region) (err error) {
+func (a prefectureHasManyMunicipalitiesTx) Replace(values ...*model.Municipality) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -257,7 +257,7 @@ func (a prefectureBelongsToRegionTx) Replace(values ...*model.Region) (err error
 	return a.tx.Replace(targetValues...)
 }
 
-func (a prefectureBelongsToRegionTx) Delete(values ...*model.Region) (err error) {
+func (a prefectureHasManyMunicipalitiesTx) Delete(values ...*model.Municipality) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -265,15 +265,15 @@ func (a prefectureBelongsToRegionTx) Delete(values ...*model.Region) (err error)
 	return a.tx.Delete(targetValues...)
 }
 
-func (a prefectureBelongsToRegionTx) Clear() error {
+func (a prefectureHasManyMunicipalitiesTx) Clear() error {
 	return a.tx.Clear()
 }
 
-func (a prefectureBelongsToRegionTx) Count() int64 {
+func (a prefectureHasManyMunicipalitiesTx) Count() int64 {
 	return a.tx.Count()
 }
 
-func (a prefectureBelongsToRegionTx) Unscoped() *prefectureBelongsToRegionTx {
+func (a prefectureHasManyMunicipalitiesTx) Unscoped() *prefectureHasManyMunicipalitiesTx {
 	a.tx = a.tx.Unscoped()
 	return &a
 }

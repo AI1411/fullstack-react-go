@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -87,7 +88,23 @@ func ProvideEnvValues() (*env.Values, error) {
 
 // ProvideDBClient creates a new database client
 func ProvideDBClient(lc fx.Lifecycle, l *logger.Logger) (db.Client, error) {
-	dbClient, err := db.NewSqlHandler(db.DefaultDatabaseConfig(), l)
+	e, err := env.NewValues()
+	if err != nil {
+		l.Error("failed to load environment variables", "error", err)
+		return nil, err
+	}
+	dbClient, err := db.NewSqlHandler(&db.DatabaseConfig{
+		Host:            e.DatabaseHost,
+		Port:            e.DatabasePort,
+		User:            e.DatabaseUsername,
+		Password:        e.DatabasePassword,
+		DBName:          e.DatabaseName,
+		SSLMode:         "disable",
+		Timezone:        "Asia/Tokyo",
+		MaxIdleConns:    e.ConnectionMaxIdle,
+		MaxOpenConns:    e.ConnectionMaxOpen,
+		ConnMaxLifetime: e.ConnectionMaxLifetime,
+	}, l)
 	if err != nil {
 		l.Error("failed to connect to database", "error", err)
 		return nil, err
@@ -309,7 +326,7 @@ func RegisterRoutes(
 
 	// 都道府県関連のルート
 	r.GET("/prefectures", prefectureHandler.ListPrefectures)
-	r.GET("/prefectures/:id", prefectureHandler.GetPrefecture)
+	r.GET("/prefectures/:code", prefectureHandler.GetPrefecture)
 
 	// タイムライン関連のルート
 	r.GET("/disasters/:id/timelines", timelineHandler.GetTimelinesByDisasterID)
@@ -372,8 +389,8 @@ func RegisterRoutes(
 		OnStart: func(ctx context.Context) error {
 			// Start HTTP server in a goroutine so it doesn't block
 			go func() {
-				l.Info("Starting server on :8080")
-				if err := r.Run(":8080"); err != nil {
+				l.Info(fmt.Sprintf("Starting server on :%s", env.ServerPort))
+				if err := r.Run(fmt.Sprintf(":%s", env.ServerPort)); err != nil {
 					l.Error("Failed to start server", "error", err)
 				}
 			}()
