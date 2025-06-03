@@ -27,8 +27,8 @@ type SQLLogger interface {
 	logger.Interface
 }
 
-// SqlHandler はDatabaseHandlerの実装
-type SqlHandler struct {
+// SQLHandler はDatabaseHandlerの実装
+type SQLHandler struct {
 	conn *gorm.DB
 }
 
@@ -170,8 +170,8 @@ func DefaultDatabaseConfig() *DatabaseConfig {
 	}
 }
 
-// NewSqlHandler creates a new SqlHandler
-func NewSqlHandler(config *DatabaseConfig, appLogger *applogger.Logger) (Client, error) {
+// NewSQLHandler creates a new SQLHandler
+func NewSQLHandler(config *DatabaseConfig, appLogger *applogger.Logger) (Client, error) {
 	if config == nil {
 		config = DefaultDatabaseConfig()
 	}
@@ -199,18 +199,18 @@ func NewSqlHandler(config *DatabaseConfig, appLogger *applogger.Logger) (Client,
 	sqlDB.SetMaxOpenConns(config.MaxOpenConns)
 	sqlDB.SetConnMaxLifetime(config.ConnMaxLifetime)
 
-	return &SqlHandler{
+	return &SQLHandler{
 		conn: db,
 	}, nil
 }
 
 // Conn returns the underlying GORM DB instance
-func (s *SqlHandler) Conn(ctx context.Context) *gorm.DB {
+func (s *SQLHandler) Conn(ctx context.Context) *gorm.DB {
 	return s.conn.WithContext(ctx)
 }
 
 // Close closes the database connection
-func (s *SqlHandler) Close() error {
+func (s *SQLHandler) Close() error {
 	sqlDB, err := s.conn.DB()
 	if err != nil {
 		return fmt.Errorf("failed to get underlying sql.DB: %w", err)
@@ -220,7 +220,7 @@ func (s *SqlHandler) Close() error {
 }
 
 // Ping verifies a connection to the database is still alive
-func (s *SqlHandler) Ping(ctx context.Context) error {
+func (s *SQLHandler) Ping(ctx context.Context) error {
 	sqlDB, err := s.conn.DB()
 	if err != nil {
 		return fmt.Errorf("failed to get underlying sql.DB: %w", err)
@@ -230,29 +230,11 @@ func (s *SqlHandler) Ping(ctx context.Context) error {
 }
 
 // Transaction executes a function within a database transaction
-func (s *SqlHandler) Transaction(ctx context.Context, fn func(tx Client) error) error {
+func (s *SQLHandler) Transaction(ctx context.Context, fn func(tx Client) error) error {
 	return s.conn.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		txHandler := &SqlHandler{conn: tx}
+		txHandler := &SQLHandler{conn: tx}
 		return fn(txHandler)
 	})
-}
-
-// NewSqlHandlerFromParams creates a new SqlHandler from individual parameters (for backward compatibility)
-func NewSqlHandlerFromParams(userID, password, host, port, dbName string, appLogger *applogger.Logger) (Client, error) {
-	config := &DatabaseConfig{
-		Host:            host,
-		Port:            port,
-		User:            userID,
-		Password:        password,
-		DBName:          dbName,
-		SSLMode:         "disable",
-		Timezone:        "Asia/Tokyo",
-		MaxIdleConns:    10,
-		MaxOpenConns:    100,
-		ConnMaxLifetime: time.Hour,
-	}
-
-	return NewSqlHandler(config, appLogger)
 }
 
 // MockDatabaseHandler テスト用のモック実装

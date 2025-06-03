@@ -257,7 +257,7 @@ func (m *MunicipalityImporter) GetStatistics() (map[string]*int64, error) {
 // 使用例
 func main() {
 	ctx := context.Background()
-	client, err := db.NewSqlHandler(db.DefaultDatabaseConfig(), applogger.New(applogger.DefaultConfig()))
+	client, err := db.NewSQLHandler(db.DefaultDatabaseConfig(), applogger.New(applogger.DefaultConfig()))
 	if err != nil {
 		log.Fatal("データベース接続に失敗しました:", err)
 	}

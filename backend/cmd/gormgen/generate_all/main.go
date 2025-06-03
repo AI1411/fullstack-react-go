@@ -20,7 +20,7 @@ func main() {
 		FieldNullable:     true,
 	})
 
-	sqlHandler, err := db.NewSqlHandler(
+	sqlHandler, err := db.NewSQLHandler(
 		db.DefaultDatabaseConfig(),
 		applogger.New(applogger.DefaultConfig()),
 	)

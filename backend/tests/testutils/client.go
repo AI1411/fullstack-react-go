@@ -10,9 +10,9 @@ import (
 
 // SetupTestDB テスト用のDBクライアントをセットアップする
 func SetupTestDB(t *testing.T) db.Client {
-	client, err := db.NewSqlHandler(&db.DatabaseConfig{
-		Host:     "localhost",
-		Port:     "15432",
+	client, err := db.NewSQLHandler(&db.DatabaseConfig{
+		Host:     "db-test",
+		Port:     "5432",
 		User:     "postgres",
 		Password: "postgres",
 		DBName:   "gen_test",

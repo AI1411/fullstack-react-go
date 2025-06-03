@@ -93,7 +93,7 @@ func ProvideDBClient(lc fx.Lifecycle, l *logger.Logger) (db.Client, error) {
 		l.Error("failed to load environment variables", "error", err)
 		return nil, err
 	}
-	dbClient, err := db.NewSqlHandler(&db.DatabaseConfig{
+	dbClient, err := db.NewSQLHandler(&db.DatabaseConfig{
 		Host:            e.DatabaseHost,
 		Port:            e.DatabasePort,
 		User:            e.DatabaseUsername,
