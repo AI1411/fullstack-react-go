@@ -44,14 +44,12 @@ func TestPrefectureHandler_ListPrefectures(t *testing.T) {
 			mockSetup: func(mockUseCase *mockusecase.MockPrefectureUseCase) {
 				prefectures := []*model.Prefecture{
 					{
-						ID:       1,
-						Name:     "東京都",
-						RegionID: 1,
+						ID:   1,
+						Name: "東京都",
 					},
 					{
-						ID:       2,
-						Name:     "大阪府",
-						RegionID: 2,
+						ID:   2,
+						Name: "大阪府",
 					},
 				}
 				mockUseCase.EXPECT().ListPrefectures(gomock.Any()).Return(prefectures, nil)
@@ -59,14 +57,12 @@ func TestPrefectureHandler_ListPrefectures(t *testing.T) {
 			expectedStatus: http.StatusOK,
 			expectedBody: []*handler.PrefectureResponse{
 				{
-					ID:       1,
-					Name:     "東京都",
-					RegionID: 1,
+					ID:   1,
+					Name: "東京都",
 				},
 				{
-					ID:       2,
-					Name:     "大阪府",
-					RegionID: 2,
+					ID:   2,
+					Name: "大阪府",
 				},
 			},
 		},
@@ -107,7 +103,7 @@ func TestPrefectureHandler_ListPrefectures(t *testing.T) {
 func TestPrefectureHandler_GetPrefecture(t *testing.T) {
 	// Setup
 	r, mockUseCase, h := setupPrefectureTest(t)
-	r.GET("/prefectures/:id", h.GetPrefecture)
+	r.GET("/prefectures/:code", h.GetPrefecture)
 
 	// Test cases
 	tests := []struct {
@@ -119,34 +115,25 @@ func TestPrefectureHandler_GetPrefecture(t *testing.T) {
 	}{
 		{
 			name:         "Success",
-			prefectureID: "1",
+			prefectureID: "01",
 			mockSetup: func(mockUseCase *mockusecase.MockPrefectureUseCase) {
 				prefecture := &model.Prefecture{
-					ID:       1,
-					Name:     "東京都",
-					RegionID: 1,
+					ID:   1,
+					Name: "東京都",
 				}
-				mockUseCase.EXPECT().GetPrefectureByID(gomock.Any(), int32(1)).Return(prefecture, nil)
+				mockUseCase.EXPECT().GetPrefectureByID(gomock.Any(), "01").Return(prefecture, nil)
 			},
 			expectedStatus: http.StatusOK,
 			expectedBody: &handler.PrefectureResponse{
-				ID:       1,
-				Name:     "東京都",
-				RegionID: 1,
+				ID:   1,
+				Name: "東京都",
 			},
-		},
-		{
-			name:           "Invalid ID",
-			prefectureID:   "invalid",
-			mockSetup:      func(mockUseCase *mockusecase.MockPrefectureUseCase) {},
-			expectedStatus: http.StatusBadRequest,
-			expectedBody:   nil,
 		},
 		{
 			name:         "Not Found",
 			prefectureID: "999",
 			mockSetup: func(mockUseCase *mockusecase.MockPrefectureUseCase) {
-				mockUseCase.EXPECT().GetPrefectureByID(gomock.Any(), int32(999)).Return(nil, errors.New("not found"))
+				mockUseCase.EXPECT().GetPrefectureByID(gomock.Any(), "999").Return(nil, errors.New("not found"))
 			},
 			expectedStatus: http.StatusNotFound,
 			expectedBody:   nil,

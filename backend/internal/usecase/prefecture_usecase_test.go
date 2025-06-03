@@ -94,27 +94,28 @@ func TestPrefectureUseCase_GetPrefectureByID(t *testing.T) {
 	// Test cases
 	tests := []struct {
 		name          string
-		id            int32
+		id            string
 		mockSetup     func(mockRepo *mockdatastore.MockPrefectureRepository)
 		expectedError bool
 	}{
 		{
 			name: "Success",
-			id:   13,
+			id:   "13",
 			mockSetup: func(mockRepo *mockdatastore.MockPrefectureRepository) {
 				prefecture := &model.Prefecture{
 					ID:   13,
 					Name: "東京都",
+					Code: "13",
 				}
-				mockRepo.EXPECT().FindByID(gomock.Any(), int32(13)).Return(prefecture, nil)
+				mockRepo.EXPECT().FindByID(gomock.Any(), "13").Return(prefecture, nil)
 			},
 			expectedError: false,
 		},
 		{
 			name: "Not Found",
-			id:   999,
+			id:   "999",
 			mockSetup: func(mockRepo *mockdatastore.MockPrefectureRepository) {
-				mockRepo.EXPECT().FindByID(gomock.Any(), int32(999)).Return(nil, errors.New("not found"))
+				mockRepo.EXPECT().FindByID(gomock.Any(), "999").Return(nil, errors.New("not found"))
 			},
 			expectedError: true,
 		},
@@ -136,7 +137,7 @@ func TestPrefectureUseCase_GetPrefectureByID(t *testing.T) {
 			} else {
 				assert.NoError(t, err)
 				assert.NotNil(t, prefecture)
-				assert.Equal(t, tt.id, prefecture.ID)
+				assert.Equal(t, tt.id, prefecture.Code)
 			}
 		})
 	}

@@ -9,5 +9,4 @@
 export interface HandlerPrefectureResponse {
   id?: number;
   name?: string;
-  region_id?: number;
 }

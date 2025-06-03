@@ -3,9 +3,13 @@ package datastore
 
 import (
 	"context"
+	"errors"
+
+	"gorm.io/gorm"
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
 	"github.com/AI1411/fullstack-react-go/internal/domain/query"
+	myerrors "github.com/AI1411/fullstack-react-go/internal/errors"
 	"github.com/AI1411/fullstack-react-go/internal/infra/db"
 )
 
@@ -42,9 +46,15 @@ func (r *prefectureRepository) FindByID(ctx context.Context, code string) (*mode
 	prefecture, err := r.query.WithContext(ctx).
 		Prefecture.
 		Where(r.query.Prefecture.Code.Eq(code)).
-		Preload(r.query.Prefecture.Municipalities).
+		Preload(r.query.Prefecture.Municipalities.On(r.query.Municipality.IsActive.Is(true))).
 		First()
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, &myerrors.APIError{
+				Code:    myerrors.PrefectureNotFoundError,
+				Message: myerrors.PrefectureNotFoundErrorMessage,
+			}
+		}
 		return nil, err
 	}
 

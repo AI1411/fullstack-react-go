@@ -69,6 +69,21 @@ func (mr *MockUserUseCaseMockRecorder) DeleteUser(ctx, id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUser", reflect.TypeOf((*MockUserUseCase)(nil).DeleteUser), ctx, id)
 }
 
+// GetUserByEmail mocks base method.
+func (m *MockUserUseCase) GetUserByEmail(ctx context.Context, email string) (*model.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserByEmail", ctx, email)
+	ret0, _ := ret[0].(*model.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserByEmail indicates an expected call of GetUserByEmail.
+func (mr *MockUserUseCaseMockRecorder) GetUserByEmail(ctx, email any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByEmail", reflect.TypeOf((*MockUserUseCase)(nil).GetUserByEmail), ctx, email)
+}
+
 // GetUserByID mocks base method.
 func (m *MockUserUseCase) GetUserByID(ctx context.Context, id int32) (*model.User, error) {
 	m.ctrl.T.Helper()

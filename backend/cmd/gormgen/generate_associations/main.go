@@ -117,6 +117,9 @@ func main() {
 				},
 			}),
 		),
+		g.GenerateModel(
+			model.TableNameMunicipality,
+		),
 	}
 
 	g.ApplyBasic(allModels...)

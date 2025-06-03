@@ -57,16 +57,16 @@ func (mr *MockPrefectureRepositoryMockRecorder) Find(ctx any) *gomock.Call {
 }
 
 // FindByID mocks base method.
-func (m *MockPrefectureRepository) FindByID(ctx context.Context, id int32) (*model.Prefecture, error) {
+func (m *MockPrefectureRepository) FindByID(ctx context.Context, code string) (*model.Prefecture, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByID", ctx, id)
+	ret := m.ctrl.Call(m, "FindByID", ctx, code)
 	ret0, _ := ret[0].(*model.Prefecture)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindByID indicates an expected call of FindByID.
-func (mr *MockPrefectureRepositoryMockRecorder) FindByID(ctx, id any) *gomock.Call {
+func (mr *MockPrefectureRepositoryMockRecorder) FindByID(ctx, code any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockPrefectureRepository)(nil).FindByID), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockPrefectureRepository)(nil).FindByID), ctx, code)
 }

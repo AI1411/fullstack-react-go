@@ -26,6 +26,7 @@ var (
 	FacilityEquipment  *facilityEquipment
 	FacilityType       *facilityType
 	GisDatum           *gisDatum
+	Municipality       *municipality
 	Notification       *notification
 	Organization       *organization
 	Prefecture         *prefecture
@@ -47,6 +48,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	FacilityEquipment = &Q.FacilityEquipment
 	FacilityType = &Q.FacilityType
 	GisDatum = &Q.GisDatum
+	Municipality = &Q.Municipality
 	Notification = &Q.Notification
 	Organization = &Q.Organization
 	Prefecture = &Q.Prefecture
@@ -69,6 +71,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		FacilityEquipment:  newFacilityEquipment(db, opts...),
 		FacilityType:       newFacilityType(db, opts...),
 		GisDatum:           newGisDatum(db, opts...),
+		Municipality:       newMunicipality(db, opts...),
 		Notification:       newNotification(db, opts...),
 		Organization:       newOrganization(db, opts...),
 		Prefecture:         newPrefecture(db, opts...),
@@ -92,6 +95,7 @@ type Query struct {
 	FacilityEquipment  facilityEquipment
 	FacilityType       facilityType
 	GisDatum           gisDatum
+	Municipality       municipality
 	Notification       notification
 	Organization       organization
 	Prefecture         prefecture
@@ -116,6 +120,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		FacilityEquipment:  q.FacilityEquipment.clone(db),
 		FacilityType:       q.FacilityType.clone(db),
 		GisDatum:           q.GisDatum.clone(db),
+		Municipality:       q.Municipality.clone(db),
 		Notification:       q.Notification.clone(db),
 		Organization:       q.Organization.clone(db),
 		Prefecture:         q.Prefecture.clone(db),
@@ -147,6 +152,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		FacilityEquipment:  q.FacilityEquipment.replaceDB(db),
 		FacilityType:       q.FacilityType.replaceDB(db),
 		GisDatum:           q.GisDatum.replaceDB(db),
+		Municipality:       q.Municipality.replaceDB(db),
 		Notification:       q.Notification.replaceDB(db),
 		Organization:       q.Organization.replaceDB(db),
 		Prefecture:         q.Prefecture.replaceDB(db),
@@ -168,6 +174,7 @@ type queryCtx struct {
 	FacilityEquipment  IFacilityEquipmentDo
 	FacilityType       IFacilityTypeDo
 	GisDatum           IGisDatumDo
+	Municipality       IMunicipalityDo
 	Notification       INotificationDo
 	Organization       IOrganizationDo
 	Prefecture         IPrefectureDo
@@ -189,6 +196,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		FacilityEquipment:  q.FacilityEquipment.WithContext(ctx),
 		FacilityType:       q.FacilityType.WithContext(ctx),
 		GisDatum:           q.GisDatum.WithContext(ctx),
+		Municipality:       q.Municipality.WithContext(ctx),
 		Notification:       q.Notification.WithContext(ctx),
 		Organization:       q.Organization.WithContext(ctx),
 		Prefecture:         q.Prefecture.WithContext(ctx),
