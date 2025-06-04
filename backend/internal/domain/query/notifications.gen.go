@@ -29,7 +29,7 @@ func newNotification(db *gorm.DB, opts ...gen.DOOption) notification {
 	tableName := _notification.notificationDo.TableName()
 	_notification.ALL = field.NewAsterisk(tableName)
 	_notification.ID = field.NewInt32(tableName, "id")
-	_notification.UserID = field.NewInt32(tableName, "user_id")
+	_notification.UserID = field.NewString(tableName, "user_id")
 	_notification.Title = field.NewString(tableName, "title")
 	_notification.Message = field.NewString(tableName, "message")
 	_notification.NotificationType = field.NewString(tableName, "notification_type")
@@ -51,7 +51,7 @@ type notification struct {
 
 	ALL               field.Asterisk
 	ID                field.Int32  // 通知ID - 主キー
-	UserID            field.Int32  // ユーザーID - 通知の宛先ユーザーID
+	UserID            field.String // ユーザーID - 通知の宛先ユーザーID
 	Title             field.String // タイトル - 通知のタイトル
 	Message           field.String // メッセージ - 通知の本文
 	NotificationType  field.String // 通知種別 - 通知の種類
@@ -79,7 +79,7 @@ func (n notification) As(alias string) *notification {
 func (n *notification) updateTableName(table string) *notification {
 	n.ALL = field.NewAsterisk(table)
 	n.ID = field.NewInt32(table, "id")
-	n.UserID = field.NewInt32(table, "user_id")
+	n.UserID = field.NewString(table, "user_id")
 	n.Title = field.NewString(table, "title")
 	n.Message = field.NewString(table, "message")
 	n.NotificationType = field.NewString(table, "notification_type")

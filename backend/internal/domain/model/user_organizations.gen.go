@@ -12,7 +12,7 @@ const TableNameUserOrganization = "user_organizations"
 
 // UserOrganization mapped from table <user_organizations>
 type UserOrganization struct {
-	UserID         int32        `gorm:"column:user_id;type:integer;primaryKey;index:idx_user_organizations_user_id,priority:1;comment:ユーザーID - ユーザーテーブルの外部キー" json:"user_id"`                     // ユーザーID - ユーザーテーブルの外部キー
+	UserID         string       `gorm:"column:user_id;type:uuid;primaryKey;index:idx_user_organizations_user_id,priority:1;comment:ユーザーID - ユーザーテーブルの外部キー" json:"user_id"`                        // ユーザーID - ユーザーテーブルの外部キー
 	OrganizationID int32        `gorm:"column:organization_id;type:integer;primaryKey;index:idx_user_organizations_organization_id,priority:1;comment:組織ID - 組織テーブルの外部キー" json:"organization_id"` // 組織ID - 組織テーブルの外部キー
 	IsPrimary      bool         `gorm:"column:is_primary;type:boolean;not null;comment:主所属フラグ - ユーザーの主所属組織かどうか" json:"is_primary"`                                                                // 主所属フラグ - ユーザーの主所属組織かどうか
 	CreatedAt      time.Time    `gorm:"column:created_at;type:timestamp with time zone;not null;default:CURRENT_TIMESTAMP;comment:作成日時 - レコード作成日時" json:"created_at"`                             // 作成日時 - レコード作成日時

@@ -14,9 +14,9 @@ const TableNameAssessment = "assessments"
 
 // Assessment mapped from table <assessments>
 type Assessment struct {
-	ID                int32          `gorm:"column:id;type:integer;primaryKey;autoIncrement:true;comment:査定ID - 主キー" json:"id"`                                                         // 査定ID - 主キー
+	ID                int64          `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;comment:査定ID - 主キー" json:"id"`                                                          // 査定ID - 主キー
 	DisasterID        string         `gorm:"column:disaster_id;type:uuid;not null;index:idx_assessments_disaster_id,priority:1;comment:災害ID - 査定対象の災害ID" json:"disaster_id"`            // 災害ID - 査定対象の災害ID
-	AssessorID        int32          `gorm:"column:assessor_id;type:integer;not null;index:idx_assessments_assessor_id,priority:1;comment:査定者ID - 査定を行ったユーザーのID" json:"assessor_id"`    // 査定者ID - 査定を行ったユーザーのID
+	UserID            string         `gorm:"column:user_id;type:uuid;not null;index:idx_assessments_user_id,priority:1;comment:査定者ID - 査定を行ったユーザーのID" json:"user_id"`                   // 査定者ID - 査定を行ったユーザーのID
 	AssessmentDate    time.Time      `gorm:"column:assessment_date;type:date;not null;index:idx_assessments_assessment_date,priority:1;comment:査定日 - 査定が行われた日付" json:"assessment_date"` // 査定日 - 査定が行われた日付
 	AssessmentType    string         `gorm:"column:assessment_type;type:character varying(50);not null;comment:査定種別 - 現地査定、リモート査定など" json:"assessment_type"`                            // 査定種別 - 現地査定、リモート査定など
 	Status            string         `gorm:"column:status;type:character varying(30);not null;index:idx_assessments_status,priority:1;default:進行中;comment:状態 - 査定の進行状況" json:"status"`  // 状態 - 査定の進行状況
@@ -25,7 +25,7 @@ type Assessment struct {
 	DamageAmount      *float64       `gorm:"column:damage_amount;type:numeric(15,2);comment:被害金額 - 査定された被害金額" json:"damage_amount"`                                                     // 被害金額 - 査定された被害金額
 	ApprovedAmount    *float64       `gorm:"column:approved_amount;type:numeric(15,2);comment:承認金額 - 承認された支援金額" json:"approved_amount"`                                                 // 承認金額 - 承認された支援金額
 	ApprovalDate      *time.Time     `gorm:"column:approval_date;type:timestamp with time zone;comment:承認日時 - 査定が承認された日時" json:"approval_date"`                                         // 承認日時 - 査定が承認された日時
-	ApprovedBy        *int32         `gorm:"column:approved_by;type:integer;comment:承認者ID - 査定を承認したユーザーのID" json:"approved_by"`                                                         // 承認者ID - 査定を承認したユーザーのID
+	ApprovedBy        *string        `gorm:"column:approved_by;type:uuid;comment:承認者ID - 査定を承認したユーザーのID" json:"approved_by"`                                                            // 承認者ID - 査定を承認したユーザーのID
 	Notes             *string        `gorm:"column:notes;type:text;comment:備考 - 査定に関する備考やメモ" json:"notes"`                                                                              // 備考 - 査定に関する備考やメモ
 	CreatedAt         time.Time      `gorm:"column:created_at;type:timestamp with time zone;not null;default:CURRENT_TIMESTAMP;comment:作成日時 - レコード作成日時" json:"created_at"`              // 作成日時 - レコード作成日時
 	UpdatedAt         time.Time      `gorm:"column:updated_at;type:timestamp with time zone;not null;default:CURRENT_TIMESTAMP;comment:更新日時 - レコード最終更新日時" json:"updated_at"`            // 更新日時 - レコード最終更新日時

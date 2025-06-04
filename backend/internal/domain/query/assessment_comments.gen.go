@@ -30,7 +30,7 @@ func newAssessmentComment(db *gorm.DB, opts ...gen.DOOption) assessmentComment {
 	_assessmentComment.ALL = field.NewAsterisk(tableName)
 	_assessmentComment.ID = field.NewInt32(tableName, "id")
 	_assessmentComment.AssessmentID = field.NewInt32(tableName, "assessment_id")
-	_assessmentComment.UserID = field.NewInt32(tableName, "user_id")
+	_assessmentComment.UserID = field.NewString(tableName, "user_id")
 	_assessmentComment.CommentText = field.NewString(tableName, "comment_text")
 	_assessmentComment.CommentTime = field.NewTime(tableName, "comment_time")
 	_assessmentComment.ParentCommentID = field.NewInt32(tableName, "parent_comment_id")
@@ -49,7 +49,7 @@ type assessmentComment struct {
 	ALL             field.Asterisk
 	ID              field.Int32  // コメントID - 主キー
 	AssessmentID    field.Int32  // 査定ID - 関連する査定のID
-	UserID          field.Int32  // ユーザーID - コメントを投稿したユーザーのID
+	UserID          field.String // ユーザーID - コメントを投稿したユーザーのID
 	CommentText     field.String // コメント本文 - コメントの内容
 	CommentTime     field.Time   // コメント時間 - コメントが投稿された時間
 	ParentCommentID field.Int32  // 親コメントID - 返信先のコメントID（スレッド構造用）
@@ -74,7 +74,7 @@ func (a *assessmentComment) updateTableName(table string) *assessmentComment {
 	a.ALL = field.NewAsterisk(table)
 	a.ID = field.NewInt32(table, "id")
 	a.AssessmentID = field.NewInt32(table, "assessment_id")
-	a.UserID = field.NewInt32(table, "user_id")
+	a.UserID = field.NewString(table, "user_id")
 	a.CommentText = field.NewString(table, "comment_text")
 	a.CommentTime = field.NewTime(table, "comment_time")
 	a.ParentCommentID = field.NewInt32(table, "parent_comment_id")

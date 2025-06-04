@@ -14,35 +14,35 @@ $$ language 'plpgsql';
 DROP TABLE IF EXISTS assessments CASCADE;
 CREATE TABLE IF NOT EXISTS assessments
 (
-    id                  SERIAL PRIMARY KEY,
-    disaster_id         UUID NOT NULL REFERENCES disasters(id) ON DELETE CASCADE,
-    assessor_id         INT NOT NULL REFERENCES users(id),
-    assessment_date     DATE NOT NULL,
-    assessment_type     VARCHAR(50) NOT NULL,
-    status              VARCHAR(30) NOT NULL DEFAULT '進行中',
+    id                 BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    disaster_id        UUID                     NOT NULL REFERENCES disasters (id) ON DELETE CASCADE,
+    user_id            UUID                     NOT NULL REFERENCES users (id),
+    assessment_date    DATE                     NOT NULL,
+    assessment_type    VARCHAR(50)              NOT NULL,
+    status             VARCHAR(30)              NOT NULL DEFAULT '進行中',
     CHECK (status IN ('準備中', '進行中', '完了', '差戻し', '承認済')),
-    assessment_method   VARCHAR(50) NOT NULL,
+    assessment_method  VARCHAR(50)              NOT NULL,
     CHECK (assessment_method IN ('現地査定', 'リモート査定', '書類査定', '緊急査定')),
-    assessment_summary  TEXT,
-    damage_amount       DECIMAL(15, 2),
-    approved_amount     DECIMAL(15, 2),
-    approval_date       TIMESTAMP WITH TIME ZONE,
-    approved_by         INT REFERENCES users(id),
-    notes               TEXT,
-    created_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at          TIMESTAMP WITH TIME ZONE
+    assessment_summary TEXT,
+    damage_amount      DECIMAL(15, 2),
+    approved_amount    DECIMAL(15, 2),
+    approval_date      TIMESTAMP WITH TIME ZONE,
+    approved_by        UUID REFERENCES users (id),
+    notes              TEXT,
+    created_at         TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at         TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at         TIMESTAMP WITH TIME ZONE
 );
 
 CREATE INDEX IF NOT EXISTS idx_assessments_disaster_id ON assessments (disaster_id);
-CREATE INDEX IF NOT EXISTS idx_assessments_assessor_id ON assessments (assessor_id);
+CREATE INDEX IF NOT EXISTS idx_assessments_user_id ON assessments (user_id);
 CREATE INDEX IF NOT EXISTS idx_assessments_assessment_date ON assessments (assessment_date);
 CREATE INDEX IF NOT EXISTS idx_assessments_status ON assessments (status);
 
 COMMENT ON TABLE assessments IS '査定テーブル - 災害被害の査定情報を管理';
 COMMENT ON COLUMN assessments.id IS '査定ID - 主キー';
 COMMENT ON COLUMN assessments.disaster_id IS '災害ID - 査定対象の災害ID';
-COMMENT ON COLUMN assessments.assessor_id IS '査定者ID - 査定を行ったユーザーのID';
+COMMENT ON COLUMN assessments.user_id IS '査定者ID - 査定を行ったユーザーのID';
 COMMENT ON COLUMN assessments.assessment_date IS '査定日 - 査定が行われた日付';
 COMMENT ON COLUMN assessments.assessment_type IS '査定種別 - 現地査定、リモート査定など';
 COMMENT ON COLUMN assessments.status IS '状態 - 査定の進行状況';
@@ -61,20 +61,20 @@ COMMENT ON COLUMN assessments.deleted_at IS '削除日時 - 論理削除用の�
 DROP TABLE IF EXISTS assessment_items CASCADE;
 CREATE TABLE IF NOT EXISTS assessment_items
 (
-    id                  SERIAL PRIMARY KEY,
-    assessment_id       INT NOT NULL REFERENCES assessments(id) ON DELETE CASCADE,
-    item_name           VARCHAR(100) NOT NULL,
-    facility_type_id    INT, -- 外部キー制約は後で追加（facility_typesテーブルへの参照）
-    damage_level_id     INT, -- 外部キー制約は後で追加（damage_levelsテーブルへの参照）
-    damage_description  TEXT NOT NULL,
-    damage_amount       DECIMAL(15, 2) NOT NULL,
-    approved_amount     DECIMAL(15, 2),
-    location_latitude   DECIMAL(10, 8),
-    location_longitude  DECIMAL(11, 8),
-    notes               TEXT,
-    created_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at          TIMESTAMP WITH TIME ZONE
+    id                 SERIAL PRIMARY KEY,
+    assessment_id      BIGINT                   NOT NULL REFERENCES assessments (id) ON DELETE CASCADE,
+    item_name          VARCHAR(100)             NOT NULL,
+    facility_type_id   INT, -- 外部キー制約は後で追加（facility_typesテーブルへの参照）
+    damage_level_id    INT, -- 外部キー制約は後で追加（damage_levelsテーブルへの参照）
+    damage_description TEXT                     NOT NULL,
+    damage_amount      DECIMAL(15, 2)           NOT NULL,
+    approved_amount    DECIMAL(15, 2),
+    location_latitude  DECIMAL(10, 8),
+    location_longitude DECIMAL(11, 8),
+    notes              TEXT,
+    created_at         TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at         TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at         TIMESTAMP WITH TIME ZONE
 );
 
 CREATE INDEX IF NOT EXISTS idx_assessment_items_assessment_id ON assessment_items (assessment_id);
@@ -101,15 +101,15 @@ COMMENT ON COLUMN assessment_items.deleted_at IS '削除日時 - 論理削除用
 DROP TABLE IF EXISTS assessment_comments CASCADE;
 CREATE TABLE IF NOT EXISTS assessment_comments
 (
-    id                  SERIAL PRIMARY KEY,
-    assessment_id       INT NOT NULL REFERENCES assessments(id) ON DELETE CASCADE,
-    user_id             INT NOT NULL REFERENCES users(id),
-    comment_text        TEXT NOT NULL,
-    comment_time        TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    parent_comment_id   INT REFERENCES assessment_comments(id),
-    created_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at          TIMESTAMP WITH TIME ZONE
+    id                SERIAL PRIMARY KEY,
+    assessment_id     INT                      NOT NULL REFERENCES assessments (id) ON DELETE CASCADE,
+    user_id           UUID                     NOT NULL REFERENCES users (id),
+    comment_text      TEXT                     NOT NULL,
+    comment_time      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    parent_comment_id INT REFERENCES assessment_comments (id),
+    created_at        TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at        TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at        TIMESTAMP WITH TIME ZONE
 );
 
 CREATE INDEX IF NOT EXISTS idx_assessment_comments_assessment_id ON assessment_comments (assessment_id);
@@ -131,20 +131,20 @@ COMMENT ON COLUMN assessment_comments.deleted_at IS '削除日時 - 論理削除
 DROP TABLE IF EXISTS gis_data CASCADE;
 CREATE TABLE IF NOT EXISTS gis_data
 (
-    id                  SERIAL PRIMARY KEY,
-    disaster_id         UUID NOT NULL REFERENCES disasters(id) ON DELETE CASCADE,
-    data_type           VARCHAR(50) NOT NULL,
+    id            SERIAL PRIMARY KEY,
+    disaster_id   UUID                     NOT NULL REFERENCES disasters (id) ON DELETE CASCADE,
+    data_type     VARCHAR(50)              NOT NULL,
     CHECK (data_type IN ('被害エリア', '避難経路', '施設位置', 'リソース配置', 'その他')),
-    name                VARCHAR(100) NOT NULL,
-    description         TEXT,
-    geometry_type       VARCHAR(20) NOT NULL,
+    name          VARCHAR(100)             NOT NULL,
+    description   TEXT,
+    geometry_type VARCHAR(20)              NOT NULL,
     CHECK (geometry_type IN ('POINT', 'LINESTRING', 'POLYGON', 'MULTIPOINT', 'MULTILINESTRING', 'MULTIPOLYGON')),
-    geometry_data       TEXT NOT NULL, -- GeoJSON形式のデータを格納
-    properties          JSONB, -- 追加のプロパティをJSON形式で格納
-    created_by          INT NOT NULL REFERENCES users(id),
-    created_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at          TIMESTAMP WITH TIME ZONE
+    geometry_data TEXT                     NOT NULL, -- GeoJSON形式のデータを格納
+    properties    JSONB,                             -- 追加のプロパティをJSON形式で格納
+    created_by    UUID                      NOT NULL REFERENCES users (id),
+    created_at    TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at    TIMESTAMP WITH TIME ZONE
 );
 
 CREATE INDEX IF NOT EXISTS idx_gis_data_disaster_id ON gis_data (disaster_id);
@@ -170,14 +170,14 @@ DROP TABLE IF EXISTS notifications CASCADE;
 CREATE TABLE IF NOT EXISTS notifications
 (
     id                  SERIAL PRIMARY KEY,
-    user_id             INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    title               VARCHAR(200) NOT NULL,
-    message             TEXT NOT NULL,
-    notification_type   VARCHAR(50) NOT NULL,
+    user_id             UUID                     NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    title               VARCHAR(200)             NOT NULL,
+    message             TEXT                     NOT NULL,
+    notification_type   VARCHAR(50)              NOT NULL,
     CHECK (notification_type IN ('システム', '災害情報', '査定', '申請', 'リマインダー', 'その他')),
     related_entity_type VARCHAR(50),
     related_entity_id   VARCHAR(100),
-    is_read             BOOLEAN NOT NULL DEFAULT FALSE,
+    is_read             BOOLEAN                  NOT NULL DEFAULT FALSE,
     read_at             TIMESTAMP WITH TIME ZONE,
     created_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at          TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -205,70 +205,102 @@ COMMENT ON COLUMN notifications.deleted_at IS '削除日時 - 論理削除用の
 
 -- 更新日時を自動更新するトリガー
 CREATE TRIGGER update_assessments_updated_at
-    BEFORE UPDATE ON assessments
+    BEFORE UPDATE
+    ON assessments
     FOR EACH ROW
 EXECUTE FUNCTION update_master_updated_at_column();
 
 CREATE TRIGGER update_assessment_items_updated_at
-    BEFORE UPDATE ON assessment_items
+    BEFORE UPDATE
+    ON assessment_items
     FOR EACH ROW
 EXECUTE FUNCTION update_master_updated_at_column();
 
 CREATE TRIGGER update_assessment_comments_updated_at
-    BEFORE UPDATE ON assessment_comments
+    BEFORE UPDATE
+    ON assessment_comments
     FOR EACH ROW
 EXECUTE FUNCTION update_master_updated_at_column();
 
 CREATE TRIGGER update_gis_data_updated_at
-    BEFORE UPDATE ON gis_data
+    BEFORE UPDATE
+    ON gis_data
     FOR EACH ROW
 EXECUTE FUNCTION update_master_updated_at_column();
 
 CREATE TRIGGER update_notifications_updated_at
-    BEFORE UPDATE ON notifications
-    FOR EACH ROW
-EXECUTE FUNCTION update_master_updated_at_column();
-
-CREATE TRIGGER update_notifications_updated_at
-    BEFORE UPDATE ON notifications
+    BEFORE UPDATE
+    ON notifications
     FOR EACH ROW
 EXECUTE FUNCTION update_master_updated_at_column();
 
 -- 通知テーブルへのダミーデータ挿入
-INSERT INTO notifications (user_id, title, message, notification_type, related_entity_type, related_entity_id, is_read, read_at)
+INSERT INTO notifications (user_id, title, message, notification_type, related_entity_type, related_entity_id, is_read,
+                           read_at)
 VALUES
 -- システム通知
-(1, 'システムメンテナンスのお知らせ', '明日2025年6月1日午前2時から4時までシステムメンテナンスを実施します。この間サービスはご利用いただけません。', 'システム', NULL, NULL, true, '2025-05-31 09:15:00+09'),
-(2, 'システムアップデート完了', 'システムのアップデートが完了しました。新機能の詳細はお知らせページをご確認ください。', 'システム', NULL, NULL, false, NULL),
+('1cccd405-4150-4cf4-a534-7461f6aca1b3', 'システムメンテナンスのお知らせ',
+ '明日2025年6月1日午前2時から4時までシステムメンテナンスを実施します。この間サービスはご利用いただけません。', 'システム',
+ NULL, NULL, true, '2025-05-31 09:15:00+09'),
+('186e8952-f98f-4b45-8ca0-736047faa401', 'システムアップデート完了',
+ 'システムのアップデートが完了しました。新機能の詳細はお知らせページをご確認ください。', 'システム', NULL, NULL, false,
+ NULL),
 
 -- 災害情報通知
-(3, '新規災害情報登録', '新たな災害情報「2025年青森県豪雨」が登録されました。', '災害情報', '災害', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', true, '2025-05-30 14:25:10+09'),
-(4, '災害ステータス更新', '災害「2025年関東地方大雨被害」のステータスが「対応中」に更新されました。', '災害情報', '災害', '2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q', false, NULL),
-(5, '被害報告が提出されました', '青森県りんご被害の報告が提出されました。確認をお願いします。', '災害情報', '災害', '3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r', false, NULL),
+('12d8bfe1-96ff-491a-b36a-166d98f3b270', '新規災害情報登録', '新たな災害情報「2025年青森県豪雨」が登録されました。',
+ '災害情報', '災害', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', true, '2025-05-30 14:25:10+09'),
+('4362c0ab-cd9b-4694-be22-503e0f6a524c', '災害ステータス更新',
+ '災害「2025年関東地方大雨被害」のステータスが「対応中」に更新されました。', '災害情報', '災害',
+ '2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q', false, NULL),
+('def28980-a550-49d7-a73e-1d09961f5296', '被害報告が提出されました',
+ '青森県りんご被害の報告が提出されました。確認をお願いします。', '災害情報', '災害',
+ '3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r', false, NULL),
 
 -- 査定関連通知
-(6, '査定が割り当てられました', '2025年東京都風害の査定担当者として割り当てられました。詳細を確認してください。', '査定', '査定', '1', true, '2025-05-28 10:45:22+09'),
-(7, '査定結果が提出されました', '査定ID: 2の結果が提出されました。承認作業をお願いします。', '査定', '査定', '2', false, NULL),
-(8, '査定コメントが追加されました', '担当査定に新しいコメントが追加されました。', '査定', 'コメント', '3', false, NULL),
+('39c8ccf9-ab70-4dc5-8cfc-b92337aaa175', '査定が割り当てられました',
+ '2025年東京都風害の査定担当者として割り当てられました。詳細を確認してください。', '査定', '査定', '1', true,
+ '2025-05-28 10:45:22+09'),
+('2977a69b-3baf-4df2-9894-76fb78773cb5', '査定結果が提出されました',
+ '査定ID: 2の結果が提出されました。承認作業をお願いします。', '査定', '査定', '2', false, NULL),
+('da0b56a2-03b0-41b5-96ec-c68fb6fedde9', '査定コメントが追加されました', '担当査定に新しいコメントが追加されました。',
+ '査定', 'コメント', '3', false, NULL),
 
 -- 申請関連通知
-(9, '支援申請が提出されました', '新しい支援申請が提出されました。審査をお願いします。', '申請', '支援申請', '1', true, '2025-05-25 16:30:00+09'),
-(10, '申請ステータス更新', 'あなたの支援申請（ID: 2）のステータスが「審査中」に更新されました。', '申請', '支援申請', '2', false, NULL),
-(11, '申請が承認されました', 'あなたの支援申請（ID: 3）が承認されました。詳細は申請履歴をご確認ください。', '申請', '支援申請', '3', true, '2025-05-23 09:10:45+09'),
+('2ee198e4-666f-4614-8da5-834dc4c7139d', '支援申請が提出されました',
+ '新しい支援申請が提出されました。審査をお願いします。', '申請', '支援申請', '1', true, '2025-05-25 16:30:00+09'),
+('31b92890-45fc-4cb0-8344-6dedf2f8446b', '申請ステータス更新',
+ 'あなたの支援申請（ID: 2）のステータスが「審査中」に更新されました。', '申請', '支援申請', '2', false, NULL),
+('a3f6cb3b-3bf4-4162-9004-ffd8fe81b33a', '申請が承認されました',
+ 'あなたの支援申請（ID: 3）が承認されました。詳細は申請履歴をご確認ください。', '申請', '支援申請', '3', true,
+ '2025-05-23 09:10:45+09'),
 
 -- リマインダー通知
-(12, '査定期限のリマインダー', '担当の査定（ID: 4）の提出期限が3日後に迫っています。', 'リマインダー', '査定', '4', false, NULL),
-(13, 'ドキュメント提出リマインダー', '被害状況の追加ドキュメントの提出期限は明日までです。', 'リマインダー', 'ドキュメント', NULL, true, '2025-05-20 13:40:30+09'),
+('577f5a91-6814-4bf8-a55b-792402d17153', '査定期限のリマインダー', '担当の査定（ID: 4）の提出期限が3日後に迫っています。',
+ 'リマインダー', '査定', '4', false, NULL),
+('f61c1d9c-f098-4c74-9faf-9a49b4c19781', 'ドキュメント提出リマインダー',
+ '被害状況の追加ドキュメントの提出期限は明日までです。', 'リマインダー', 'ドキュメント', NULL, true,
+ '2025-05-20 13:40:30+09'),
 
 -- その他の通知
-(14, '研修会のお知らせ', '次回の査定員研修会は2025年6月15日に開催されます。参加希望者は登録をお願いします。', 'その他', 'イベント', 'training-2025-06', false, NULL),
-(15, '新しい施設登録マニュアルの公開', '施設登録に関する新しいマニュアルが公開されました。マニュアルページからご確認ください。', 'その他', 'マニュアル', 'facility-registration-v2', true, '2025-05-18 11:20:15+09'),
+('87fbf2c6-341e-46c5-a2fc-1d9834c55a7e', '研修会のお知らせ',
+ '次回の査定員研修会は2025年6月15日に開催されます。参加希望者は登録をお願いします。', 'その他', 'イベント',
+ 'training-2025-06', false, NULL),
+('4b9d8271-b8a1-4e24-bab2-62ac44ec73a8', '新しい施設登録マニュアルの公開',
+ '施設登録に関する新しいマニュアルが公開されました。マニュアルページからご確認ください。', 'その他', 'マニュアル',
+ 'facility-registration-v2', true, '2025-05-18 11:20:15+09'),
 
 -- 複数ユーザーへの同一通知
-(16, '緊急：システムセキュリティアップデート', 'セキュリティ上の理由により、全ユーザーのパスワード変更をお願いします。', 'システム', NULL, NULL, false, NULL),
-(17, '緊急：システムセキュリティアップデート', 'セキュリティ上の理由により、全ユーザーのパスワード変更をお願いします。', 'システム', NULL, NULL, true, '2025-05-15 15:30:00+09'),
-(18, '緊急：システムセキュリティアップデート', 'セキュリティ上の理由により、全ユーザーのパスワード変更をお願いします。', 'システム', NULL, NULL, false, NULL),
+('e3dbf9e4-9182-4c4e-b927-6c0153bc07e4', '緊急：システムセキュリティアップデート',
+ 'セキュリティ上の理由により、全ユーザーのパスワード変更をお願いします。', 'システム', NULL, NULL, false, NULL),
+('f08bcf78-248b-42ec-9df1-143b21e4b253', '緊急：システムセキュリティアップデート',
+ 'セキュリティ上の理由により、全ユーザーのパスワード変更をお願いします。', 'システム', NULL, NULL, true,
+ '2025-05-15 15:30:00+09'),
+('558b9c39-f56d-4e6f-844c-28b2424cc4a7', '緊急：システムセキュリティアップデート',
+ 'セキュリティ上の理由により、全ユーザーのパスワード変更をお願いします。', 'システム', NULL, NULL, false, NULL),
 
 -- 最近の通知
-(19, '災害報告書テンプレート更新', '災害報告書の新しいテンプレートが公開されました。今後の報告にはこちらをご使用ください。', 'その他', 'テンプレート', 'disaster-report-v3', false, NULL),
-(20, '祝：システム利用者1000人達成', '本システムの利用者が1000人を達成しました。ご利用ありがとうございます。', 'システム', NULL, NULL, false, NULL);
+('d0db121b-77a5-48cb-a4ed-25d085c363d7', '災害報告書テンプレート更新',
+ '災害報告書の新しいテンプレートが公開されました。今後の報告にはこちらをご使用ください。', 'その他', 'テンプレート',
+ 'disaster-report-v3', false, NULL),
+('dcb243f6-4d77-4cb4-af9c-9d5f645580c8', '祝：システム利用者1000人達成',
+ '本システムの利用者が1000人を達成しました。ご利用ありがとうございます。', 'システム', NULL, NULL, false, NULL);

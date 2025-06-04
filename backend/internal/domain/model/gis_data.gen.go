@@ -22,7 +22,7 @@ type GisDatum struct {
 	GeometryType string         `gorm:"column:geometry_type;type:character varying(20);not null;comment:ジオメトリ種別 - 地理データの形状タイプ" json:"geometry_type"`                             // ジオメトリ種別 - 地理データの形状タイプ
 	GeometryData string         `gorm:"column:geometry_data;type:text;not null;comment:ジオメトリデータ - GeoJSON形式の地理データ" json:"geometry_data"`                                         // ジオメトリデータ - GeoJSON形式の地理データ
 	Properties   *string        `gorm:"column:properties;type:jsonb;comment:プロパティ - 追加のプロパティ情報（JSON形式）" json:"properties"`                                                       // プロパティ - 追加のプロパティ情報（JSON形式）
-	CreatedBy    int32          `gorm:"column:created_by;type:integer;not null;index:idx_gis_data_created_by,priority:1;comment:作成者ID - データを作成したユーザーのID" json:"created_by"`      // 作成者ID - データを作成したユーザーのID
+	CreatedBy    string         `gorm:"column:created_by;type:uuid;not null;index:idx_gis_data_created_by,priority:1;comment:作成者ID - データを作成したユーザーのID" json:"created_by"`         // 作成者ID - データを作成したユーザーのID
 	CreatedAt    time.Time      `gorm:"column:created_at;type:timestamp with time zone;not null;default:CURRENT_TIMESTAMP;comment:作成日時 - レコード作成日時" json:"created_at"`            // 作成日時 - レコード作成日時
 	UpdatedAt    time.Time      `gorm:"column:updated_at;type:timestamp with time zone;not null;default:CURRENT_TIMESTAMP;comment:更新日時 - レコード最終更新日時" json:"updated_at"`          // 更新日時 - レコード最終更新日時
 	DeletedAt    gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp with time zone;comment:削除日時 - 論理削除用のタイムスタンプ" json:"deleted_at"`                                          // 削除日時 - 論理削除用のタイムスタンプ

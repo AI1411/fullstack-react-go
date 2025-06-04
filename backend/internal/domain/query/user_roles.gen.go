@@ -28,7 +28,7 @@ func newUserRole(db *gorm.DB, opts ...gen.DOOption) userRole {
 
 	tableName := _userRole.userRoleDo.TableName()
 	_userRole.ALL = field.NewAsterisk(tableName)
-	_userRole.UserID = field.NewInt32(tableName, "user_id")
+	_userRole.UserID = field.NewString(tableName, "user_id")
 	_userRole.RoleID = field.NewInt32(tableName, "role_id")
 	_userRole.CreatedAt = field.NewTime(tableName, "created_at")
 	_userRole.UpdatedAt = field.NewTime(tableName, "updated_at")
@@ -42,10 +42,10 @@ type userRole struct {
 	userRoleDo
 
 	ALL       field.Asterisk
-	UserID    field.Int32 // ユーザーID - ユーザーテーブルの外部キー
-	RoleID    field.Int32 // 役割ID - 役割テーブルの外部キー
-	CreatedAt field.Time  // 作成日時 - レコード作成日時
-	UpdatedAt field.Time  // 更新日時 - レコード最終更新日時
+	UserID    field.String // ユーザーID - ユーザーテーブルの外部キー
+	RoleID    field.Int32  // 役割ID - 役割テーブルの外部キー
+	CreatedAt field.Time   // 作成日時 - レコード作成日時
+	UpdatedAt field.Time   // 更新日時 - レコード最終更新日時
 
 	fieldMap map[string]field.Expr
 }
@@ -62,7 +62,7 @@ func (u userRole) As(alias string) *userRole {
 
 func (u *userRole) updateTableName(table string) *userRole {
 	u.ALL = field.NewAsterisk(table)
-	u.UserID = field.NewInt32(table, "user_id")
+	u.UserID = field.NewString(table, "user_id")
 	u.RoleID = field.NewInt32(table, "role_id")
 	u.CreatedAt = field.NewTime(table, "created_at")
 	u.UpdatedAt = field.NewTime(table, "updated_at")

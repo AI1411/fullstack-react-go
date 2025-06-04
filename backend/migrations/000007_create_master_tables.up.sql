@@ -132,7 +132,7 @@ VALUES ('システム管理者', 'システム全体の管理権限を持つ最�
 DROP TABLE IF EXISTS user_roles CASCADE;
 CREATE TABLE IF NOT EXISTS user_roles
 (
-    user_id    INT                      NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    user_id    UUID                     NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     role_id    INT                      NOT NULL REFERENCES roles (id) ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -152,7 +152,7 @@ COMMENT ON COLUMN user_roles.updated_at IS '更新日時 - レコード最終更
 DROP TABLE IF EXISTS user_organizations CASCADE;
 CREATE TABLE IF NOT EXISTS user_organizations
 (
-    user_id         INT                      NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    user_id         UUID                     NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     organization_id INT                      NOT NULL REFERENCES organizations (id) ON DELETE CASCADE,
     is_primary      BOOLEAN                  NOT NULL DEFAULT FALSE,
     created_at      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -223,51 +223,43 @@ CREATE TRIGGER update_user_organizations_updated_at
     FOR EACH ROW
 EXECUTE FUNCTION update_master_updated_at_column();
 
-CREATE TRIGGER update_user_organizations_updated_at
-    BEFORE UPDATE
-    ON user_organizations
-    FOR EACH ROW
-EXECUTE FUNCTION update_master_updated_at_column();
-
 -- ユーザーと組織の関連付けのダミーデータ挿入
 INSERT INTO user_organizations (user_id, organization_id, is_primary)
 VALUES
 -- 農林水産省所属
-(1, 1, true),   -- 田中太郎: 農林水産省（主所属）
-(2, 1, true),   -- 佐藤花子: 農林水産省（主所属）
-(3, 1, false),  -- 鈴木一郎: 農林水産省（副所属）
+('1cccd405-4150-4cf4-a534-7461f6aca1b3', 1, true),  -- 田中太郎: 農林水産省（主所属）
+('186e8952-f98f-4b45-8ca0-736047faa401', 1, true),  -- 佐藤花子: 農林水産省（主所属）
+('12d8bfe1-96ff-491a-b36a-166d98f3b270', 1, false), -- 鈴木一郎: 農林水産省（副所属）
 
 -- 関東農政局所属
-(3, 2, true),   -- 鈴木一郎: 関東農政局（主所属）
-(4, 2, true),   -- 高橋幸子: 関東農政局（主所属）
-(5, 2, true),   -- 渡辺雄太: 関東農政局（主所属）
+('4362c0ab-cd9b-4694-be22-503e0f6a524c', 2, true),  -- 鈴木一郎: 関東農政局（主所属）
+('def28980-a550-49d7-a73e-1d09961f5296', 2, true),  -- 高橋幸子: 関東農政局（主所属）
+('39c8ccf9-ab70-4dc5-8cfc-b92337aaa175', 2, true),  -- 渡辺雄太: 関東農政局（主所属）
 
 -- 東京都農林水産部所属
-(6, 3, true),   -- 伊藤美咲: 東京都農林水産部（主所属）
-(7, 3, true),   -- 山本健太: 東京都農林水産部（主所属）
-(8, 3, false),  -- 中村洋子: 東京都農林水産部（副所属）
+('2977a69b-3baf-4df2-9894-76fb78773cb5', 3, true),  -- 伊藤美咲: 東京都農林水産部（主所属）
+('da0b56a2-03b0-41b5-96ec-c68fb6fedde9', 3, true),  -- 山本健太: 東京都農林水産部（主所属）
+('2ee198e4-666f-4614-8da5-834dc4c7139d', 3, false), -- 中村洋子: 東京都農林水産部（副所属）
 
 -- 青森県農林水産部所属
-(8, 4, true),   -- 中村洋子: 青森県農林水産部（主所属）
-(9, 4, true),   -- 小林直人: 青森県農林水産部（主所属）
-(10, 4, true),  -- 加藤千尋: 青森県農林水産部（主所属）
+('31b92890-45fc-4cb0-8344-6dedf2f8446b', 4, true),  -- 中村洋子: 青森県農林水産部（主所属）
+('a3f6cb3b-3bf4-4162-9004-ffd8fe81b33a', 4, true),  -- 小林直人: 青森県農林水産部（主所属）
+('577f5a91-6814-4bf8-a55b-792402d17153', 4, true),  -- 加藤千尋: 青森県農林水産部（主所属）
 
 -- JA全農所属
-(11, 5, true),  -- 松本龍太郎: JA全農（主所属）
-(12, 5, true),  -- 井上真希: JA全農（主所属）
-(13, 5, true),  -- 木村大輔: JA全農（主所属）
+('f61c1d9c-f098-4c74-9faf-9a49b4c19781', 5, true),  -- 松本龍太郎: JA全農（主所属）
+('87fbf2c6-341e-46c5-a2fc-1d9834c55a7e', 5, true),  -- 井上真希: JA全農（主所属）
+('4b9d8271-b8a1-4e24-bab2-62ac44ec73a8', 5, true),  -- 木村大輔: JA全農（主所属）
 
 -- JA東京所属
-(14, 6, true),  -- 林優子: JA東京（主所属）
-(15, 6, true),  -- 斎藤拓也: JA東京（主所属）
-(16, 6, true),  -- 清水恵子: JA東京（主所属）
+('e3dbf9e4-9182-4c4e-b927-6c0153bc07e4', 6, true),  -- 林優子: JA東京（主所属）
+('f08bcf78-248b-42ec-9df1-143b21e4b253', 6, true),  -- 斎藤拓也: JA東京（主所属）
+('558b9c39-f56d-4e6f-844c-28b2424cc4a7', 6, true),  -- 清水恵子: JA東京（主所属）
 
 -- 複数組織に所属する例
-(17, 1, false), -- 山田隆史: 農林水産省（副所属）
-(17, 5, true),  -- 山田隆史: JA全農（主所属）
-(18, 3, false), -- 中島裕太: 東京都農林水産部（副所属）
-(18, 6, true),  -- 中島裕太: JA東京（主所属）
-(19, 2, false), -- 岡田彩香: 関東農政局（副所属）
-(19, 4, true),  -- 岡田彩香: 青森県農林水産部（主所属）
-(20, 1, false), -- 後藤光希: 農林水産省（副所属）
-(20, 2, true); -- 後藤光希: 関東農政局（主所属）
+('d0db121b-77a5-48cb-a4ed-25d085c363d7', 1, false), -- 山田隆史: 農林水産省（副所属）
+('dcb243f6-4d77-4cb4-af9c-9d5f645580c8', 5, true),  -- 山田隆史: JA全農（主所属）
+('d0db121b-77a5-48cb-a4ed-25d085c363d7', 3, false), -- 中島裕太: 東京都農林水産部（副所属）
+('d0db121b-77a5-48cb-a4ed-25d085c363d7', 6, true),  -- 中島裕太: JA東京（主所属）
+('d0db121b-77a5-48cb-a4ed-25d085c363d7', 2, false), -- 岡田彩香: 関東農政局（副所属）
+('d0db121b-77a5-48cb-a4ed-25d085c363d7', 4, true); -- 岡田彩香: 青森県農林水産部（主所属）

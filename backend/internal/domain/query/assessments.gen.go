@@ -28,9 +28,9 @@ func newAssessment(db *gorm.DB, opts ...gen.DOOption) assessment {
 
 	tableName := _assessment.assessmentDo.TableName()
 	_assessment.ALL = field.NewAsterisk(tableName)
-	_assessment.ID = field.NewInt32(tableName, "id")
+	_assessment.ID = field.NewInt64(tableName, "id")
 	_assessment.DisasterID = field.NewString(tableName, "disaster_id")
-	_assessment.AssessorID = field.NewInt32(tableName, "assessor_id")
+	_assessment.UserID = field.NewString(tableName, "user_id")
 	_assessment.AssessmentDate = field.NewTime(tableName, "assessment_date")
 	_assessment.AssessmentType = field.NewString(tableName, "assessment_type")
 	_assessment.Status = field.NewString(tableName, "status")
@@ -39,7 +39,7 @@ func newAssessment(db *gorm.DB, opts ...gen.DOOption) assessment {
 	_assessment.DamageAmount = field.NewFloat64(tableName, "damage_amount")
 	_assessment.ApprovedAmount = field.NewFloat64(tableName, "approved_amount")
 	_assessment.ApprovalDate = field.NewTime(tableName, "approval_date")
-	_assessment.ApprovedBy = field.NewInt32(tableName, "approved_by")
+	_assessment.ApprovedBy = field.NewString(tableName, "approved_by")
 	_assessment.Notes = field.NewString(tableName, "notes")
 	_assessment.CreatedAt = field.NewTime(tableName, "created_at")
 	_assessment.UpdatedAt = field.NewTime(tableName, "updated_at")
@@ -54,9 +54,9 @@ type assessment struct {
 	assessmentDo
 
 	ALL               field.Asterisk
-	ID                field.Int32   // 査定ID - 主キー
+	ID                field.Int64   // 査定ID - 主キー
 	DisasterID        field.String  // 災害ID - 査定対象の災害ID
-	AssessorID        field.Int32   // 査定者ID - 査定を行ったユーザーのID
+	UserID            field.String  // 査定者ID - 査定を行ったユーザーのID
 	AssessmentDate    field.Time    // 査定日 - 査定が行われた日付
 	AssessmentType    field.String  // 査定種別 - 現地査定、リモート査定など
 	Status            field.String  // 状態 - 査定の進行状況
@@ -65,7 +65,7 @@ type assessment struct {
 	DamageAmount      field.Float64 // 被害金額 - 査定された被害金額
 	ApprovedAmount    field.Float64 // 承認金額 - 承認された支援金額
 	ApprovalDate      field.Time    // 承認日時 - 査定が承認された日時
-	ApprovedBy        field.Int32   // 承認者ID - 査定を承認したユーザーのID
+	ApprovedBy        field.String  // 承認者ID - 査定を承認したユーザーのID
 	Notes             field.String  // 備考 - 査定に関する備考やメモ
 	CreatedAt         field.Time    // 作成日時 - レコード作成日時
 	UpdatedAt         field.Time    // 更新日時 - レコード最終更新日時
@@ -86,9 +86,9 @@ func (a assessment) As(alias string) *assessment {
 
 func (a *assessment) updateTableName(table string) *assessment {
 	a.ALL = field.NewAsterisk(table)
-	a.ID = field.NewInt32(table, "id")
+	a.ID = field.NewInt64(table, "id")
 	a.DisasterID = field.NewString(table, "disaster_id")
-	a.AssessorID = field.NewInt32(table, "assessor_id")
+	a.UserID = field.NewString(table, "user_id")
 	a.AssessmentDate = field.NewTime(table, "assessment_date")
 	a.AssessmentType = field.NewString(table, "assessment_type")
 	a.Status = field.NewString(table, "status")
@@ -97,7 +97,7 @@ func (a *assessment) updateTableName(table string) *assessment {
 	a.DamageAmount = field.NewFloat64(table, "damage_amount")
 	a.ApprovedAmount = field.NewFloat64(table, "approved_amount")
 	a.ApprovalDate = field.NewTime(table, "approval_date")
-	a.ApprovedBy = field.NewInt32(table, "approved_by")
+	a.ApprovedBy = field.NewString(table, "approved_by")
 	a.Notes = field.NewString(table, "notes")
 	a.CreatedAt = field.NewTime(table, "created_at")
 	a.UpdatedAt = field.NewTime(table, "updated_at")
@@ -121,7 +121,7 @@ func (a *assessment) fillFieldMap() {
 	a.fieldMap = make(map[string]field.Expr, 16)
 	a.fieldMap["id"] = a.ID
 	a.fieldMap["disaster_id"] = a.DisasterID
-	a.fieldMap["assessor_id"] = a.AssessorID
+	a.fieldMap["user_id"] = a.UserID
 	a.fieldMap["assessment_date"] = a.AssessmentDate
 	a.fieldMap["assessment_type"] = a.AssessmentType
 	a.fieldMap["status"] = a.Status

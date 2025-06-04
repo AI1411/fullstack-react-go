@@ -16,7 +16,7 @@ const TableNameAssessmentComment = "assessment_comments"
 type AssessmentComment struct {
 	ID              int32          `gorm:"column:id;type:integer;primaryKey;autoIncrement:true;comment:コメントID - 主キー" json:"id"`                                                                             // コメントID - 主キー
 	AssessmentID    int32          `gorm:"column:assessment_id;type:integer;not null;index:idx_assessment_comments_assessment_id,priority:1;comment:査定ID - 関連する査定のID" json:"assessment_id"`                 // 査定ID - 関連する査定のID
-	UserID          int32          `gorm:"column:user_id;type:integer;not null;index:idx_assessment_comments_user_id,priority:1;comment:ユーザーID - コメントを投稿したユーザーのID" json:"user_id"`                          // ユーザーID - コメントを投稿したユーザーのID
+	UserID          string         `gorm:"column:user_id;type:uuid;not null;index:idx_assessment_comments_user_id,priority:1;comment:ユーザーID - コメントを投稿したユーザーのID" json:"user_id"`                             // ユーザーID - コメントを投稿したユーザーのID
 	CommentText     string         `gorm:"column:comment_text;type:text;not null;comment:コメント本文 - コメントの内容" json:"comment_text"`                                                                             // コメント本文 - コメントの内容
 	CommentTime     time.Time      `gorm:"column:comment_time;type:timestamp with time zone;not null;default:CURRENT_TIMESTAMP;comment:コメント時間 - コメントが投稿された時間" json:"comment_time"`                          // コメント時間 - コメントが投稿された時間
 	ParentCommentID *int32         `gorm:"column:parent_comment_id;type:integer;index:idx_assessment_comments_parent_comment_id,priority:1;comment:親コメントID - 返信先のコメントID（スレッド構造用）" json:"parent_comment_id"` // 親コメントID - 返信先のコメントID（スレッド構造用）

@@ -14,14 +14,23 @@ const TableNameUser = "users"
 
 // User mapped from table <users>
 type User struct {
-	ID            int32          `gorm:"column:id;type:integer;primaryKey;autoIncrement:true" json:"id"`
-	Name          string         `gorm:"column:name;type:character varying(255);not null" json:"name"`
-	Email         string         `gorm:"column:email;type:character varying(255);not null;index:idx_users_email,priority:1" json:"email"`
-	Password      string         `gorm:"column:password;type:character varying(255);not null" json:"password"`
-	CreatedAt     *time.Time     `gorm:"column:created_at;type:timestamp with time zone;default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt     *time.Time     `gorm:"column:updated_at;type:timestamp with time zone;default:CURRENT_TIMESTAMP" json:"updated_at"`
-	DeletedAt     gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp with time zone;index:idx_users_deleted_at,priority:1" json:"deleted_at"`
-	Organizations []Organization `gorm:"many2many:user_organizations" json:"organizations"`
+	ID                   string         `gorm:"column:id;type:uuid;primaryKey;index:idx_users_id_hash,priority:1;default:gen_random_uuid();comment:ユーザーID（主キー、自動掲番）" json:"id"`              // ユーザーID（主キー、自動掲番）
+	Name                 string         `gorm:"column:name;type:character varying(255);not null;comment:ユーザー名" json:"name"`                                                                  // ユーザー名
+	Email                string         `gorm:"column:email;type:character varying(255);not null;index:idx_users_email,priority:1;comment:メールアドレス（ユニーク制約あり）" json:"email"`                   // メールアドレス（ユニーク制約あり）
+	Password             string         `gorm:"column:password;type:character varying(255);not null;comment:ハッシュ化されたパスワード" json:"password"`                                                  // ハッシュ化されたパスワード
+	OrganizationID       *int32         `gorm:"column:organization_id;type:integer;index:idx_users_organization_id,priority:1;comment:組織ID（外部キー、組織マスタのID）" json:"organization_id"`           // 組織ID（外部キー、組織マスタのID）
+	RoleID               int16          `gorm:"column:role_id;type:smallint;not null;index:idx_users_role_id,priority:1;comment:役割ID（外部キー、役割マスタのID）" json:"role_id"`                         // 役割ID（外部キー、役割マスタのID）
+	IsActive             bool           `gorm:"column:is_active;type:boolean;not null;index:idx_users_is_active,priority:1;default:true;comment:有効フラグ（TRUE: 有効、FALSE: 無効）" json:"is_active"` // 有効フラグ（TRUE: 有効、FALSE: 無効）
+	EmailVerified        bool           `gorm:"column:email_verified;type:boolean;not null;comment:メールアドレスの確認済みフラグ（TRUE: 確認済み、FALSE: 未確認）" json:"email_verified"`                            // メールアドレスの確認済みフラグ（TRUE: 確認済み、FALSE: 未確認）
+	MfaEnabled           *bool          `gorm:"column:mfa_enabled;type:boolean;comment:多要素認証の有効フラグ（TRUE: 有効、FALSE: 無効）" json:"mfa_enabled"`                                                  // 多要素認証の有効フラグ（TRUE: 有効、FALSE: 無効）
+	MfaSecret            *string        `gorm:"column:mfa_secret;type:character varying(255);comment:多要素認証のシークレットキー（TOTP用）" json:"mfa_secret"`                                               // 多要素認証のシークレットキー（TOTP用）
+	PasswordResetToken   *string        `gorm:"column:password_reset_token;type:character varying(255);comment:パスワードリセット用のトークン" json:"password_reset_token"`                                 // パスワードリセット用のトークン
+	PasswordResetExpires *time.Time     `gorm:"column:password_reset_expires;type:timestamp with time zone;comment:パスワードリセットトークンの有効期限" json:"password_reset_expires"`                        // パスワードリセットトークンの有効期限
+	LastPasswordChange   *time.Time     `gorm:"column:last_password_change;type:timestamp with time zone;default:CURRENT_TIMESTAMP;comment:最後のパスワード変更日時" json:"last_password_change"`        // 最後のパスワード変更日時
+	CreatedAt            *time.Time     `gorm:"column:created_at;type:timestamp with time zone;default:CURRENT_TIMESTAMP;comment:ユーザー作成日時" json:"created_at"`                                // ユーザー作成日時
+	UpdatedAt            *time.Time     `gorm:"column:updated_at;type:timestamp with time zone;default:CURRENT_TIMESTAMP;comment:ユーザー情報の最終更新日時" json:"updated_at"`                           // ユーザー情報の最終更新日時
+	DeletedAt            gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp with time zone;comment:ユーザー削除日時（論理削除用、NULLの場合は削除されていない）" json:"deleted_at"`                                  // ユーザー削除日時（論理削除用、NULLの場合は削除されていない）
+	Organizations        []Organization `gorm:"many2many:user_organizations" json:"organizations"`
 }
 
 // TableName User's table name

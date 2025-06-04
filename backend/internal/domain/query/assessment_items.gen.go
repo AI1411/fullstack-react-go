@@ -29,7 +29,7 @@ func newAssessmentItem(db *gorm.DB, opts ...gen.DOOption) assessmentItem {
 	tableName := _assessmentItem.assessmentItemDo.TableName()
 	_assessmentItem.ALL = field.NewAsterisk(tableName)
 	_assessmentItem.ID = field.NewInt32(tableName, "id")
-	_assessmentItem.AssessmentID = field.NewInt32(tableName, "assessment_id")
+	_assessmentItem.AssessmentID = field.NewInt64(tableName, "assessment_id")
 	_assessmentItem.ItemName = field.NewString(tableName, "item_name")
 	_assessmentItem.FacilityTypeID = field.NewInt32(tableName, "facility_type_id")
 	_assessmentItem.DamageLevelID = field.NewInt32(tableName, "damage_level_id")
@@ -53,7 +53,7 @@ type assessmentItem struct {
 
 	ALL               field.Asterisk
 	ID                field.Int32   // 査定項目ID - 主キー
-	AssessmentID      field.Int32   // 査定ID - 関連する査定のID
+	AssessmentID      field.Int64   // 査定ID - 関連する査定のID
 	ItemName          field.String  // 項目名 - 査定項目の名称
 	FacilityTypeID    field.Int32   // 施設種別ID - 被害を受けた施設の種別
 	DamageLevelID     field.Int32   // 被害程度ID - 被害の程度
@@ -83,7 +83,7 @@ func (a assessmentItem) As(alias string) *assessmentItem {
 func (a *assessmentItem) updateTableName(table string) *assessmentItem {
 	a.ALL = field.NewAsterisk(table)
 	a.ID = field.NewInt32(table, "id")
-	a.AssessmentID = field.NewInt32(table, "assessment_id")
+	a.AssessmentID = field.NewInt64(table, "assessment_id")
 	a.ItemName = field.NewString(table, "item_name")
 	a.FacilityTypeID = field.NewInt32(table, "facility_type_id")
 	a.DamageLevelID = field.NewInt32(table, "damage_level_id")

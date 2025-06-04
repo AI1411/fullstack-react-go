@@ -28,10 +28,19 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 
 	tableName := _user.userDo.TableName()
 	_user.ALL = field.NewAsterisk(tableName)
-	_user.ID = field.NewInt32(tableName, "id")
+	_user.ID = field.NewString(tableName, "id")
 	_user.Name = field.NewString(tableName, "name")
 	_user.Email = field.NewString(tableName, "email")
 	_user.Password = field.NewString(tableName, "password")
+	_user.OrganizationID = field.NewInt32(tableName, "organization_id")
+	_user.RoleID = field.NewInt16(tableName, "role_id")
+	_user.IsActive = field.NewBool(tableName, "is_active")
+	_user.EmailVerified = field.NewBool(tableName, "email_verified")
+	_user.MfaEnabled = field.NewBool(tableName, "mfa_enabled")
+	_user.MfaSecret = field.NewString(tableName, "mfa_secret")
+	_user.PasswordResetToken = field.NewString(tableName, "password_reset_token")
+	_user.PasswordResetExpires = field.NewTime(tableName, "password_reset_expires")
+	_user.LastPasswordChange = field.NewTime(tableName, "last_password_change")
 	_user.CreatedAt = field.NewTime(tableName, "created_at")
 	_user.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_user.DeletedAt = field.NewField(tableName, "deleted_at")
@@ -49,15 +58,24 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 type user struct {
 	userDo
 
-	ALL           field.Asterisk
-	ID            field.Int32
-	Name          field.String
-	Email         field.String
-	Password      field.String
-	CreatedAt     field.Time
-	UpdatedAt     field.Time
-	DeletedAt     field.Field
-	Organizations userManyToManyOrganizations
+	ALL                  field.Asterisk
+	ID                   field.String // ユーザーID（主キー、自動掲番）
+	Name                 field.String // ユーザー名
+	Email                field.String // メールアドレス（ユニーク制約あり）
+	Password             field.String // ハッシュ化されたパスワード
+	OrganizationID       field.Int32  // 組織ID（外部キー、組織マスタのID）
+	RoleID               field.Int16  // 役割ID（外部キー、役割マスタのID）
+	IsActive             field.Bool   // 有効フラグ（TRUE: 有効、FALSE: 無効）
+	EmailVerified        field.Bool   // メールアドレスの確認済みフラグ（TRUE: 確認済み、FALSE: 未確認）
+	MfaEnabled           field.Bool   // 多要素認証の有効フラグ（TRUE: 有効、FALSE: 無効）
+	MfaSecret            field.String // 多要素認証のシークレットキー（TOTP用）
+	PasswordResetToken   field.String // パスワードリセット用のトークン
+	PasswordResetExpires field.Time   // パスワードリセットトークンの有効期限
+	LastPasswordChange   field.Time   // 最後のパスワード変更日時
+	CreatedAt            field.Time   // ユーザー作成日時
+	UpdatedAt            field.Time   // ユーザー情報の最終更新日時
+	DeletedAt            field.Field  // ユーザー削除日時（論理削除用、NULLの場合は削除されていない）
+	Organizations        userManyToManyOrganizations
 
 	fieldMap map[string]field.Expr
 }
@@ -74,10 +92,19 @@ func (u user) As(alias string) *user {
 
 func (u *user) updateTableName(table string) *user {
 	u.ALL = field.NewAsterisk(table)
-	u.ID = field.NewInt32(table, "id")
+	u.ID = field.NewString(table, "id")
 	u.Name = field.NewString(table, "name")
 	u.Email = field.NewString(table, "email")
 	u.Password = field.NewString(table, "password")
+	u.OrganizationID = field.NewInt32(table, "organization_id")
+	u.RoleID = field.NewInt16(table, "role_id")
+	u.IsActive = field.NewBool(table, "is_active")
+	u.EmailVerified = field.NewBool(table, "email_verified")
+	u.MfaEnabled = field.NewBool(table, "mfa_enabled")
+	u.MfaSecret = field.NewString(table, "mfa_secret")
+	u.PasswordResetToken = field.NewString(table, "password_reset_token")
+	u.PasswordResetExpires = field.NewTime(table, "password_reset_expires")
+	u.LastPasswordChange = field.NewTime(table, "last_password_change")
 	u.CreatedAt = field.NewTime(table, "created_at")
 	u.UpdatedAt = field.NewTime(table, "updated_at")
 	u.DeletedAt = field.NewField(table, "deleted_at")
@@ -97,11 +124,20 @@ func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (u *user) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 8)
+	u.fieldMap = make(map[string]field.Expr, 17)
 	u.fieldMap["id"] = u.ID
 	u.fieldMap["name"] = u.Name
 	u.fieldMap["email"] = u.Email
 	u.fieldMap["password"] = u.Password
+	u.fieldMap["organization_id"] = u.OrganizationID
+	u.fieldMap["role_id"] = u.RoleID
+	u.fieldMap["is_active"] = u.IsActive
+	u.fieldMap["email_verified"] = u.EmailVerified
+	u.fieldMap["mfa_enabled"] = u.MfaEnabled
+	u.fieldMap["mfa_secret"] = u.MfaSecret
+	u.fieldMap["password_reset_token"] = u.PasswordResetToken
+	u.fieldMap["password_reset_expires"] = u.PasswordResetExpires
+	u.fieldMap["last_password_change"] = u.LastPasswordChange
 	u.fieldMap["created_at"] = u.CreatedAt
 	u.fieldMap["updated_at"] = u.UpdatedAt
 	u.fieldMap["deleted_at"] = u.DeletedAt

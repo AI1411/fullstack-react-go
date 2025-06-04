@@ -15,7 +15,7 @@ const TableNameAssessmentItem = "assessment_items"
 // AssessmentItem mapped from table <assessment_items>
 type AssessmentItem struct {
 	ID                int32          `gorm:"column:id;type:integer;primaryKey;autoIncrement:true;comment:査定項目ID - 主キー" json:"id"`                                                              // 査定項目ID - 主キー
-	AssessmentID      int32          `gorm:"column:assessment_id;type:integer;not null;index:idx_assessment_items_assessment_id,priority:1;comment:査定ID - 関連する査定のID" json:"assessment_id"`     // 査定ID - 関連する査定のID
+	AssessmentID      int64          `gorm:"column:assessment_id;type:bigint;not null;index:idx_assessment_items_assessment_id,priority:1;comment:査定ID - 関連する査定のID" json:"assessment_id"`      // 査定ID - 関連する査定のID
 	ItemName          string         `gorm:"column:item_name;type:character varying(100);not null;comment:項目名 - 査定項目の名称" json:"item_name"`                                                     // 項目名 - 査定項目の名称
 	FacilityTypeID    *int32         `gorm:"column:facility_type_id;type:integer;index:idx_assessment_items_facility_type_id,priority:1;comment:施設種別ID - 被害を受けた施設の種別" json:"facility_type_id"` // 施設種別ID - 被害を受けた施設の種別
 	DamageLevelID     *int32         `gorm:"column:damage_level_id;type:integer;index:idx_assessment_items_damage_level_id,priority:1;comment:被害程度ID - 被害の程度" json:"damage_level_id"`          // 被害程度ID - 被害の程度

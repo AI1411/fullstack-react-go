@@ -1,4 +1,5 @@
 -- 支援申請テーブルの作成
+DROP TABLE IF EXISTS support_applications CASCADE;
 CREATE TABLE support_applications
 (
     application_id   VARCHAR(10) PRIMARY KEY,

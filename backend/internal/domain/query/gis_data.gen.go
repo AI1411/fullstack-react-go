@@ -36,7 +36,7 @@ func newGisDatum(db *gorm.DB, opts ...gen.DOOption) gisDatum {
 	_gisDatum.GeometryType = field.NewString(tableName, "geometry_type")
 	_gisDatum.GeometryData = field.NewString(tableName, "geometry_data")
 	_gisDatum.Properties = field.NewString(tableName, "properties")
-	_gisDatum.CreatedBy = field.NewInt32(tableName, "created_by")
+	_gisDatum.CreatedBy = field.NewString(tableName, "created_by")
 	_gisDatum.CreatedAt = field.NewTime(tableName, "created_at")
 	_gisDatum.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_gisDatum.DeletedAt = field.NewField(tableName, "deleted_at")
@@ -58,7 +58,7 @@ type gisDatum struct {
 	GeometryType field.String // ジオメトリ種別 - 地理データの形状タイプ
 	GeometryData field.String // ジオメトリデータ - GeoJSON形式の地理データ
 	Properties   field.String // プロパティ - 追加のプロパティ情報（JSON形式）
-	CreatedBy    field.Int32  // 作成者ID - データを作成したユーザーのID
+	CreatedBy    field.String // 作成者ID - データを作成したユーザーのID
 	CreatedAt    field.Time   // 作成日時 - レコード作成日時
 	UpdatedAt    field.Time   // 更新日時 - レコード最終更新日時
 	DeletedAt    field.Field  // 削除日時 - 論理削除用のタイムスタンプ
@@ -86,7 +86,7 @@ func (g *gisDatum) updateTableName(table string) *gisDatum {
 	g.GeometryType = field.NewString(table, "geometry_type")
 	g.GeometryData = field.NewString(table, "geometry_data")
 	g.Properties = field.NewString(table, "properties")
-	g.CreatedBy = field.NewInt32(table, "created_by")
+	g.CreatedBy = field.NewString(table, "created_by")
 	g.CreatedAt = field.NewTime(table, "created_at")
 	g.UpdatedAt = field.NewTime(table, "updated_at")
 	g.DeletedAt = field.NewField(table, "deleted_at")

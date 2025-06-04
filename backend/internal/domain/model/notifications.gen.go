@@ -15,7 +15,7 @@ const TableNameNotification = "notifications"
 // Notification mapped from table <notifications>
 type Notification struct {
 	ID                int32          `gorm:"column:id;type:integer;primaryKey;autoIncrement:true;comment:通知ID - 主キー" json:"id"`                                                                                          // 通知ID - 主キー
-	UserID            int32          `gorm:"column:user_id;type:integer;not null;index:idx_notifications_user_id,priority:1;comment:ユーザーID - 通知の宛先ユーザーID" json:"user_id"`                                                // ユーザーID - 通知の宛先ユーザーID
+	UserID            string         `gorm:"column:user_id;type:uuid;not null;index:idx_notifications_user_id,priority:1;comment:ユーザーID - 通知の宛先ユーザーID" json:"user_id"`                                                   // ユーザーID - 通知の宛先ユーザーID
 	Title             string         `gorm:"column:title;type:character varying(200);not null;comment:タイトル - 通知のタイトル" json:"title"`                                                                                      // タイトル - 通知のタイトル
 	Message           string         `gorm:"column:message;type:text;not null;comment:メッセージ - 通知の本文" json:"message"`                                                                                                     // メッセージ - 通知の本文
 	NotificationType  string         `gorm:"column:notification_type;type:character varying(50);not null;index:idx_notifications_notification_type,priority:1;comment:通知種別 - 通知の種類" json:"notification_type"`            // 通知種別 - 通知の種類

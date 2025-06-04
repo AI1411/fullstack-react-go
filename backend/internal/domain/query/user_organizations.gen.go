@@ -28,7 +28,7 @@ func newUserOrganization(db *gorm.DB, opts ...gen.DOOption) userOrganization {
 
 	tableName := _userOrganization.userOrganizationDo.TableName()
 	_userOrganization.ALL = field.NewAsterisk(tableName)
-	_userOrganization.UserID = field.NewInt32(tableName, "user_id")
+	_userOrganization.UserID = field.NewString(tableName, "user_id")
 	_userOrganization.OrganizationID = field.NewInt32(tableName, "organization_id")
 	_userOrganization.IsPrimary = field.NewBool(tableName, "is_primary")
 	_userOrganization.CreatedAt = field.NewTime(tableName, "created_at")
@@ -54,11 +54,11 @@ type userOrganization struct {
 	userOrganizationDo
 
 	ALL            field.Asterisk
-	UserID         field.Int32 // ユーザーID - ユーザーテーブルの外部キー
-	OrganizationID field.Int32 // 組織ID - 組織テーブルの外部キー
-	IsPrimary      field.Bool  // 主所属フラグ - ユーザーの主所属組織かどうか
-	CreatedAt      field.Time  // 作成日時 - レコード作成日時
-	UpdatedAt      field.Time  // 更新日時 - レコード最終更新日時
+	UserID         field.String // ユーザーID - ユーザーテーブルの外部キー
+	OrganizationID field.Int32  // 組織ID - 組織テーブルの外部キー
+	IsPrimary      field.Bool   // 主所属フラグ - ユーザーの主所属組織かどうか
+	CreatedAt      field.Time   // 作成日時 - レコード作成日時
+	UpdatedAt      field.Time   // 更新日時 - レコード最終更新日時
 	User           userOrganizationBelongsToUser
 
 	Organization userOrganizationBelongsToOrganization
@@ -78,7 +78,7 @@ func (u userOrganization) As(alias string) *userOrganization {
 
 func (u *userOrganization) updateTableName(table string) *userOrganization {
 	u.ALL = field.NewAsterisk(table)
-	u.UserID = field.NewInt32(table, "user_id")
+	u.UserID = field.NewString(table, "user_id")
 	u.OrganizationID = field.NewInt32(table, "organization_id")
 	u.IsPrimary = field.NewBool(table, "is_primary")
 	u.CreatedAt = field.NewTime(table, "created_at")
