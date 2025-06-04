@@ -148,46 +148,6 @@ COMMENT ON COLUMN user_roles.role_id IS '役割ID - 役割テーブルの外部�
 COMMENT ON COLUMN user_roles.created_at IS '作成日時 - レコード作成日時';
 COMMENT ON COLUMN user_roles.updated_at IS '更新日時 - レコード最終更新日時';
 
--- 組織テーブル
-DROP TABLE IF EXISTS organizations CASCADE;
-CREATE TABLE IF NOT EXISTS organizations
-(
-    id            SERIAL PRIMARY KEY,
-    name          VARCHAR(100)             NOT NULL,
-    type          VARCHAR(50)              NOT NULL,
-    prefecture_id INT REFERENCES prefectures (id),
-    parent_id     INT REFERENCES organizations (id),
-    description   TEXT,
-    created_at    TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at    TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at    TIMESTAMP WITH TIME ZONE
-);
-
-CREATE INDEX IF NOT EXISTS idx_organizations_name ON organizations (name);
-CREATE INDEX IF NOT EXISTS idx_organizations_type ON organizations (type);
-CREATE INDEX IF NOT EXISTS idx_organizations_prefecture_id ON organizations (prefecture_id);
-CREATE INDEX IF NOT EXISTS idx_organizations_parent_id ON organizations (parent_id);
-
-COMMENT ON TABLE organizations IS '組織テーブル - 行政機関や団体の組織情報を管理';
-COMMENT ON COLUMN organizations.id IS '組織ID - 主キー';
-COMMENT ON COLUMN organizations.name IS '組織名 - 組織の名称';
-COMMENT ON COLUMN organizations.type IS '組織種別 - 国, 都道府県, 市町村, JAなど';
-COMMENT ON COLUMN organizations.prefecture_id IS '都道府県ID - 組織が所属する都道府県';
-COMMENT ON COLUMN organizations.parent_id IS '親組織ID - 階層構造を表現するための親組織ID';
-COMMENT ON COLUMN organizations.description IS '説明 - 組織の詳細説明';
-COMMENT ON COLUMN organizations.created_at IS '作成日時 - レコード作成日時';
-COMMENT ON COLUMN organizations.updated_at IS '更新日時 - レコード最終更新日時';
-COMMENT ON COLUMN organizations.deleted_at IS '削除日時 - 論理削除用のタイムスタンプ';
-
--- 初期データ投入（サンプル）
-INSERT INTO organizations (name, type, prefecture_id, parent_id, description)
-VALUES ('農林水産省', '国', NULL, NULL, '農林水産行政を担当する国の行政機関'),
-       ('関東農政局', '国', 13, 1, '関東地方の農政を担当する農林水産省の地方機関'),
-       ('東京都農林水産部', '都道府県', 13, NULL, '東京都の農林水産行政を担当する部署'),
-       ('青森県農林水産部', '都道府県', 2, NULL, '青森県の農林水産行政を担当する部署'),
-       ('JA全農', '団体', NULL, NULL, '全国農業協同組合連合会'),
-       ('JA東京', '団体', 13, 5, '東京都の農業協同組合');
-
 -- ユーザー組織テーブル（ユーザーと組織の多対多関連）
 DROP TABLE IF EXISTS user_organizations CASCADE;
 CREATE TABLE IF NOT EXISTS user_organizations

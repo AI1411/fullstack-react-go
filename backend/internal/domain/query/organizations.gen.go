@@ -28,15 +28,14 @@ func newOrganization(db *gorm.DB, opts ...gen.DOOption) organization {
 
 	tableName := _organization.organizationDo.TableName()
 	_organization.ALL = field.NewAsterisk(tableName)
-	_organization.ID = field.NewInt32(tableName, "id")
+	_organization.ID = field.NewInt64(tableName, "id")
 	_organization.Name = field.NewString(tableName, "name")
 	_organization.Type = field.NewString(tableName, "type")
-	_organization.PrefectureID = field.NewInt32(tableName, "prefecture_id")
 	_organization.ParentID = field.NewInt32(tableName, "parent_id")
-	_organization.Description = field.NewString(tableName, "description")
+	_organization.SortOrder = field.NewInt32(tableName, "sort_order")
+	_organization.IsActive = field.NewBool(tableName, "is_active")
 	_organization.CreatedAt = field.NewTime(tableName, "created_at")
 	_organization.UpdatedAt = field.NewTime(tableName, "updated_at")
-	_organization.DeletedAt = field.NewField(tableName, "deleted_at")
 	_organization.Users = organizationManyToManyUsers{
 		db: db.Session(&gorm.Session{}),
 
@@ -51,17 +50,16 @@ func newOrganization(db *gorm.DB, opts ...gen.DOOption) organization {
 type organization struct {
 	organizationDo
 
-	ALL          field.Asterisk
-	ID           field.Int32  // 組織ID - 主キー
-	Name         field.String // 組織名 - 組織の名称
-	Type         field.String // 組織種別 - 国, 都道府県, 市町村, JAなど
-	PrefectureID field.Int32  // 都道府県ID - 組織が所属する都道府県
-	ParentID     field.Int32  // 親組織ID - 階層構造を表現するための親組織ID
-	Description  field.String // 説明 - 組織の詳細説明
-	CreatedAt    field.Time   // 作成日時 - レコード作成日時
-	UpdatedAt    field.Time   // 更新日時 - レコード最終更新日時
-	DeletedAt    field.Field  // 削除日時 - 論理削除用のタイムスタンプ
-	Users        organizationManyToManyUsers
+	ALL       field.Asterisk
+	ID        field.Int64  // 組織ID（主キー、自動掲番）
+	Name      field.String // 組織名
+	Type      field.String // 組織の種類（MAFF: 農林水産本省、regional: 地方農政局、prefecture: 都道府県）
+	ParentID  field.Int32  // 親組織ID（階層構造を持つための外部キー）
+	SortOrder field.Int32  // 表示順序
+	IsActive  field.Bool   // 有効フラグ（TRUE: 有効、FALSE: 無効）
+	CreatedAt field.Time
+	UpdatedAt field.Time
+	Users     organizationManyToManyUsers
 
 	fieldMap map[string]field.Expr
 }
@@ -78,15 +76,14 @@ func (o organization) As(alias string) *organization {
 
 func (o *organization) updateTableName(table string) *organization {
 	o.ALL = field.NewAsterisk(table)
-	o.ID = field.NewInt32(table, "id")
+	o.ID = field.NewInt64(table, "id")
 	o.Name = field.NewString(table, "name")
 	o.Type = field.NewString(table, "type")
-	o.PrefectureID = field.NewInt32(table, "prefecture_id")
 	o.ParentID = field.NewInt32(table, "parent_id")
-	o.Description = field.NewString(table, "description")
+	o.SortOrder = field.NewInt32(table, "sort_order")
+	o.IsActive = field.NewBool(table, "is_active")
 	o.CreatedAt = field.NewTime(table, "created_at")
 	o.UpdatedAt = field.NewTime(table, "updated_at")
-	o.DeletedAt = field.NewField(table, "deleted_at")
 
 	o.fillFieldMap()
 
@@ -103,16 +100,15 @@ func (o *organization) GetFieldByName(fieldName string) (field.OrderExpr, bool) 
 }
 
 func (o *organization) fillFieldMap() {
-	o.fieldMap = make(map[string]field.Expr, 10)
+	o.fieldMap = make(map[string]field.Expr, 9)
 	o.fieldMap["id"] = o.ID
 	o.fieldMap["name"] = o.Name
 	o.fieldMap["type"] = o.Type
-	o.fieldMap["prefecture_id"] = o.PrefectureID
 	o.fieldMap["parent_id"] = o.ParentID
-	o.fieldMap["description"] = o.Description
+	o.fieldMap["sort_order"] = o.SortOrder
+	o.fieldMap["is_active"] = o.IsActive
 	o.fieldMap["created_at"] = o.CreatedAt
 	o.fieldMap["updated_at"] = o.UpdatedAt
-	o.fieldMap["deleted_at"] = o.DeletedAt
 
 }
 

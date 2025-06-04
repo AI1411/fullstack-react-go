@@ -35,3 +35,80 @@ COMMENT ON COLUMN municipalities.municipality_name_kanji IS '市区町村名（�
 COMMENT ON COLUMN municipalities.prefecture_name_kana IS '都道府県名（カタカナ表記）';
 COMMENT ON COLUMN municipalities.municipality_name_kana IS '市区町村名（カタカナ表記）';
 COMMENT ON COLUMN municipalities.is_active IS '有効フラグ（TRUE: 有効、FALSE: 無効）';
+
+-- 工種区分マスタ
+DROP TABLE IF EXISTS work_categories CASCADE;
+CREATE TABLE work_categories
+(
+    id            SERIAL PRIMARY KEY,
+    category_name VARCHAR(20) NOT NULL,
+    icon_name     VARCHAR(50), -- アイコンファイル名
+    sort_order    INTEGER     NOT NULL DEFAULT 0,
+    is_active     BOOLEAN     NOT NULL DEFAULT true
+);
+
+-- インデックス作成
+CREATE INDEX IF NOT EXISTS idx_work_categories_category_name ON work_categories (category_name);
+CREATE INDEX IF NOT EXISTS idx_work_categories_icon_name ON work_categories (icon_name);
+CREATE INDEX IF NOT EXISTS idx_work_categories_sort_order ON work_categories (sort_order);
+CREATE INDEX IF NOT EXISTS idx_work_categories_is_active ON work_categories (is_active);
+
+-- テーブルコメント
+COMMENT ON TABLE work_categories IS '工種区分マスタ - 工種区分の基本情報を管理';
+
+-- カラムコメント
+COMMENT ON COLUMN work_categories.id IS '工種区分ID（主キー、自動掲番）';
+COMMENT ON COLUMN work_categories.category_name IS '工種区分名（漢字表記）';
+COMMENT ON COLUMN work_categories.icon_name IS 'アイコンファイル名';
+COMMENT ON COLUMN work_categories.sort_order IS '表示順序';
+COMMENT ON COLUMN work_categories.is_active IS '有効フラグ（TRUE: 有効、FALSE: 無効）';
+
+-- 工種区分マスタに初期データを挿入
+INSERT INTO work_categories (category_name, sort_order)
+VALUES ('農地', 10),
+       ('水路', 20),
+       ('農道', 30),
+       ('ため池', 40),
+       ('頭首工', 50),
+       ('揚水機', 60),
+       ('堤防', 70),
+       ('橋梁', 80),
+       ('農地保全施設', 90);
+
+-- 単価マスタ
+DROP TABLE IF EXISTS unit_prices CASCADE;
+CREATE TABLE unit_prices
+(
+    id              BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,       -- 単価ID（主キー、自動掲番）
+    category_id     INTEGER        NOT NULL REFERENCES work_categories (id),
+    prefecture_code VARCHAR(2)     NOT NULL REFERENCES prefectures (code), -- 都道府県コード（外部キー、prefecturesテーブルのコード）
+    unit_price      DECIMAL(12, 2) NOT NULL,                               -- 単価（円）
+    unit_type       VARCHAR(20)    NOT NULL,                               -- 'per_meter', 'per_sqm', 'per_unit'
+    valid_from      DATE           NOT NULL DEFAULT CURRENT_DATE,
+    valid_to        DATE,
+    notes           TEXT,
+    created_at      TIMESTAMPTZ    NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ    NOT NULL DEFAULT NOW()
+);
+
+-- インデックス作成
+CREATE INDEX IF NOT EXISTS idx_unit_prices_category_id ON unit_prices (category_id);
+CREATE INDEX IF NOT EXISTS idx_unit_prices_prefecture_code ON unit_prices (prefecture_code);
+CREATE INDEX IF NOT EXISTS idx_unit_prices_unit_type ON unit_prices (unit_type);
+CREATE INDEX IF NOT EXISTS idx_unit_prices_valid_from ON unit_prices (valid_from);
+CREATE INDEX IF NOT EXISTS idx_unit_prices_valid_to ON unit_prices (valid_to);
+
+-- テーブルコメント
+COMMENT ON TABLE unit_prices IS '単価マスタ - 工種区分ごとの単価を管理';
+
+-- カラムコメント
+COMMENT ON COLUMN unit_prices.id IS '単価ID（主キー、自動掲番）';
+COMMENT ON COLUMN unit_prices.category_id IS '工種区分ID（外部キー、work_categoriesテーブルのID）';
+COMMENT ON COLUMN unit_prices.prefecture_code IS '都道府県コード（外部キー、prefecturesテーブルのコード）';
+COMMENT ON COLUMN unit_prices.unit_price IS '単価（円）';
+COMMENT ON COLUMN unit_prices.unit_type IS '単位タイプ（"per_meter", "per_sqm", "per_unit"）';
+COMMENT ON COLUMN unit_prices.valid_from IS '有効開始日';
+COMMENT ON COLUMN unit_prices.valid_to IS '有効終了日';
+COMMENT ON COLUMN unit_prices.notes IS '備考';
+COMMENT ON COLUMN unit_prices.created_at IS '作成日時';
+COMMENT ON COLUMN unit_prices.updated_at IS '更新日時';
