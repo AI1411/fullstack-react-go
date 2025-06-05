@@ -47,6 +47,12 @@ export const DisasterList = ({
                 <th className="px-4 py-3 text-left text-[#111418] w-[200px] text-sm font-medium leading-normal">
                   工種区分
                 </th>
+                <th className="px-4 py-3 text-left text-[#111418] w-[200px] text-sm font-medium leading-normal">
+                  都道府県
+                </th>
+                <th className="px-4 py-3 text-left text-[#111418] w-[200px] text-sm font-medium leading-normal">
+                  市町村
+                </th>
                 <th className="px-4 py-3 text-left text-[#111418] w-[150px] text-sm font-medium leading-normal">
                   ステータス
                 </th>
@@ -68,6 +74,12 @@ export const DisasterList = ({
                   </td>
                   <td className="h-[72px] px-4 py-2 w-[200px] text-[#637588] text-sm font-normal leading-normal">
                     {disaster.work_category?.category_name || "-"}
+                  </td>
+                  <td className="h-[72px] px-4 py-2 w-[200px] text-[#637588] text-sm font-normal leading-normal">
+                    {disaster.municipality?.prefecture_name_kanji || "-"}
+                  </td>
+                  <td className="h-[72px] px-4 py-2 w-[200px] text-[#637588] text-sm font-normal leading-normal">
+                    {disaster.municipality?.municipality_name_kanji || "-"}
                   </td>
                   <td className="h-[72px] px-4 py-2 w-[150px] text-sm font-normal leading-normal">
                     <span
