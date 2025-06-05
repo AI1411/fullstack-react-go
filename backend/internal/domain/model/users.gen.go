@@ -31,6 +31,7 @@ type User struct {
 	UpdatedAt            *time.Time     `gorm:"column:updated_at;type:timestamp with time zone;default:CURRENT_TIMESTAMP;comment:ユーザー情報の最終更新日時" json:"updated_at"`                           // ユーザー情報の最終更新日時
 	DeletedAt            gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp with time zone;comment:ユーザー削除日時（論理削除用、NULLの場合は削除されていない）" json:"deleted_at"`                                  // ユーザー削除日時（論理削除用、NULLの場合は削除されていない）
 	Organizations        []Organization `gorm:"many2many:user_organizations" json:"organizations"`
+	Role                 Role           `json:"role"`
 }
 
 // TableName User's table name

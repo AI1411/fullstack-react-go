@@ -9,7 +9,6 @@ import (
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/oauth2"
 
@@ -25,11 +24,13 @@ type Auth interface {
 	Callback(c *gin.Context)
 	Logout(c *gin.Context)
 	Register(c *gin.Context)
+	VerifyEmail(c *gin.Context)
 }
 
 type authHandler struct {
 	logger       *logger.Logger
 	userUseCase  usecase.UserUseCase
+	authUsecase  usecase.AuthUsecase
 	env          *env.Values
 	provider     *oidc.Provider
 	oauth2Config oauth2.Config
@@ -41,11 +42,13 @@ func NewAuthHandler(
 	ctx context.Context,
 	l *logger.Logger,
 	userUseCase usecase.UserUseCase,
+	authUsecase usecase.AuthUsecase,
 	env *env.Values,
 ) (Auth, error) {
 	return &authHandler{
 		logger:      l,
 		userUseCase: userUseCase,
+		authUsecase: authUsecase,
 		env:         env,
 	}, nil
 }
@@ -171,19 +174,11 @@ func (h *authHandler) Callback(c *gin.Context) {
 		}
 	}
 
-	// Generate JWT token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub":   user.ID,
-		"name":  user.Name,
-		"email": user.Email,
-		"exp":   time.Now().Add(time.Duration(h.env.JWTExpiration) * time.Second).Unix(),
-	})
-
-	// Sign token
-	tokenString, err := token.SignedString([]byte(h.env.JWTSecret))
+	// Generate JWT token using auth usecase
+	tokenString, err := h.authUsecase.GenerateToken(user)
 	if err != nil {
-		h.logger.Error("Failed to sign token", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to sign token"})
+		h.logger.Error("Failed to generate token", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
 	}
 
@@ -291,18 +286,10 @@ func (h *authHandler) Register(c *gin.Context) {
 		return
 	}
 
-	// Generate JWT token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub":   user.ID,
-		"name":  user.Name,
-		"email": user.Email,
-		"exp":   time.Now().Add(time.Duration(h.env.JWTExpiration) * time.Second).Unix(),
-	})
-
-	// Sign token
-	tokenString, err := token.SignedString([]byte(h.env.JWTSecret))
+	// Generate JWT token using auth usecase
+	tokenString, err := h.authUsecase.GenerateToken(user)
 	if err != nil {
-		h.logger.Error("Failed to sign token", "error", err)
+		h.logger.Error("Failed to generate token", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate authentication token"})
 		return
 	}
@@ -319,4 +306,27 @@ func (h *authHandler) Register(c *gin.Context) {
 			"email": user.Email,
 		},
 	})
+}
+
+type VerifyEmailRequest struct {
+	Token string `json:"token" binding:"required"`
+}
+
+func (h *authHandler) VerifyEmail(c *gin.Context) {
+	var req VerifyEmailRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "無効なリクエストです"})
+		return
+	}
+
+	// Use auth usecase to verify email
+	err := h.authUsecase.VerifyEmail(req.Token)
+	if err != nil {
+		h.logger.Error("Failed to verify email", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "メールアドレスの確認に失敗しました"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "メールアドレスが確認されました"})
 }

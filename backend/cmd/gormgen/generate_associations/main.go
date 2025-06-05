@@ -61,6 +61,7 @@ func main() {
 					"many2many": []string{"user_organizations"},
 				},
 			}),
+			gen.FieldRelateModel(field.BelongsTo, "Role", model.Role{}, nil),
 		),
 
 		g.GenerateModel(

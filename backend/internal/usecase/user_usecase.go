@@ -20,6 +20,7 @@ type UserUseCase interface {
 	CreateUser(ctx context.Context, user *model.User) error
 	UpdateUser(ctx context.Context, user *model.User) error
 	DeleteUser(ctx context.Context, id int32) error
+	VerifyEmail(ctx context.Context, token string) error
 }
 
 type userUseCase struct {
@@ -218,4 +219,21 @@ func (u *userUseCase) generateWelcomeEmailBody(userName string) string {
 </body>
 </html>
 	`, userName)
+}
+
+func (u *userUseCase) VerifyEmail(ctx context.Context, token string) error {
+	user, err := u.userRepository.FindByEmail(ctx, token)
+	if err != nil {
+		return fmt.Errorf("メールアドレスの認証に失敗しました: %w", err)
+	}
+
+	if user == nil {
+		return fmt.Errorf("無効な認証トークンです")
+	}
+
+	if err := u.userRepository.Update(ctx, user); err != nil {
+		return fmt.Errorf("メールアドレスの認証更新に失敗しました: %w", err)
+	}
+
+	return nil
 }

@@ -4,12 +4,15 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 
+	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
 	"github.com/AI1411/fullstack-react-go/internal/env"
 	"github.com/AI1411/fullstack-react-go/internal/handler"
+	"github.com/AI1411/fullstack-react-go/internal/infra/auth"
 	"github.com/AI1411/fullstack-react-go/internal/infra/datastore"
 	"github.com/AI1411/fullstack-react-go/internal/infra/db"
 	"github.com/AI1411/fullstack-react-go/internal/infra/logger"
@@ -75,6 +78,7 @@ type Module struct {
 	UserHandler               handler.User
 	AuthHandler               handler.Auth
 	EmailHistoryRepo          datastore.EmailHistoryRepository
+	JWTClient                 domain.JWT
 }
 
 // ProvideLogger creates a new logger instance
@@ -120,6 +124,16 @@ func ProvideDBClient(lc fx.Lifecycle, l *logger.Logger) (db.Client, error) {
 	})
 
 	return dbClient, nil
+}
+
+func ProvideJWTClient(env *env.Values) (domain.JWT, error) {
+	jwtConfig := auth.JWTConfig{
+		SecretKey:  env.Auth.JWTSecret,
+		Expiration: time.Duration(env.JWTExpiration),
+		Issuer:     env.Auth.JWTIssuer,
+	}
+
+	return auth.NewJWTClient(jwtConfig), nil
 }
 
 // ProvideGinEngine creates and configures a new Gin engine
@@ -282,9 +296,14 @@ func ProvideUserHandler(l *logger.Logger, usecase usecase.UserUseCase) handler.U
 	return handler.NewUserHandler(l, usecase)
 }
 
+// ProvideAuthUsecase creates a new auth usecase
+func ProvideAuthUsecase(jwtClient domain.JWT) usecase.AuthUsecase {
+	return usecase.NewAuthUsecase(jwtClient)
+}
+
 // ProvideAuthHandler creates a new auth handler
-func ProvideAuthHandler(ctx context.Context, l *logger.Logger, usecase usecase.UserUseCase, env *env.Values) (handler.Auth, error) {
-	return handler.NewAuthHandler(ctx, l, usecase, env)
+func ProvideAuthHandler(ctx context.Context, l *logger.Logger, userUseCase usecase.UserUseCase, authUsecase usecase.AuthUsecase, env *env.Values) (handler.Auth, error) {
+	return handler.NewAuthHandler(ctx, l, userUseCase, authUsecase, env)
 }
 
 // RegisterRoutes registers all HTTP routes
@@ -453,6 +472,8 @@ func main() {
 			ProvideNotificationHandler,
 			ProvideOrganizationHandler,
 			ProvideUserHandler,
+			ProvideJWTClient,
+			ProvideAuthUsecase,
 			ProvideAuthHandler,
 		),
 		// Register the lifecycle hooks

@@ -22,6 +22,7 @@ type Auth struct {
 	OIDCRedirectURL  string `split_words:"true"`
 	JWTSecret        string `split_words:"true" default:"secret"`
 	JWTExpiration    int    `split_words:"true" default:"3600"`
+	JWTIssuer        string `split_words:"true" default:"http://localhost:8080"`
 }
 
 type DB struct {
