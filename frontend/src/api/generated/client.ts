@@ -81,6 +81,8 @@ import type {
   HandlerNotificationResponse,
   HandlerOrganizationResponse,
   HandlerPrefectureResponse,
+  HandlerRegisterRequest,
+  HandlerRegisterResponse,
   HandlerSupportApplicationResponse,
   HandlerUpdateDamageLevelRequest,
   HandlerUpdateDisasterRequest,
@@ -93,6 +95,8 @@ import type {
   Logout200,
   MarkAsRead400,
   MarkAsRead404,
+  Register400,
+  Register500,
   UpdateDamageLevel400,
   UpdateDamageLevel404,
   UpdateDisaster400,
@@ -345,6 +349,69 @@ export const useLogout = <TError = AxiosError<unknown>,
       > => {
 
       const mutationOptions = getLogoutMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * 新規ユーザーを登録します
+ * @summary ユーザー登録
+ */
+export const register = (
+    handlerRegisterRequest: HandlerRegisterRequest, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<HandlerRegisterResponse>> => {
+    
+    
+    return axios.default.post(
+      `/auth/register`,
+      handlerRegisterRequest,options
+    );
+  }
+
+
+
+export const getRegisterMutationOptions = <TError = AxiosError<Register400 | Register500>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof register>>, TError,{data: HandlerRegisterRequest}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof register>>, TError,{data: HandlerRegisterRequest}, TContext> => {
+
+const mutationKey = ['register'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof register>>, {data: HandlerRegisterRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  register(data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RegisterMutationResult = NonNullable<Awaited<ReturnType<typeof register>>>
+    export type RegisterMutationBody = HandlerRegisterRequest
+    export type RegisterMutationError = AxiosError<Register400 | Register500>
+
+    /**
+ * @summary ユーザー登録
+ */
+export const useRegister = <TError = AxiosError<Register400 | Register500>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof register>>, TError,{data: HandlerRegisterRequest}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof register>>,
+        TError,
+        {data: HandlerRegisterRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getRegisterMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }

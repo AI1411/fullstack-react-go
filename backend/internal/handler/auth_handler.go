@@ -10,6 +10,7 @@ import (
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/oauth2"
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
@@ -23,6 +24,7 @@ type Auth interface {
 	Login(c *gin.Context)
 	Callback(c *gin.Context)
 	Logout(c *gin.Context)
+	Register(c *gin.Context)
 }
 
 type authHandler struct {
@@ -41,75 +43,11 @@ func NewAuthHandler(
 	userUseCase usecase.UserUseCase,
 	env *env.Values,
 ) (Auth, error) {
-	// If OIDC issuer is not set, return a mock auth handler
-	if env.OIDCIssuer == "" {
-		l.Warn("OIDC issuer not set, using mock auth handler")
-		return NewMockAuthHandler(l, userUseCase, env), nil
-	}
-
-	// Initialize OIDC provider
-	provider, err := oidc.NewProvider(ctx, env.OIDCIssuer)
-	if err != nil {
-		l.Warn("Failed to initialize OIDC provider, using mock auth handler", "error", err)
-		return NewMockAuthHandler(l, userUseCase, env), nil
-	}
-
-	// Configure OAuth2
-	oauth2Config := oauth2.Config{
-		ClientID:     env.OIDCClientID,
-		ClientSecret: env.OIDCClientSecret,
-		RedirectURL:  env.OIDCRedirectURL,
-		Endpoint:     provider.Endpoint(),
-		Scopes:       []string{oidc.ScopeOpenID, "profile", "email"},
-	}
-
-	// Configure ID token verifier
-	verifier := provider.Verifier(&oidc.Config{
-		ClientID: env.OIDCClientID,
-	})
-
 	return &authHandler{
-		logger:       l,
-		userUseCase:  userUseCase,
-		env:          env,
-		provider:     provider,
-		oauth2Config: oauth2Config,
-		verifier:     verifier,
-	}, nil
-}
-
-// mockAuthHandler is a mock implementation of the Auth interface
-type mockAuthHandler struct {
-	logger      *logger.Logger
-	userUseCase usecase.UserUseCase
-	env         *env.Values
-}
-
-// NewMockAuthHandler creates a new mock auth handler
-func NewMockAuthHandler(l *logger.Logger, userUseCase usecase.UserUseCase, env *env.Values) Auth {
-	return &mockAuthHandler{
 		logger:      l,
 		userUseCase: userUseCase,
 		env:         env,
-	}
-}
-
-// Login handles the login request for the mock auth handler
-func (h *mockAuthHandler) Login(c *gin.Context) {
-	h.logger.Warn("Mock auth handler: Login called")
-	c.JSON(http.StatusOK, gin.H{"message": "Mock login endpoint. OIDC not configured."})
-}
-
-// Callback handles the callback request for the mock auth handler
-func (h *mockAuthHandler) Callback(c *gin.Context) {
-	h.logger.Warn("Mock auth handler: Callback called")
-	c.JSON(http.StatusOK, gin.H{"message": "Mock callback endpoint. OIDC not configured."})
-}
-
-// Logout handles the logout request for the mock auth handler
-func (h *mockAuthHandler) Logout(c *gin.Context) {
-	h.logger.Warn("Mock auth handler: Logout called")
-	c.JSON(http.StatusOK, gin.H{"message": "Mock logout endpoint. OIDC not configured."})
+	}, nil
 }
 
 // generateRandomState generates a random state string for CSRF protection
@@ -279,4 +217,106 @@ func (h *authHandler) Logout(c *gin.Context) {
 	c.SetCookie("auth_token", "", -1, "/", "", false, true)
 
 	c.JSON(http.StatusOK, gin.H{"message": "Logged out successfully"})
+}
+
+// RegisterRequest defines the request body for user registration
+type RegisterRequest struct {
+	Name     string `json:"name" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=6"`
+}
+
+type RegisterResponse struct {
+	Token string       `json:"token"`
+	User  UserResponse `json:"user"`
+}
+
+// Register registers a new user
+// @title ユーザー登録
+// @id Register
+// @tags auth
+// @accept json
+// @produce json
+// @version 1.0
+// @description 新規ユーザーを登録します
+// @Summary ユーザー登録
+// @Param request body RegisterRequest true "ユーザー登録リクエスト"
+// @Success 201 {object} RegisterResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /auth/register [post]
+func (h *authHandler) Register(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	// Parse request body
+	var req RegisterRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		h.logger.Error("Invalid request body", "error", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Check if user already exists
+	existingUser, err := h.userUseCase.GetUserByEmail(ctx, req.Email)
+	if err == nil && existingUser != nil {
+		h.logger.Error("User already exists", "email", req.Email)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User with this email already exists"})
+		return
+	}
+
+	// Hash password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		h.logger.Error("Failed to hash password", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
+		return
+	}
+
+	// Create user
+	now := time.Now()
+	user := &model.User{
+		Name:          req.Name,
+		Email:         req.Email,
+		Password:      string(hashedPassword),
+		IsActive:      true,
+		EmailVerified: false,
+		RoleID:        1, // Default role
+		CreatedAt:     &now,
+		UpdatedAt:     &now,
+	}
+
+	if err := h.userUseCase.CreateUser(ctx, user); err != nil {
+		h.logger.Error("Failed to create user", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
+		return
+	}
+
+	// Generate JWT token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub":   user.ID,
+		"name":  user.Name,
+		"email": user.Email,
+		"exp":   time.Now().Add(time.Duration(h.env.JWTExpiration) * time.Second).Unix(),
+	})
+
+	// Sign token
+	tokenString, err := token.SignedString([]byte(h.env.JWTSecret))
+	if err != nil {
+		h.logger.Error("Failed to sign token", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate authentication token"})
+		return
+	}
+
+	// Set token in cookie
+	c.SetCookie("auth_token", tokenString, h.env.JWTExpiration, "/", "", false, true)
+
+	// Return token and user info
+	c.JSON(http.StatusCreated, gin.H{
+		"token": tokenString,
+		"user": gin.H{
+			"id":    user.ID,
+			"name":  user.Name,
+			"email": user.Email,
+		},
+	})
 }

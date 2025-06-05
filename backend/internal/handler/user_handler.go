@@ -39,6 +39,7 @@ type UserResponse struct {
 	CreatedAt     *time.Time              `json:"created_at"`
 	UpdatedAt     *time.Time              `json:"updated_at"`
 	Organizations []*OrganizationResponse `json:"organizations,omitempty"`
+	RoleID        int32                   `json:"role_id,omitempty"`
 }
 
 type CreateUserRequest struct {

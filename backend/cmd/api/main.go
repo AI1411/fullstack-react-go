@@ -377,6 +377,7 @@ func RegisterRoutes(
 	r.GET("/auth/login", authHandler.Login)
 	r.GET("/auth/callback", authHandler.Callback)
 	r.POST("/auth/logout", authHandler.Logout)
+	r.POST("/auth/register", authHandler.Register)
 
 	// Swagger JSON エンドポイント
 	r.GET("/docs", func(c *gin.Context) {

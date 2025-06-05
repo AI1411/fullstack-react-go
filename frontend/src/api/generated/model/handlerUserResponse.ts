@@ -13,5 +13,6 @@ export interface HandlerUserResponse {
   id?: string;
   name?: string;
   organizations?: HandlerOrganizationResponse[];
+  role_id?: number;
   updated_at?: string;
 }
