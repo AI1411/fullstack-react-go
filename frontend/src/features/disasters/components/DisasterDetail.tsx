@@ -8,6 +8,7 @@ import {
   getStatusBadgeClass,
   getStatusLabel,
 } from "../utils/formatters"
+import { DisasterImageUpload } from "./DisasterImageUpload"
 
 export const DisasterDetail = () => {
   // Get the disaster ID from the URL parameters
@@ -138,6 +139,10 @@ export const DisasterDetail = () => {
           </div>
         )}
       </div>
+
+      {/* 災害画像アップロードコンポーネント */}
+      <DisasterImageUpload />
+
       <div className="border rounded-lg overflow-hidden">
         {isLoaded ? (
           <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>

@@ -3,6 +3,7 @@ export { DisastersFeature } from './components/DisastersFeature'
 export { DisasterList } from './components/DisasterList'
 export { DisasterSearchForm } from './components/DisasterSearchForm'
 export { DisasterDetail } from './components/DisasterDetail'
+export { DisasterImageUpload } from './components/DisasterImageUpload'
 
 // Export hooks
 export { useDisasters } from './hooks/useDisasters'
