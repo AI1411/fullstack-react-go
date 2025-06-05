@@ -36,7 +36,7 @@ func NewOrganizationHandler(
 }
 
 type OrganizationResponse struct {
-	ID           int32          `json:"id"`
+	ID           int64          `json:"id"`
 	Name         string         `json:"name"`
 	Type         string         `json:"type"`
 	PrefectureID *int32         `json:"prefecture_id,omitempty"`
@@ -85,14 +85,12 @@ func (h *organizationHandler) ListOrganizations(c *gin.Context) {
 
 	for _, organization := range organizations {
 		resp := &OrganizationResponse{
-			ID:           organization.ID,
-			Name:         organization.Name,
-			Type:         organization.Type,
-			PrefectureID: organization.PrefectureID,
-			ParentID:     organization.ParentID,
-			Description:  organization.Description,
-			CreatedAt:    organization.CreatedAt,
-			UpdatedAt:    organization.UpdatedAt,
+			ID:        organization.ID,
+			Name:      organization.Name,
+			Type:      organization.Type,
+			ParentID:  organization.ParentID,
+			CreatedAt: organization.CreatedAt,
+			UpdatedAt: organization.UpdatedAt,
 		}
 
 		response = append(response, resp)
@@ -124,7 +122,7 @@ func (h *organizationHandler) GetOrganization(c *gin.Context) {
 		return
 	}
 
-	organization, err := h.organizationUseCase.GetOrganizationByID(ctx, int32(id))
+	organization, err := h.organizationUseCase.GetOrganizationByID(ctx, id)
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Organization not found", "organization_id", id)
 		c.JSON(404, gin.H{"error": "Organization not found"})
@@ -145,15 +143,13 @@ func (h *organizationHandler) GetOrganization(c *gin.Context) {
 	}
 
 	response := &OrganizationResponse{
-		ID:           organization.ID,
-		Name:         organization.Name,
-		Type:         organization.Type,
-		PrefectureID: organization.PrefectureID,
-		ParentID:     organization.ParentID,
-		Description:  organization.Description,
-		CreatedAt:    organization.CreatedAt,
-		UpdatedAt:    organization.UpdatedAt,
-		Users:        users,
+		ID:        organization.ID,
+		Name:      organization.Name,
+		Type:      organization.Type,
+		ParentID:  organization.ParentID,
+		CreatedAt: organization.CreatedAt,
+		UpdatedAt: organization.UpdatedAt,
+		Users:     users,
 	}
 
 	h.l.InfoContext(ctx, "Successfully retrieved organization", "organization_id", id)
@@ -178,11 +174,9 @@ func (h *organizationHandler) CreateOrganization(c *gin.Context) {
 	}
 
 	organization := &model.Organization{
-		Name:         req.Name,
-		Type:         req.Type,
-		PrefectureID: req.PrefectureID,
-		ParentID:     req.ParentID,
-		Description:  req.Description,
+		Name:     req.Name,
+		Type:     req.Type,
+		ParentID: req.ParentID,
 	}
 
 	err := h.organizationUseCase.CreateOrganization(c.Request.Context(), organization)
@@ -194,14 +188,12 @@ func (h *organizationHandler) CreateOrganization(c *gin.Context) {
 	}
 
 	response := &OrganizationResponse{
-		ID:           organization.ID,
-		Name:         organization.Name,
-		Type:         organization.Type,
-		PrefectureID: organization.PrefectureID,
-		ParentID:     organization.ParentID,
-		Description:  organization.Description,
-		CreatedAt:    organization.CreatedAt,
-		UpdatedAt:    organization.UpdatedAt,
+		ID:        organization.ID,
+		Name:      organization.Name,
+		Type:      organization.Type,
+		ParentID:  organization.ParentID,
+		CreatedAt: organization.CreatedAt,
+		UpdatedAt: organization.UpdatedAt,
 	}
 
 	h.l.InfoContext(c.Request.Context(), "Successfully created organization", "organization_id", organization.ID)
@@ -241,7 +233,7 @@ func (h *organizationHandler) UpdateOrganization(c *gin.Context) {
 	}
 
 	// Check if the organization exists
-	existingOrganization, err := h.organizationUseCase.GetOrganizationByID(ctx, int32(id))
+	existingOrganization, err := h.organizationUseCase.GetOrganizationByID(ctx, id)
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Organization not found", "organization_id", id)
 		c.JSON(404, gin.H{"error": "Organization not found"})
@@ -252,9 +244,7 @@ func (h *organizationHandler) UpdateOrganization(c *gin.Context) {
 	// Update the organization
 	existingOrganization.Name = req.Name
 	existingOrganization.Type = req.Type
-	existingOrganization.PrefectureID = req.PrefectureID
 	existingOrganization.ParentID = req.ParentID
-	existingOrganization.Description = req.Description
 
 	err = h.organizationUseCase.UpdateOrganization(ctx, existingOrganization)
 	if err != nil {
@@ -265,14 +255,12 @@ func (h *organizationHandler) UpdateOrganization(c *gin.Context) {
 	}
 
 	response := &OrganizationResponse{
-		ID:           existingOrganization.ID,
-		Name:         existingOrganization.Name,
-		Type:         existingOrganization.Type,
-		PrefectureID: existingOrganization.PrefectureID,
-		ParentID:     existingOrganization.ParentID,
-		Description:  existingOrganization.Description,
-		CreatedAt:    existingOrganization.CreatedAt,
-		UpdatedAt:    existingOrganization.UpdatedAt,
+		ID:        existingOrganization.ID,
+		Name:      existingOrganization.Name,
+		Type:      existingOrganization.Type,
+		ParentID:  existingOrganization.ParentID,
+		CreatedAt: existingOrganization.CreatedAt,
+		UpdatedAt: existingOrganization.UpdatedAt,
 	}
 
 	h.l.InfoContext(ctx, "Successfully updated organization", "organization_id", id)
@@ -303,7 +291,7 @@ func (h *organizationHandler) DeleteOrganization(c *gin.Context) {
 	}
 
 	// Check if the organization exists
-	_, err = h.organizationUseCase.GetOrganizationByID(ctx, int32(id))
+	_, err = h.organizationUseCase.GetOrganizationByID(ctx, id)
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Organization not found", "organization_id", id)
 		c.JSON(404, gin.H{"error": "Organization not found"})
@@ -311,7 +299,7 @@ func (h *organizationHandler) DeleteOrganization(c *gin.Context) {
 		return
 	}
 
-	err = h.organizationUseCase.DeleteOrganization(ctx, int32(id))
+	err = h.organizationUseCase.DeleteOrganization(ctx, id)
 	if err != nil {
 		h.l.ErrorContext(ctx, err, "Failed to delete organization", "organization_id", id)
 		c.JSON(500, gin.H{"error": "Failed to delete organization"})

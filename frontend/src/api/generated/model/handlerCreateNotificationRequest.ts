@@ -16,5 +16,5 @@ export interface HandlerCreateNotificationRequest {
   related_entity_type?: string;
   /** @maxLength 200 */
   title: string;
-  user_id: number;
+  user_id: string;
 }

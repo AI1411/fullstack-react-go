@@ -19,13 +19,13 @@ DROP TABLE IF EXISTS organizations CASCADE;
 CREATE TABLE organizations
 (
     id         BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    name       VARCHAR(64)                           NOT NULL,
-    type       VARCHAR(50)                           NOT NULL CHECK (type IN ('MAFF', 'regional', 'prefecture')), -- 組織の種類（農林水産本省、地方農政局、都道府県）
-    parent_id  INTEGER REFERENCES organizations (id) NULL,
+    name       VARCHAR(64)                                        NOT NULL,
+    type       VARCHAR(50)                                        NOT NULL CHECK (type IN ('MAFF', 'regional', 'prefecture')), -- 組織の種類（農林水産本省、地方農政局、都道府県）
+    parent_id  INTEGER REFERENCES organizations (id)              NULL,
     sort_order INTEGER                  DEFAULT 0,
     is_active  BOOLEAN                  DEFAULT true,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 -- インデックス作成

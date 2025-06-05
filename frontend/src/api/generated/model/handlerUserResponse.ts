@@ -10,7 +10,7 @@ import type { HandlerOrganizationResponse } from './handlerOrganizationResponse'
 export interface HandlerUserResponse {
   created_at?: string;
   email?: string;
-  id?: number;
+  id?: string;
   name?: string;
   organizations?: HandlerOrganizationResponse[];
   updated_at?: string;

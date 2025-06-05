@@ -10,7 +10,7 @@ import (
 
 type UserUseCase interface {
 	ListUsers(ctx context.Context) ([]*model.User, error)
-	GetUserByID(ctx context.Context, id int32) (*model.User, error)
+	GetUserByID(ctx context.Context, id string) (*model.User, error)
 	GetUserByEmail(ctx context.Context, email string) (*model.User, error)
 	CreateUser(ctx context.Context, user *model.User) error
 	UpdateUser(ctx context.Context, user *model.User) error
@@ -38,7 +38,7 @@ func (u *userUseCase) ListUsers(ctx context.Context) ([]*model.User, error) {
 	return users, nil
 }
 
-func (u *userUseCase) GetUserByID(ctx context.Context, id int32) (*model.User, error) {
+func (u *userUseCase) GetUserByID(ctx context.Context, id string) (*model.User, error) {
 	user, err := u.userRepository.FindByID(ctx, id)
 	if err != nil {
 		return nil, err

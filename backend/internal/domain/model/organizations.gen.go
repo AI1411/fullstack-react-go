@@ -12,15 +12,15 @@ const TableNameOrganization = "organizations"
 
 // Organization mapped from table <organizations>
 type Organization struct {
-	ID        int64      `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;comment:組織ID（主キー、自動掲番）" json:"id"`                                                                             // 組織ID（主キー、自動掲番）
-	Name      string     `gorm:"column:name;type:character varying(64);not null;index:idx_organizations_name,priority:1;comment:組織名" json:"name"`                                                  // 組織名
-	Type      string     `gorm:"column:type;type:character varying(50);not null;index:idx_organizations_type,priority:1;comment:組織の種類（MAFF: 農林水産本省、regional: 地方農政局、prefecture: 都道府県）" json:"type"` // 組織の種類（MAFF: 農林水産本省、regional: 地方農政局、prefecture: 都道府県）
-	ParentID  *int32     `gorm:"column:parent_id;type:integer;index:idx_organizations_parent_id,priority:1;comment:親組織ID（階層構造を持つための外部キー）" json:"parent_id"`                                        // 親組織ID（階層構造を持つための外部キー）
-	SortOrder *int32     `gorm:"column:sort_order;type:integer;index:idx_organizations_sort_order,priority:1;comment:表示順序" json:"sort_order"`                                                      // 表示順序
-	IsActive  *bool      `gorm:"column:is_active;type:boolean;index:idx_organizations_is_active,priority:1;default:true;comment:有効フラグ（TRUE: 有効、FALSE: 無効）" json:"is_active"`                       // 有効フラグ（TRUE: 有効、FALSE: 無効）
-	CreatedAt *time.Time `gorm:"column:created_at;type:timestamp with time zone;default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt *time.Time `gorm:"column:updated_at;type:timestamp with time zone;default:CURRENT_TIMESTAMP" json:"updated_at"`
-	Users     []User     `gorm:"many2many:user_organizations" json:"users"`
+	ID        int64     `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;comment:組織ID（主キー、自動掲番）" json:"id"`                                                                             // 組織ID（主キー、自動掲番）
+	Name      string    `gorm:"column:name;type:character varying(64);not null;index:idx_organizations_name,priority:1;comment:組織名" json:"name"`                                                  // 組織名
+	Type      string    `gorm:"column:type;type:character varying(50);not null;index:idx_organizations_type,priority:1;comment:組織の種類（MAFF: 農林水産本省、regional: 地方農政局、prefecture: 都道府県）" json:"type"` // 組織の種類（MAFF: 農林水産本省、regional: 地方農政局、prefecture: 都道府県）
+	ParentID  *int32    `gorm:"column:parent_id;type:integer;index:idx_organizations_parent_id,priority:1;comment:親組織ID（階層構造を持つための外部キー）" json:"parent_id"`                                        // 親組織ID（階層構造を持つための外部キー）
+	SortOrder *int32    `gorm:"column:sort_order;type:integer;index:idx_organizations_sort_order,priority:1;comment:表示順序" json:"sort_order"`                                                      // 表示順序
+	IsActive  *bool     `gorm:"column:is_active;type:boolean;index:idx_organizations_is_active,priority:1;default:true;comment:有効フラグ（TRUE: 有効、FALSE: 無効）" json:"is_active"`                       // 有効フラグ（TRUE: 有効、FALSE: 無効）
+	CreatedAt time.Time `gorm:"column:created_at;type:timestamp with time zone;not null;default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt time.Time `gorm:"column:updated_at;type:timestamp with time zone;not null;default:CURRENT_TIMESTAMP" json:"updated_at"`
+	Users     []User    `gorm:"many2many:user_organizations" json:"users"`
 }
 
 // TableName Organization's table name

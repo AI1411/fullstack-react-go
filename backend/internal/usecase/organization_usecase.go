@@ -10,10 +10,10 @@ import (
 
 type OrganizationUseCase interface {
 	ListOrganizations(ctx context.Context) ([]*model.Organization, error)
-	GetOrganizationByID(ctx context.Context, id int32) (*model.Organization, error)
+	GetOrganizationByID(ctx context.Context, id int64) (*model.Organization, error)
 	CreateOrganization(ctx context.Context, organization *model.Organization) error
 	UpdateOrganization(ctx context.Context, organization *model.Organization) error
-	DeleteOrganization(ctx context.Context, id int32) error
+	DeleteOrganization(ctx context.Context, id int64) error
 }
 
 type organizationUseCase struct {
@@ -37,7 +37,7 @@ func (u *organizationUseCase) ListOrganizations(ctx context.Context) ([]*model.O
 	return organizations, nil
 }
 
-func (u *organizationUseCase) GetOrganizationByID(ctx context.Context, id int32) (*model.Organization, error) {
+func (u *organizationUseCase) GetOrganizationByID(ctx context.Context, id int64) (*model.Organization, error) {
 	organization, err := u.organizationRepository.FindByID(ctx, id)
 	if err != nil {
 		return nil, err
@@ -54,6 +54,6 @@ func (u *organizationUseCase) UpdateOrganization(ctx context.Context, organizati
 	return u.organizationRepository.Update(ctx, organization)
 }
 
-func (u *organizationUseCase) DeleteOrganization(ctx context.Context, id int32) error {
+func (u *organizationUseCase) DeleteOrganization(ctx context.Context, id int64) error {
 	return u.organizationRepository.Delete(ctx, id)
 }

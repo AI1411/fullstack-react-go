@@ -11,10 +11,10 @@ import (
 
 type OrganizationRepository interface {
 	Find(ctx context.Context) ([]*model.Organization, error)
-	FindByID(ctx context.Context, id int32) (*model.Organization, error)
+	FindByID(ctx context.Context, id int64) (*model.Organization, error)
 	Create(ctx context.Context, organization *model.Organization) error
 	Update(ctx context.Context, organization *model.Organization) error
-	Delete(ctx context.Context, id int32) error
+	Delete(ctx context.Context, id int64) error
 }
 
 type organizationRepository struct {
@@ -41,7 +41,7 @@ func (r *organizationRepository) Find(ctx context.Context) ([]*model.Organizatio
 	return organizations, nil
 }
 
-func (r *organizationRepository) FindByID(ctx context.Context, id int32) (*model.Organization, error) {
+func (r *organizationRepository) FindByID(ctx context.Context, id int64) (*model.Organization, error) {
 	organization, err := r.query.WithContext(ctx).
 		Organization.
 		Where(r.query.Organization.ID.Eq(id)).
@@ -63,7 +63,7 @@ func (r *organizationRepository) Update(ctx context.Context, organization *model
 	return err
 }
 
-func (r *organizationRepository) Delete(ctx context.Context, id int32) error {
+func (r *organizationRepository) Delete(ctx context.Context, id int64) error {
 	_, err := r.query.WithContext(ctx).Organization.Where(r.query.Organization.ID.Eq(id)).Delete()
 	return err
 }

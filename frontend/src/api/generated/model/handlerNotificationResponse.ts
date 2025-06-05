@@ -17,5 +17,5 @@ export interface HandlerNotificationResponse {
   related_entity_type?: string;
   title?: string;
   updated_at?: string;
-  user_id?: number;
+  user_id?: string;
 }

@@ -33,7 +33,7 @@ func NewUserHandler(l *logger.Logger, userUseCase usecase.UserUseCase) User {
 }
 
 type UserResponse struct {
-	ID            int32                   `json:"id"`
+	ID            string                  `json:"id"`
 	Name          string                  `json:"name"`
 	Email         string                  `json:"email"`
 	CreatedAt     *time.Time              `json:"created_at"`
@@ -103,15 +103,7 @@ func (h *userHandler) ListUsers(c *gin.Context) {
 func (h *userHandler) GetUser(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		h.logger.Error("Invalid user ID", "error", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
-
-		return
-	}
-
-	user, err := h.userUseCase.GetUserByID(ctx, int32(id))
+	user, err := h.userUseCase.GetUserByID(ctx, c.Param("id"))
 	if err != nil {
 		h.logger.Error("Failed to get user", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user"})
@@ -205,14 +197,6 @@ func (h *userHandler) CreateUser(c *gin.Context) {
 func (h *userHandler) UpdateUser(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		h.logger.Error("Invalid user ID", "error", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
-
-		return
-	}
-
 	var req UpdateUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		h.logger.Error("Invalid request body", "error", err)
@@ -221,7 +205,7 @@ func (h *userHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	user, err := h.userUseCase.GetUserByID(ctx, int32(id))
+	user, err := h.userUseCase.GetUserByID(ctx, c.Param("id"))
 	if err != nil {
 		h.logger.Error("Failed to get user", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user"})

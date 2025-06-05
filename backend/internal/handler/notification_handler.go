@@ -39,7 +39,7 @@ func NewNotificationHandler(
 
 type NotificationResponse struct {
 	ID                int32      `json:"id"`
-	UserID            int32      `json:"user_id"`
+	UserID            string     `json:"user_id"`
 	Title             string     `json:"title"`
 	Message           string     `json:"message"`
 	NotificationType  string     `json:"notification_type"`
@@ -52,7 +52,7 @@ type NotificationResponse struct {
 }
 
 type CreateNotificationRequest struct {
-	UserID            int32   `json:"user_id" binding:"required"`
+	UserID            string  `json:"user_id" binding:"required"`
 	Title             string  `json:"title" binding:"required,max=200"`
 	Message           string  `json:"message" binding:"required"`
 	NotificationType  string  `json:"notification_type" binding:"required,max=50"`

@@ -11,7 +11,7 @@ import (
 
 type UserRepository interface {
 	Find(ctx context.Context) ([]*model.User, error)
-	FindByID(ctx context.Context, id int32) (*model.User, error)
+	FindByID(ctx context.Context, id string) (*model.User, error)
 	FindByEmail(ctx context.Context, email string) (*model.User, error)
 	Create(ctx context.Context, user *model.User) error
 	Update(ctx context.Context, user *model.User) error
@@ -42,7 +42,7 @@ func (r *userRepository) Find(ctx context.Context) ([]*model.User, error) {
 	return users, nil
 }
 
-func (r *userRepository) FindByID(ctx context.Context, id int32) (*model.User, error) {
+func (r *userRepository) FindByID(ctx context.Context, id string) (*model.User, error) {
 	user, err := r.query.User.
 		Where(r.query.User.ID.Eq(id)).
 		Preload(r.query.User.Organizations).
