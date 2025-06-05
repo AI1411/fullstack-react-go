@@ -1,5 +1,3 @@
--- PostGIS不使用版（GEOGRAPHY型を使わない代替案）
-
 -- 既存のENUM型を削除して再作成
 DROP TYPE IF EXISTS disaster_status CASCADE;
 CREATE TYPE disaster_status AS ENUM ('pending', 'under_review', 'in_progress', 'completed');
@@ -29,12 +27,16 @@ CREATE TABLE IF NOT EXISTS disasters
 );
 
 -- インデックス作成
-CREATE INDEX idx_disasters_prefecture_id ON disasters (prefecture_id);
-CREATE INDEX idx_disasters_disaster_type ON disasters (disaster_type);
-CREATE INDEX idx_disasters_status ON disasters (status);
-CREATE INDEX idx_disasters_occurred_at ON disasters (occurred_at);
-CREATE INDEX idx_disasters_latitude_longitude ON disasters (latitude, longitude);
-CREATE INDEX idx_disasters_place_id ON disasters (place_id);
+CREATE INDEX IF NOT EXISTS idx_disasters_prefecture_id ON disasters (prefecture_id);
+CREATE INDEX IF NOT EXISTS idx_disasters_disaster_type ON disasters (disaster_type);
+CREATE INDEX IF NOT EXISTS idx_disasters_status ON disasters (status);
+CREATE INDEX IF NOT EXISTS idx_disasters_occurred_at ON disasters (occurred_at);
+CREATE INDEX IF NOT EXISTS idx_disasters_latitude_longitude ON disasters (latitude, longitude);
+CREATE INDEX IF NOT EXISTS idx_disasters_place_id ON disasters (place_id);
+
+-- pg_bigm インデックス作成
+CREATE INDEX IF NOT EXISTS idx_disaster_reports_title_bigm ON disasters USING gin (name gin_bigm_ops);
+CREATE INDEX IF NOT EXISTS idx_disaster_reports_description_bigm ON disasters USING gin (summary gin_bigm_ops);
 
 -- テーブルとカラムにコメントを追加
 COMMENT ON TABLE disasters IS '農業災害情報管理テーブル - 各種災害の詳細情報を格納';

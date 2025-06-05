@@ -1,3 +1,20 @@
+-- 必要な拡張を有効化
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE EXTENSION IF NOT EXISTS "pg_trgm";
+CREATE EXTENSION IF NOT EXISTS "pg_bigm";
+
+-- pg_bigm設定の最適化
+ALTER SYSTEM SET pg_bigm.enable_recheck = on;
+ALTER SYSTEM SET pg_bigm.gin_key_limit = 0;
+ALTER SYSTEM SET pg_bigm.similarity_limit = 0.3;
+
+-- 設定をリロード
+SELECT pg_reload_conf();
+
+-- pg_bigm での実装（推奨）
+CREATE EXTENSION IF NOT EXISTS pg_bigm;
+
 DROP TABLE IF EXISTS organizations CASCADE;
 CREATE TABLE organizations
 (

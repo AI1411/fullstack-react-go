@@ -2,7 +2,7 @@ services:
   gen-api:
     container_name: gen-api
     build:
-      context: ./backend
+      context: .
       dockerfile: build/api/Dockerfile-dev
     command: air -c .air.toml
     ports:
@@ -19,7 +19,9 @@ services:
       - gen-network
     restart: unless-stopped
   db:
-    image: postgres:17-alpine
+    build:
+      context: .
+      dockerfile: build/postgres/Dockerfile
     container_name: db
     ports:
       - "5432:5432"
@@ -33,7 +35,7 @@ services:
       - gen-network
     restart: unless-stopped
   db-test:
-    image: postgres:15-alpine
+    image: postgres:17-alpine
     container_name: db-test
     ports:
       - "15432:5432"
