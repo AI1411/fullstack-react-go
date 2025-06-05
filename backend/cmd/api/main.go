@@ -74,7 +74,6 @@ type Module struct {
 	UserUsecase               usecase.UserUseCase
 	UserHandler               handler.User
 	AuthHandler               handler.Auth
-	FileHandler               handler.File
 }
 
 // ProvideLogger creates a new logger instance
@@ -281,11 +280,6 @@ func ProvideAuthHandler(ctx context.Context, l *logger.Logger, usecase usecase.U
 	return handler.NewAuthHandler(ctx, l, usecase, env)
 }
 
-// ProvideFileHandler creates a new file handler
-func ProvideFileHandler(l *logger.Logger) handler.File {
-	return handler.NewFileHandler(l)
-}
-
 // RegisterRoutes registers all HTTP routes
 func RegisterRoutes(
 	lc fx.Lifecycle,
@@ -303,7 +297,6 @@ func RegisterRoutes(
 	organizationHandler handler.Organization,
 	userHandler handler.User,
 	authHandler handler.Auth,
-	fileHandler handler.File,
 ) {
 	// Context for health check
 	ctx := context.Background()
@@ -330,7 +323,6 @@ func RegisterRoutes(
 	r.POST("/disasters", disasterHandler.CreateDisaster)
 	r.PUT("/disasters/:id", disasterHandler.UpdateDisaster)
 	r.DELETE("/disasters/:id", disasterHandler.DeleteDisaster)
-	r.POST("/disasters/:id/images", fileHandler.UploadDisasterImage)
 
 	// 都道府県関連のルート
 	r.GET("/prefectures", prefectureHandler.ListPrefectures)
@@ -453,7 +445,6 @@ func main() {
 			ProvideOrganizationHandler,
 			ProvideUserHandler,
 			ProvideAuthHandler,
-			ProvideFileHandler,
 		),
 		// Register the lifecycle hooks
 		fx.Invoke(RegisterRoutes),
