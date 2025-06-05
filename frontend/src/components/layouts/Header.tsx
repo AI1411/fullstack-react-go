@@ -45,12 +45,6 @@ export const Header = () => {
           </Link>
           <Link
             className="text-[#111418] text-sm font-medium leading-normal"
-            to="/application"
-          >
-            評価
-          </Link>
-          <Link
-            className="text-[#111418] text-sm font-medium leading-normal"
             to="/facility-equipment"
           >
             施設設備

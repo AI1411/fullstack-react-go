@@ -89,6 +89,7 @@ func (r *disasterRepository) FindByID(ctx context.Context, id string) (*model.Di
 		Disaster.
 		Where(r.query.Disaster.ID.Eq(id)).
 		Preload(r.query.Disaster.Municipality).
+		Preload(r.query.Disaster.WorkCategory).
 		First()
 	if err != nil {
 		return nil, err

@@ -219,7 +219,14 @@ func (h *disasterHandler) GetDisaster(c *gin.Context) {
 		Longitude:             disaster.Longitude,
 		Address:               disaster.Address,
 		PlaceID:               disaster.PlaceID,
-		Municipality:          Municipality{},
+		Municipality: Municipality{
+			PrefectureNameKanji:   disaster.Municipality.PrefectureNameKanji,
+			MunicipalityNameKanji: disaster.Municipality.MunicipalityNameKanji,
+		},
+		WorkCategory: WorkCategory{
+			CategoryName: disaster.WorkCategory.CategoryName,
+			IconName:     disaster.WorkCategory.IconName,
+		},
 	}
 
 	h.l.InfoContext(ctx, "Successfully retrieved disaster", "disaster_id", id)
