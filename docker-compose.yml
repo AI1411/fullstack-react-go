@@ -61,6 +61,18 @@ services:
       - db-test
     networks:
       - gen-network
+  mailhog:
+    container_name: mailhog
+    platform: linux/amd64  # apple silicon以外の環境で実行する場合は不要
+    image: mailhog/mailhog:v1.0.0
+    ports:
+      - "1025:1025"  # SMTP port
+      - "8025:8025"  # Web UI port
+    environment:
+      - MH_STORAGE=maildir
+      - MH_MAILDIR_PATH=/maildir
+    volumes:
+      - mailhog_data:/maildir
 
 networks:
   gen-network:
@@ -68,7 +80,5 @@ networks:
 
 volumes:
   postgres_data:
-  # 既存のボリュームを削除して新たに作成する場合は、以下のコマンドを実行：
-  # docker-compose down -v
-  # docker-compose up -d
   postgres_test_data:
+  mailhog_data:

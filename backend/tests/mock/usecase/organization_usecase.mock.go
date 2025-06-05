@@ -56,7 +56,7 @@ func (mr *MockOrganizationUseCaseMockRecorder) CreateOrganization(ctx, organizat
 }
 
 // DeleteOrganization mocks base method.
-func (m *MockOrganizationUseCase) DeleteOrganization(ctx context.Context, id int32) error {
+func (m *MockOrganizationUseCase) DeleteOrganization(ctx context.Context, id int64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteOrganization", ctx, id)
 	ret0, _ := ret[0].(error)
@@ -70,7 +70,7 @@ func (mr *MockOrganizationUseCaseMockRecorder) DeleteOrganization(ctx, id any) *
 }
 
 // GetOrganizationByID mocks base method.
-func (m *MockOrganizationUseCase) GetOrganizationByID(ctx context.Context, id int32) (*model.Organization, error) {
+func (m *MockOrganizationUseCase) GetOrganizationByID(ctx context.Context, id int64) (*model.Organization, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOrganizationByID", ctx, id)
 	ret0, _ := ret[0].(*model.Organization)

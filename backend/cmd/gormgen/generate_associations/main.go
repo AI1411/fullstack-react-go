@@ -120,6 +120,10 @@ func main() {
 		g.GenerateModel(
 			model.TableNameMunicipality,
 		),
+		g.GenerateModel(
+			model.TableNameEmailHistory,
+			gen.FieldRelateModel(field.BelongsTo, "User", model.User{}, nil),
+		),
 	}
 
 	g.ApplyBasic(allModels...)

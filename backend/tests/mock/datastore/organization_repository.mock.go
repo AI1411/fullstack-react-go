@@ -56,7 +56,7 @@ func (mr *MockOrganizationRepositoryMockRecorder) Create(ctx, organization any) 
 }
 
 // Delete mocks base method.
-func (m *MockOrganizationRepository) Delete(ctx context.Context, id int32) error {
+func (m *MockOrganizationRepository) Delete(ctx context.Context, id int64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", ctx, id)
 	ret0, _ := ret[0].(error)
@@ -85,7 +85,7 @@ func (mr *MockOrganizationRepositoryMockRecorder) Find(ctx any) *gomock.Call {
 }
 
 // FindByID mocks base method.
-func (m *MockOrganizationRepository) FindByID(ctx context.Context, id int32) (*model.Organization, error) {
+func (m *MockOrganizationRepository) FindByID(ctx context.Context, id int64) (*model.Organization, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByID", ctx, id)
 	ret0, _ := ret[0].(*model.Organization)
