@@ -146,7 +146,6 @@ func (u *userUseCase) sendWelcomeEmail(ctx context.Context, user *model.User) er
 
 	if err := u.emailHistoryRepository.SaveEmailHistory(ctx, emailHistory); err != nil {
 		fmt.Printf("メール履歴保存エラー: %v\n", err)
-		// メール履歴保存の失敗はエラーとして返さない
 	}
 
 	return nil
@@ -155,37 +154,65 @@ func (u *userUseCase) sendWelcomeEmail(ctx context.Context, user *model.User) er
 // generateWelcomeEmailBody はウェルカムメールの本文を生成する
 func (u *userUseCase) generateWelcomeEmailBody(userName string) string {
 	return fmt.Sprintf(`
+<!-- templates/email/verification.html -->
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>農業災害支援システムへようこそ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>メールアドレス認証</title>
+    <style>
+        body {
+            font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        .info {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-    <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
-        <h1 style="color: #2c5530;">農業災害支援システムへようこそ</h1>
+    <div class="container">
+        <h2>メールアドレス認証</h2>
 
-        <p>%s 様</p>
+        <p>%sさん</p>
 
-        <p>この度は農業災害支援システムにご登録いただき、ありがとうございます。</p>
+        下記のボタンをクリックしてメールアドレスの認証を完了してください。</p>
 
-        <p>当システムでは以下のサービスをご利用いただけます：</p>
-        <ul>
-            <li>災害情報の確認</li>
-            <li>被害報告の提出</li>
-            <li>支援申請の手続き</li>
-            <li>通知の受信</li>
-        </ul>
+        <div style="text-align: center;">
+            <a href="{{.VerificationURL}}" class="button">認証を完了する</a>
+        </div>
 
-        <p>システムの利用方法についてご不明な点がございましたら、お気軽にお問い合わせください。</p>
+        <div class="info">
+            <strong>注意:</strong> このリンクは1時間で期限切れになります。
+        </div>
 
-        <p>今後ともよろしくお願いいたします。</p>
-
-        <hr style="margin: 30px 0;">
-        <p style="color: #666; font-size: 14px;">
-            農業災害支援システム 運営事務局<br>
-            Email: support@agri-disaster.jp<br>
-            Web: https://agri-disaster.jp
+        <hr>
+        <p style="font-size: 12px; color: #666;">
+        このメールは自動送信です。<br>
         </p>
     </div>
 </body>
