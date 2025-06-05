@@ -74,6 +74,7 @@ type Module struct {
 	UserUsecase               usecase.UserUseCase
 	UserHandler               handler.User
 	AuthHandler               handler.Auth
+	EmailHistoryRepo          datastore.EmailHistoryRepository
 }
 
 // ProvideLogger creates a new logger instance
@@ -265,9 +266,15 @@ func ProvideUserRepository(client db.Client) datastore.UserRepository {
 	return datastore.NewUserRepository(ctx, client)
 }
 
+// ProvideEmailHistoryRepository creates a new email history repository
+func ProvideEmailHistoryRepository(client db.Client) datastore.EmailHistoryRepository {
+	ctx := context.Background()
+	return datastore.NewEmailHistoryRepository(ctx, client)
+}
+
 // ProvideUserUseCase creates a new user usecase
-func ProvideUserUseCase(repo datastore.UserRepository) usecase.UserUseCase {
-	return usecase.NewUserUseCase(repo)
+func ProvideUserUseCase(repo datastore.UserRepository, emailRepo datastore.EmailHistoryRepository) usecase.UserUseCase {
+	return usecase.NewUserUseCase(repo, emailRepo)
 }
 
 // ProvideUserHandler creates a new user handler
@@ -427,6 +434,7 @@ func main() {
 			ProvideNotificationRepository,
 			ProvideOrganizationRepository,
 			ProvideUserRepository,
+			ProvideEmailHistoryRepository,
 			ProvideDisasterUseCase,
 			ProvidePrefectureUseCase,
 			ProvideTimelineUseCase,

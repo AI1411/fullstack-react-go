@@ -2,14 +2,14 @@ DROP TABLE IF EXISTS email_histories;
 CREATE TABLE email_histories
 (
     id            BIGSERIAL PRIMARY KEY,
-    user_id       UUID         NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-    email         VARCHAR(255) NOT NULL,
-    subject       VARCHAR(500),
-    email_type    VARCHAR(100) NOT NULL, -- register, verification, password_reset等
-    provider      VARCHAR(50)  NOT NULL, -- smtp, sendgrid等
+    user_id       UUID                                               NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    email         VARCHAR(255)                                       NOT NULL,
+    subject       VARCHAR(500)                                       NOT NULL,
+    email_type    VARCHAR(100)                                       NOT NULL, -- register, verification, password_reset等
+    provider      VARCHAR(50)                                        NOT NULL, -- smtp, sendgrid等
     error_message TEXT,
-    sent_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    status        VARCHAR(50)  NOT NULL,
+    sent_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    status        VARCHAR(50)                                        NOT NULL, -- success, failed, pending等
     created_at    TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at    TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

@@ -9,7 +9,7 @@ import (
 	"github.com/AI1411/fullstack-react-go/internal/infra/db"
 )
 
-type EmailRepository interface {
+type EmailHistoryRepository interface {
 	SaveEmailHistory(ctx context.Context, email *model.EmailHistory) error
 	ListEmailHistoriesByUserID(ctx context.Context, userID string) ([]*model.EmailHistory, error)
 }
@@ -19,7 +19,7 @@ type emailRepository struct {
 	query    *query.Query
 }
 
-func NewEmailRepository(ctx context.Context, dbClient db.Client) EmailRepository {
+func NewEmailHistoryRepository(ctx context.Context, dbClient db.Client) EmailHistoryRepository {
 	return &emailRepository{
 		dbClient: dbClient,
 		query:    query.Use(dbClient.Conn(ctx)),

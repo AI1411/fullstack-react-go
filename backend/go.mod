@@ -3,7 +3,7 @@ module github.com/AI1411/fullstack-react-go
 go 1.24
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.5.2
+	github.com/aws/smithy-go v1.22.3
 	github.com/coreos/go-oidc/v3 v3.10.0
 	github.com/gin-contrib/cors v1.7.5
 	github.com/gin-gonic/gin v1.10.1
@@ -16,6 +16,7 @@ require (
 	github.com/swaggo/swag v1.16.4
 	go.uber.org/fx v1.21.0
 	go.uber.org/mock v0.5.2
+	golang.org/x/crypto v0.36.0
 	golang.org/x/oauth2 v0.21.0
 	gorm.io/driver/postgres v1.5.11
 	gorm.io/gen v0.3.27
@@ -67,7 +68,6 @@ require (
 	go.uber.org/multierr v1.10.0 // indirect
 	go.uber.org/zap v1.26.0 // indirect
 	golang.org/x/arch v0.15.0 // indirect
-	golang.org/x/crypto v0.36.0 // indirect
 	golang.org/x/mod v0.22.0 // indirect
 	golang.org/x/net v0.38.0 // indirect
 	golang.org/x/sync v0.12.0 // indirect

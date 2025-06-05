@@ -69,10 +69,10 @@ services:
       - "1025:1025"  # SMTP port
       - "8025:8025"  # Web UI port
     environment:
-      - MH_STORAGE=maildir
-      - MH_MAILDIR_PATH=/maildir
-    volumes:
-      - mailhog_data:/maildir
+      - MH_STORAGE=memory
+    networks:
+      - gen-network
+    restart: unless-stopped
 
 networks:
   gen-network:
@@ -81,4 +81,3 @@ networks:
 volumes:
   postgres_data:
   postgres_test_data:
-  mailhog_data:
