@@ -31,12 +31,6 @@ func newPrefecture(db *gorm.DB, opts ...gen.DOOption) prefecture {
 	_prefecture.ID = field.NewInt32(tableName, "id")
 	_prefecture.Code = field.NewString(tableName, "code")
 	_prefecture.Name = field.NewString(tableName, "name")
-	_prefecture.Disasters = prefectureHasManyDisasters{
-		db: db.Session(&gorm.Session{}),
-
-		RelationField: field.NewRelation("Disasters", "model.Disaster"),
-	}
-
 	_prefecture.Municipalities = prefectureHasManyMunicipalities{
 		db: db.Session(&gorm.Session{}),
 
@@ -51,12 +45,10 @@ func newPrefecture(db *gorm.DB, opts ...gen.DOOption) prefecture {
 type prefecture struct {
 	prefectureDo
 
-	ALL       field.Asterisk
-	ID        field.Int32 // 都道府県名
-	Code      field.String
-	Name      field.String // 都道府県名
-	Disasters prefectureHasManyDisasters
-
+	ALL            field.Asterisk
+	ID             field.Int32 // 都道府県名
+	Code           field.String
+	Name           field.String // 都道府県名
 	Municipalities prefectureHasManyMunicipalities
 
 	fieldMap map[string]field.Expr
@@ -93,7 +85,7 @@ func (p *prefecture) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (p *prefecture) fillFieldMap() {
-	p.fieldMap = make(map[string]field.Expr, 5)
+	p.fieldMap = make(map[string]field.Expr, 4)
 	p.fieldMap["id"] = p.ID
 	p.fieldMap["code"] = p.Code
 	p.fieldMap["name"] = p.Name
@@ -102,8 +94,6 @@ func (p *prefecture) fillFieldMap() {
 
 func (p prefecture) clone(db *gorm.DB) prefecture {
 	p.prefectureDo.ReplaceConnPool(db.Statement.ConnPool)
-	p.Disasters.db = db.Session(&gorm.Session{Initialized: true})
-	p.Disasters.db.Statement.ConnPool = db.Statement.ConnPool
 	p.Municipalities.db = db.Session(&gorm.Session{Initialized: true})
 	p.Municipalities.db.Statement.ConnPool = db.Statement.ConnPool
 	return p
@@ -111,90 +101,8 @@ func (p prefecture) clone(db *gorm.DB) prefecture {
 
 func (p prefecture) replaceDB(db *gorm.DB) prefecture {
 	p.prefectureDo.ReplaceDB(db)
-	p.Disasters.db = db.Session(&gorm.Session{})
 	p.Municipalities.db = db.Session(&gorm.Session{})
 	return p
-}
-
-type prefectureHasManyDisasters struct {
-	db *gorm.DB
-
-	field.RelationField
-}
-
-func (a prefectureHasManyDisasters) Where(conds ...field.Expr) *prefectureHasManyDisasters {
-	if len(conds) == 0 {
-		return &a
-	}
-
-	exprs := make([]clause.Expression, 0, len(conds))
-	for _, cond := range conds {
-		exprs = append(exprs, cond.BeCond().(clause.Expression))
-	}
-	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
-	return &a
-}
-
-func (a prefectureHasManyDisasters) WithContext(ctx context.Context) *prefectureHasManyDisasters {
-	a.db = a.db.WithContext(ctx)
-	return &a
-}
-
-func (a prefectureHasManyDisasters) Session(session *gorm.Session) *prefectureHasManyDisasters {
-	a.db = a.db.Session(session)
-	return &a
-}
-
-func (a prefectureHasManyDisasters) Model(m *model.Prefecture) *prefectureHasManyDisastersTx {
-	return &prefectureHasManyDisastersTx{a.db.Model(m).Association(a.Name())}
-}
-
-func (a prefectureHasManyDisasters) Unscoped() *prefectureHasManyDisasters {
-	a.db = a.db.Unscoped()
-	return &a
-}
-
-type prefectureHasManyDisastersTx struct{ tx *gorm.Association }
-
-func (a prefectureHasManyDisastersTx) Find() (result []*model.Disaster, err error) {
-	return result, a.tx.Find(&result)
-}
-
-func (a prefectureHasManyDisastersTx) Append(values ...*model.Disaster) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Append(targetValues...)
-}
-
-func (a prefectureHasManyDisastersTx) Replace(values ...*model.Disaster) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Replace(targetValues...)
-}
-
-func (a prefectureHasManyDisastersTx) Delete(values ...*model.Disaster) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Delete(targetValues...)
-}
-
-func (a prefectureHasManyDisastersTx) Clear() error {
-	return a.tx.Clear()
-}
-
-func (a prefectureHasManyDisastersTx) Count() int64 {
-	return a.tx.Count()
-}
-
-func (a prefectureHasManyDisastersTx) Unscoped() *prefectureHasManyDisastersTx {
-	a.tx = a.tx.Unscoped()
-	return &a
 }
 
 type prefectureHasManyMunicipalities struct {

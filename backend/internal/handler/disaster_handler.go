@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -37,30 +36,38 @@ func NewDisasterHandler(
 }
 
 type PrefectureItem struct {
-	Name   string     `json:"name" binding:"required"`
-	Region RegionItem `json:"region" binding:"required"`
-}
-
-type RegionItem struct {
 	Name string `json:"name" binding:"required"`
 }
 
+type WorkCategory struct {
+	CategoryName string `json:"category_name" binding:"required"`
+	IconName     string `json:"icon_name" binding:"required"`
+}
+
 type DisasterResponse struct {
-	ID                    string         `json:"id"`
-	DisasterCode          string         `json:"disaster_code"`
-	Name                  string         `json:"name"`
-	Prefecture            PrefectureItem `json:"prefecture"`
-	OccurredAt            string         `json:"occurred_at"`
-	Summary               string         `json:"summary"`
-	DisasterType          string         `json:"disaster_type"`
-	Status                string         `json:"status"`
-	ImpactLevel           string         `json:"impact_level"`
-	AffectedAreaSize      *float64       `json:"affected_area_size"`
-	EstimatedDamageAmount *float64       `json:"estimated_damage_amount"`
-	Latitude              *float64       `json:"latitude"`
-	Longitude             *float64       `json:"longitude"`
-	Address               *string        `json:"address"`
-	PlaceID               *string        `json:"place_id"`
+	ID                    string       `json:"id"`
+	Name                  string       `json:"name"`
+	MunicipalityID        int32        `json:"municipality_id"`
+	OccurredAt            string       `json:"occurred_at"`
+	Summary               string       `json:"summary"`
+	WorkCategoryID        int64        `json:"work_category_id"`
+	Status                string       `json:"status"`
+	AffectedAreaSize      *float64     `json:"affected_area_size"`
+	EstimatedDamageAmount *float64     `json:"estimated_damage_amount"`
+	Latitude              *float64     `json:"latitude"`
+	Longitude             *float64     `json:"longitude"`
+	Address               *string      `json:"address"`
+	PlaceID               *string      `json:"place_id"`
+	Municipality          Municipality `json:"municipality"`
+	WorkCategory          WorkCategory `json:"work_category"`
+	Timelines             []Timeline   `json:"timelines"`
+}
+
+type ListDisastersRequest struct {
+	Name           string `form:"name"`
+	MunicipalityID string `form:"municipality_id"`
+	WorkCategoryID string `form:"work_category_id"`
+	Status         string `form:"status"`
 }
 
 type ListDisastersResponse struct {
@@ -102,12 +109,7 @@ type UpdateDisasterRequest struct {
 // @version バージョン(1.0)
 // @description
 // @Summary 災害マスタ一覧取得
-// @Param name query string false "災害名"
-// @Param disaster_type query string false "災害種別"
-// @Param status query string false "ステータス"
-// @Param prefecture_id query integer false "都道府県ID"
-// @Param start_date query string false "開始日 (RFC3339形式)"
-// @Param end_date query string false "終了日 (RFC3339形式)"
+// @Param request body ListDisastersRequest true "request body for listing disasters"
 // @Success 200 {array} ListDisastersResponse
 // @Router /disasters [get]
 func (h *disasterHandler) ListDisasters(c *gin.Context) {
@@ -121,20 +123,8 @@ func (h *disasterHandler) ListDisasters(c *gin.Context) {
 		params.Name = name
 	}
 
-	if disasterType := c.Query("disaster_type"); disasterType != "" {
-		params.DisasterType = disasterType
-	}
-
 	if status := c.Query("status"); status != "" {
 		params.Status = status
-	}
-
-	// Parse prefecture_id if provided
-	if prefectureID := c.Query("prefecture_id"); prefectureID != "" {
-		var id int32
-		if _, err := fmt.Sscanf(prefectureID, "%d", &id); err == nil {
-			params.PrefectureID = id
-		}
 	}
 
 	// Parse date range if provided
@@ -161,23 +151,27 @@ func (h *disasterHandler) ListDisasters(c *gin.Context) {
 	var ds []*DisasterResponse
 	for _, disaster := range disasters {
 		ds = append(ds, &DisasterResponse{
-			ID:           disaster.ID,
-			DisasterCode: disaster.DisasterCode,
-			Name:         disaster.Name,
-			Prefecture: PrefectureItem{
-				Name: disaster.Prefecture.Name,
-			},
-			OccurredAt:            disaster.OccurredAt.Format(time.DateTime),
+			ID:                    disaster.ID,
+			Name:                  disaster.Name,
+			MunicipalityID:        disaster.MunicipalityID,
+			OccurredAt:            disaster.OccurredAt.Format(time.RFC3339),
 			Summary:               disaster.Summary,
-			DisasterType:          disaster.DisasterType,
+			WorkCategoryID:        disaster.WorkCategoryID,
 			Status:                disaster.Status,
-			ImpactLevel:           disaster.ImpactLevel,
 			AffectedAreaSize:      disaster.AffectedAreaSize,
 			EstimatedDamageAmount: disaster.EstimatedDamageAmount,
 			Latitude:              disaster.Latitude,
 			Longitude:             disaster.Longitude,
 			Address:               disaster.Address,
 			PlaceID:               disaster.PlaceID,
+			Municipality: Municipality{
+				PrefectureNameKanji:   disaster.Municipality.PrefectureNameKanji,
+				MunicipalityNameKanji: disaster.Municipality.MunicipalityNameKanji,
+			},
+			WorkCategory: WorkCategory{
+				CategoryName: disaster.WorkCategory.CategoryName,
+				IconName:     disaster.WorkCategory.IconName,
+			},
 		})
 	}
 
@@ -212,23 +206,20 @@ func (h *disasterHandler) GetDisaster(c *gin.Context) {
 	}
 
 	response := &DisasterResponse{
-		ID:           disaster.ID,
-		DisasterCode: disaster.DisasterCode,
-		Name:         disaster.Name,
-		Prefecture: PrefectureItem{
-			Name: disaster.Prefecture.Name,
-		},
-		OccurredAt:            disaster.OccurredAt.Format(time.DateTime),
+		ID:                    disaster.ID,
+		Name:                  disaster.Name,
+		MunicipalityID:        disaster.MunicipalityID,
+		OccurredAt:            disaster.OccurredAt.Format(time.RFC3339),
 		Summary:               disaster.Summary,
-		DisasterType:          disaster.DisasterType,
+		WorkCategoryID:        disaster.WorkCategoryID,
 		Status:                disaster.Status,
-		ImpactLevel:           disaster.ImpactLevel,
 		AffectedAreaSize:      disaster.AffectedAreaSize,
 		EstimatedDamageAmount: disaster.EstimatedDamageAmount,
 		Latitude:              disaster.Latitude,
 		Longitude:             disaster.Longitude,
 		Address:               disaster.Address,
 		PlaceID:               disaster.PlaceID,
+		Municipality:          Municipality{},
 	}
 
 	h.l.InfoContext(ctx, "Successfully retrieved disaster", "disaster_id", id)
@@ -263,14 +254,10 @@ func (h *disasterHandler) CreateDisaster(c *gin.Context) {
 	status := req.Status
 
 	disaster := &model.Disaster{
-		DisasterCode:          req.DisasterCode,
 		Name:                  req.Name,
-		PrefectureID:          req.PrefectureID,
 		OccurredAt:            occurredAt,
 		Summary:               req.Summary,
-		DisasterType:          req.DisasterType,
 		Status:                status,
-		ImpactLevel:           req.ImpactLevel,
 		AffectedAreaSize:      req.AffectedAreaSize,
 		EstimatedDamageAmount: req.EstimatedDamageAmount,
 		CreatedAt:             time.Now(),
@@ -285,15 +272,19 @@ func (h *disasterHandler) CreateDisaster(c *gin.Context) {
 
 	response := &DisasterResponse{
 		ID:                    disaster.ID,
-		DisasterCode:          disaster.DisasterCode,
 		Name:                  disaster.Name,
-		OccurredAt:            disaster.OccurredAt.Format(time.DateTime),
+		MunicipalityID:        disaster.MunicipalityID,
+		OccurredAt:            disaster.OccurredAt.Format(time.RFC3339),
 		Summary:               disaster.Summary,
-		DisasterType:          disaster.DisasterType,
+		WorkCategoryID:        disaster.WorkCategoryID,
 		Status:                disaster.Status,
-		ImpactLevel:           disaster.ImpactLevel,
 		AffectedAreaSize:      disaster.AffectedAreaSize,
 		EstimatedDamageAmount: disaster.EstimatedDamageAmount,
+		Latitude:              disaster.Latitude,
+		Longitude:             disaster.Longitude,
+		Address:               disaster.Address,
+		PlaceID:               disaster.PlaceID,
+		Municipality:          Municipality{},
 	}
 
 	c.JSON(http.StatusCreated, response)
@@ -327,19 +318,9 @@ func (h *disasterHandler) UpdateDisaster(c *gin.Context) {
 		return
 	}
 
-	// Update fields if provided
-	if req.DisasterCode != "" {
-		disaster.DisasterCode = req.DisasterCode
-	}
-
 	if req.Name != "" {
 		disaster.Name = req.Name
 	}
-
-	if req.PrefectureID != 0 {
-		disaster.PrefectureID = req.PrefectureID
-	}
-
 	if req.OccurredAt != "" {
 		occurredAt, err := time.Parse(time.RFC3339, req.OccurredAt)
 		if err != nil {
@@ -354,16 +335,8 @@ func (h *disasterHandler) UpdateDisaster(c *gin.Context) {
 		disaster.Summary = req.Summary
 	}
 
-	if req.DisasterType != "" {
-		disaster.DisasterType = req.DisasterType
-	}
-
 	if req.Status != "" {
 		disaster.Status = req.Status
-	}
-
-	if req.ImpactLevel != "" {
-		disaster.ImpactLevel = req.ImpactLevel
 	}
 
 	if req.AffectedAreaSize != nil {
@@ -384,15 +357,19 @@ func (h *disasterHandler) UpdateDisaster(c *gin.Context) {
 
 	response := &DisasterResponse{
 		ID:                    disaster.ID,
-		DisasterCode:          disaster.DisasterCode,
 		Name:                  disaster.Name,
-		OccurredAt:            disaster.OccurredAt.Format(time.DateTime),
+		MunicipalityID:        disaster.MunicipalityID,
+		OccurredAt:            disaster.OccurredAt.Format(time.RFC3339),
 		Summary:               disaster.Summary,
-		DisasterType:          disaster.DisasterType,
+		WorkCategoryID:        disaster.WorkCategoryID,
 		Status:                disaster.Status,
-		ImpactLevel:           disaster.ImpactLevel,
 		AffectedAreaSize:      disaster.AffectedAreaSize,
 		EstimatedDamageAmount: disaster.EstimatedDamageAmount,
+		Latitude:              disaster.Latitude,
+		Longitude:             disaster.Longitude,
+		Address:               disaster.Address,
+		PlaceID:               disaster.PlaceID,
+		Municipality:          Municipality{},
 	}
 
 	c.JSON(http.StatusOK, response)

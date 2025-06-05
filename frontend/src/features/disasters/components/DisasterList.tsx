@@ -1,14 +1,22 @@
 import { Link } from "@tanstack/react-router"
-import type { Disaster } from "../types"
-import { formatDate, getStatusBadgeClass, getStatusLabel } from "../utils/formatters"
+import type { HandlerDisasterResponse } from "../../../api/generated/model"
+import {
+  formatDate,
+  getStatusBadgeClass,
+  getStatusLabel,
+} from "../utils/formatters"
 
 interface DisasterListProps {
-  disasters: Disaster[]
+  disasters: HandlerDisasterResponse[]
   isLoading: boolean
   error: unknown
 }
 
-export const DisasterList = ({ disasters, isLoading, error }: DisasterListProps) => {
+export const DisasterList = ({
+  disasters,
+  isLoading,
+  error,
+}: DisasterListProps) => {
   if (isLoading) {
     return <div>読み込み中</div>
   }
@@ -21,7 +29,9 @@ export const DisasterList = ({ disasters, isLoading, error }: DisasterListProps)
     <div className="px-4 py-3">
       {disasters.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-8 bg-white rounded-lg border border-[#dce0e5]">
-          <p className="text-[#637588] text-sm">災害情報が見つかりませんでした</p>
+          <p className="text-[#637588] text-sm">
+            災害情報が見つかりませんでした
+          </p>
         </div>
       ) : (
         <div className="flex overflow-hidden rounded-lg border border-[#dce0e5] bg-white">
@@ -35,7 +45,7 @@ export const DisasterList = ({ disasters, isLoading, error }: DisasterListProps)
                   災害名
                 </th>
                 <th className="px-4 py-3 text-left text-[#111418] w-[200px] text-sm font-medium leading-normal">
-                  災害種別
+                  工種区分
                 </th>
                 <th className="px-4 py-3 text-left text-[#111418] w-[150px] text-sm font-medium leading-normal">
                   ステータス
@@ -47,10 +57,7 @@ export const DisasterList = ({ disasters, isLoading, error }: DisasterListProps)
             </thead>
             <tbody>
               {disasters.map((disaster) => (
-                <tr
-                  key={disaster.id}
-                  className="border-t border-t-[#dce0e5]"
-                >
+                <tr key={disaster.id} className="border-t border-t-[#dce0e5]">
                   <td className="h-[72px] px-4 py-2 w-[120px] text-[#637588] text-sm font-normal leading-normal">
                     {disaster.occurred_at
                       ? formatDate(disaster.occurred_at)
@@ -60,7 +67,7 @@ export const DisasterList = ({ disasters, isLoading, error }: DisasterListProps)
                     {disaster.name || "-"}
                   </td>
                   <td className="h-[72px] px-4 py-2 w-[200px] text-[#637588] text-sm font-normal leading-normal">
-                    {disaster.disaster_type || "-"}
+                    {disaster.work_category?.category_name || "-"}
                   </td>
                   <td className="h-[72px] px-4 py-2 w-[150px] text-sm font-normal leading-normal">
                     <span

@@ -36,13 +36,27 @@ COMMENT ON COLUMN municipalities.prefecture_name_kana IS '都道府県名（カ�
 COMMENT ON COLUMN municipalities.municipality_name_kana IS '市区町村名（カタカナ表記）';
 COMMENT ON COLUMN municipalities.is_active IS '有効フラグ（TRUE: 有効、FALSE: 無効）';
 
+-- ダミーデータを挿入
+INSERT INTO municipalities (prefecture_code, organization_code, prefecture_name_kanji, municipality_name_kanji,
+                            prefecture_name_kana, municipality_name_kana)
+VALUES ('01', '01001', '北海道', '札幌市', 'ホッカイドウ', 'サッポロシ'),
+       ('02', '02001', '青森県', '青森市', 'アオモリケン', 'アオモリシ'),
+       ('03', '03001', '岩手県', '盛岡市', 'イワテケン', 'モリオカシ'),
+       ('04', '04001', '宮城県', '仙台市', 'ミヤギケン', 'センダイシ'),
+       ('05', '05001', '秋田県', '秋田市', 'アキタケン', 'アキタシ'),
+       ('06', '06001', '山形県', '山形市', 'ヤマガタケン', 'ヤマガタシ'),
+       ('07', '07001', '福島県', '福島市', 'フクシマケン', 'フクシマシ'),
+       ('08', '08001', '茨城県', '水戸市', 'イバラキケン', 'ミトシ'),
+       ('09', '09001', '栃木県', '宇都宮市', 'トチギケン', 'ウツノミヤシ'),
+       ('10', '10001', '群馬県', '前橋市', 'グンマケン', 'マエバシシ');
+
 -- 工種区分マスタ
 DROP TABLE IF EXISTS work_categories CASCADE;
 CREATE TABLE work_categories
 (
     id            SERIAL PRIMARY KEY,
     category_name VARCHAR(20) NOT NULL,
-    icon_name     VARCHAR(50), -- アイコンファイル名
+    icon_name     VARCHAR(50) NOT NULL, -- アイコンファイル名
     sort_order    INTEGER     NOT NULL DEFAULT 0,
     is_active     BOOLEAN     NOT NULL DEFAULT true
 );
@@ -64,16 +78,16 @@ COMMENT ON COLUMN work_categories.sort_order IS '表示順序';
 COMMENT ON COLUMN work_categories.is_active IS '有効フラグ（TRUE: 有効、FALSE: 無効）';
 
 -- 工種区分マスタに初期データを挿入
-INSERT INTO work_categories (category_name, sort_order)
-VALUES ('農地', 10),
-       ('水路', 20),
-       ('農道', 30),
-       ('ため池', 40),
-       ('頭首工', 50),
-       ('揚水機', 60),
-       ('堤防', 70),
-       ('橋梁', 80),
-       ('農地保全施設', 90);
+INSERT INTO work_categories (category_name, icon_name, sort_order)
+VALUES ('農地', '', 10),
+       ('水路', '', 20),
+       ('農道', '', 30),
+       ('ため池', '', 40),
+       ('頭首工', '', 50),
+       ('揚水機', '', 60),
+       ('堤防', '', 70),
+       ('橋梁', '', 80),
+       ('農地保全施設', '', 90);
 
 -- 単価マスタ
 DROP TABLE IF EXISTS unit_prices CASCADE;

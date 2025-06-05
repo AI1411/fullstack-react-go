@@ -39,7 +39,6 @@ func main() {
 		// ユーザーモデル
 		g.GenerateModel(
 			model.TableNamePrefecture,
-			gen.FieldRelateModel(field.HasMany, "Disasters", model.Disaster{}, nil),
 			gen.FieldRelateModel(field.HasMany, "Municipalities", model.Municipality{}, &field.RelateConfig{
 				GORMTag: field.GormTag{
 					"foreignKey": []string{"PrefectureCode"},
@@ -49,9 +48,10 @@ func main() {
 		),
 		g.GenerateModel(
 			model.TableNameDisaster,
-			gen.FieldRelateModel(field.BelongsTo, "Prefecture", model.Prefecture{}, nil),
+			gen.FieldRelateModel(field.BelongsTo, "Municipality", model.Municipality{}, nil),
 			gen.FieldRelateModel(field.HasMany, "Timelines", model.Timeline{}, nil),
 			gen.FieldRelateModel(field.HasMany, "DisasterDocuments", model.DisasterDocument{}, nil),
+			gen.FieldRelateModel(field.BelongsTo, "WorkCategory", model.WorkCategory{}, nil),
 		),
 
 		g.GenerateModel(

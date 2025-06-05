@@ -12,13 +12,12 @@ import (
 
 // DisasterSearchParams contains the search parameters for disasters
 type DisasterSearchParams struct {
-	Name         string
-	DisasterType string
-	Status       string
-	PrefectureID int32
-	ImpactLevel  string
-	StartDate    time.Time
-	EndDate      time.Time
+	Name           string
+	WorkCategoryID int64
+	Status         string
+	MunicipalityID int32
+	StartDate      time.Time
+	EndDate        time.Time
 }
 
 type DisasterRepository interface {
@@ -46,7 +45,8 @@ func NewDisasterRepository(
 
 func (r *disasterRepository) Find(ctx context.Context, params *DisasterSearchParams) ([]*model.Disaster, error) {
 	q := r.query.WithContext(ctx).Disaster.
-		Preload(r.query.Disaster.Prefecture)
+		Preload(r.query.Disaster.Municipality).
+		Preload(r.query.Disaster.WorkCategory)
 
 	// Apply filters if provided
 	if params != nil {
@@ -54,21 +54,18 @@ func (r *disasterRepository) Find(ctx context.Context, params *DisasterSearchPar
 			q = q.Where(r.query.Disaster.Name.Like("%" + params.Name + "%"))
 		}
 
-		if params.DisasterType != "" {
-			q = q.Where(r.query.Disaster.DisasterType.Eq(params.DisasterType))
+		if params.WorkCategoryID != 0 {
+			q = q.Where(r.query.Disaster.WorkCategoryID.Eq(params.WorkCategoryID))
 		}
 
 		if params.Status != "" {
 			q = q.Where(r.query.Disaster.Status.Eq(params.Status))
 		}
 
-		if params.PrefectureID != 0 {
-			q = q.Where(r.query.Disaster.PrefectureID.Eq(params.PrefectureID))
+		if params.MunicipalityID != 0 {
+			q = q.Where(r.query.Disaster.MunicipalityID.Eq(params.MunicipalityID))
 		}
 
-		if params.ImpactLevel != "" {
-			q = q.Where(r.query.Disaster.ImpactLevel.Eq(params.ImpactLevel))
-		}
 		// Apply date range filter if both start and end dates are provided
 		if !params.StartDate.IsZero() && !params.EndDate.IsZero() {
 			q = q.Where(r.query.Disaster.OccurredAt.Between(params.StartDate, params.EndDate))
@@ -91,7 +88,7 @@ func (r *disasterRepository) FindByID(ctx context.Context, id string) (*model.Di
 	disaster, err := r.query.WithContext(ctx).
 		Disaster.
 		Where(r.query.Disaster.ID.Eq(id)).
-		Preload(r.query.Disaster.Prefecture).
+		Preload(r.query.Disaster.Municipality).
 		First()
 	if err != nil {
 		return nil, err

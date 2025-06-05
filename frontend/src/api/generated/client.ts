@@ -74,6 +74,7 @@ import type {
   HandlerCreateUserRequest,
   HandlerDamageLevelResponse,
   HandlerFacilityEquipmentResponse,
+  HandlerListDisastersRequest,
   HandlerListDisastersResponse,
   HandlerListSupportApplicationsResponse,
   HandlerListTimelinesResponse,
@@ -88,7 +89,6 @@ import type {
   HandlerUpdateOrganizationRequest,
   HandlerUpdateUserRequest,
   HandlerUserResponse,
-  ListDisastersParams,
   ListUsers500,
   Logout200,
   MarkAsRead400,
@@ -711,33 +711,31 @@ export const useUpdateDamageLevel = <TError = AxiosError<UpdateDamageLevel400 | 
  * @summary 災害マスタ一覧取得
  */
 export const listDisasters = (
-    params?: ListDisastersParams, options?: AxiosRequestConfig
+    handlerListDisastersRequest: HandlerListDisastersRequest, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<HandlerListDisastersResponse[]>> => {
     
     
     return axios.default.get(
-      `/disasters`,{
-    ...options,
-        params: {...params, ...options?.params},}
+      `/disasters`,options
     );
   }
 
 
-export const getListDisastersQueryKey = (params?: ListDisastersParams,) => {
-    return [`/disasters`, ...(params ? [params]: [])] as const;
+export const getListDisastersQueryKey = (handlerListDisastersRequest: HandlerListDisastersRequest,) => {
+    return [`/disasters`, handlerListDisastersRequest] as const;
     }
 
     
-export const getListDisastersQueryOptions = <TData = Awaited<ReturnType<typeof listDisasters>>, TError = AxiosError<unknown>>(params?: ListDisastersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDisasters>>, TError, TData>>, axios?: AxiosRequestConfig}
+export const getListDisastersQueryOptions = <TData = Awaited<ReturnType<typeof listDisasters>>, TError = AxiosError<unknown>>(handlerListDisastersRequest: HandlerListDisastersRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDisasters>>, TError, TData>>, axios?: AxiosRequestConfig}
 ) => {
 
 const {query: queryOptions, axios: axiosOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getListDisastersQueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getListDisastersQueryKey(handlerListDisastersRequest);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof listDisasters>>> = ({ signal }) => listDisasters(params, { signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listDisasters>>> = ({ signal }) => listDisasters(handlerListDisastersRequest, { signal, ...axiosOptions });
 
       
 
@@ -751,7 +749,7 @@ export type ListDisastersQueryError = AxiosError<unknown>
 
 
 export function useListDisasters<TData = Awaited<ReturnType<typeof listDisasters>>, TError = AxiosError<unknown>>(
- params: undefined |  ListDisastersParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDisasters>>, TError, TData>> & Pick<
+ handlerListDisastersRequest: HandlerListDisastersRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDisasters>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof listDisasters>>,
           TError,
@@ -761,7 +759,7 @@ export function useListDisasters<TData = Awaited<ReturnType<typeof listDisasters
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
 export function useListDisasters<TData = Awaited<ReturnType<typeof listDisasters>>, TError = AxiosError<unknown>>(
- params?: ListDisastersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDisasters>>, TError, TData>> & Pick<
+ handlerListDisastersRequest: HandlerListDisastersRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDisasters>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof listDisasters>>,
           TError,
@@ -771,7 +769,7 @@ export function useListDisasters<TData = Awaited<ReturnType<typeof listDisasters
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
 export function useListDisasters<TData = Awaited<ReturnType<typeof listDisasters>>, TError = AxiosError<unknown>>(
- params?: ListDisastersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDisasters>>, TError, TData>>, axios?: AxiosRequestConfig}
+ handlerListDisastersRequest: HandlerListDisastersRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDisasters>>, TError, TData>>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
 /**
@@ -779,11 +777,11 @@ export function useListDisasters<TData = Awaited<ReturnType<typeof listDisasters
  */
 
 export function useListDisasters<TData = Awaited<ReturnType<typeof listDisasters>>, TError = AxiosError<unknown>>(
- params?: ListDisastersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDisasters>>, TError, TData>>, axios?: AxiosRequestConfig}
+ handlerListDisastersRequest: HandlerListDisastersRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listDisasters>>, TError, TData>>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
-  const queryOptions = getListDisastersQueryOptions(params,options)
+  const queryOptions = getListDisastersQueryOptions(handlerListDisastersRequest,options)
 
   const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
 

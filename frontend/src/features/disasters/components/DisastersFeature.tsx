@@ -1,20 +1,21 @@
-import { useState } from "react"
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api"
+import { useState } from "react"
+import type { HandlerListDisastersRequest } from "../../../api/generated/model"
+import { useGoogleAPI } from "../../../providers/GoogleAPIprovider"
 import { useDisasters } from "../hooks/useDisasters"
-import type { DisasterSearchParams } from "../types"
 import { DisasterList } from "./DisasterList"
 import { DisasterSearchForm } from "./DisasterSearchForm"
-import { useGoogleAPI } from "../../../providers/GoogleAPIprovider"
 
 export const DisastersFeature = () => {
   // 検索パラメータの状態管理
-  const [searchParams, setSearchParams] = useState<DisasterSearchParams>({
-    name: "",
-    disaster_type: "",
-    status: "",
-    date_from: "",
-    date_to: "",
-  })
+  const [searchParams, setSearchParams] = useState<HandlerListDisastersRequest>(
+    {
+      name: "",
+      status: "",
+      date_from: "",
+      date_to: "",
+    }
+  )
 
   // 表示モード（リスト/マップ）の状態管理
   const [viewMode, setViewMode] = useState<"list" | "map">("list")
@@ -25,11 +26,11 @@ export const DisastersFeature = () => {
   // Load Google Maps API
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: apiKey,
-    id: 'google-map-script'
+    id: "google-map-script",
   })
 
   // 検索実行時のハンドラ
-  const handleSearch = (params: DisasterSearchParams) => {
+  const handleSearch = (params: HandlerListDisastersRequest) => {
     setSearchParams(params)
   }
 
@@ -89,18 +90,22 @@ export const DisastersFeature = () => {
 
       {viewMode === "list" ? (
         /* 災害情報リスト */
-        <DisasterList 
-          disasters={disasters} 
-          isLoading={isLoading} 
-          error={error} 
+        <DisasterList
+          disasters={disasters}
+          isLoading={isLoading}
+          error={error}
         />
       ) : (
         /* 災害情報マップ */
         <div className="p-4">
           <div className="border rounded-lg overflow-hidden">
             {isLoaded ? (
-              <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={6}>
-                {disasters.map((disaster) => 
+              <GoogleMap
+                mapContainerStyle={containerStyle}
+                center={center}
+                zoom={6}
+              >
+                {disasters.map((disaster) =>
                   disaster.latitude && disaster.longitude ? (
                     <Marker
                       key={disaster.id}
@@ -111,7 +116,7 @@ export const DisastersFeature = () => {
                       onClick={() => {
                         if (disaster.id) {
                           // Use the correct URL format based on the project's routing
-                          window.location.href = `/disasters/${disaster.id}`;
+                          window.location.href = `/disasters/${disaster.id}`
                         }
                       }}
                       title={disaster.name || "無題の災害"}
@@ -120,7 +125,10 @@ export const DisastersFeature = () => {
                 )}
               </GoogleMap>
             ) : (
-              <div style={containerStyle} className="flex items-center justify-center bg-gray-100">
+              <div
+                style={containerStyle}
+                className="flex items-center justify-center bg-gray-100"
+              >
                 <p>地図を読み込み中...</p>
               </div>
             )}

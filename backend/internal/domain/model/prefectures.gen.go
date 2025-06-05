@@ -11,7 +11,6 @@ type Prefecture struct {
 	ID             int32          `gorm:"column:id;type:integer;primaryKey;autoIncrement:true;comment:都道府県名" json:"id"` // 都道府県名
 	Code           string         `gorm:"column:code;type:character varying(2);not null;index:idx_prefectures_code,priority:1" json:"code"`
 	Name           string         `gorm:"column:name;type:character varying(10);not null;index:idx_prefectures_name,priority:1;comment:都道府県名" json:"name"` // 都道府県名
-	Disasters      []Disaster     `json:"disasters"`
 	Municipalities []Municipality `gorm:"foreignKey:PrefectureCode;references:Code" json:"municipalities"`
 }
 

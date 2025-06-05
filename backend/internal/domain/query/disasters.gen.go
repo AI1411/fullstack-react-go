@@ -29,14 +29,12 @@ func newDisaster(db *gorm.DB, opts ...gen.DOOption) disaster {
 	tableName := _disaster.disasterDo.TableName()
 	_disaster.ALL = field.NewAsterisk(tableName)
 	_disaster.ID = field.NewString(tableName, "id")
-	_disaster.DisasterCode = field.NewString(tableName, "disaster_code")
 	_disaster.Name = field.NewString(tableName, "name")
-	_disaster.PrefectureID = field.NewInt32(tableName, "prefecture_id")
+	_disaster.MunicipalityID = field.NewInt32(tableName, "municipality_id")
 	_disaster.OccurredAt = field.NewTime(tableName, "occurred_at")
 	_disaster.Summary = field.NewString(tableName, "summary")
-	_disaster.DisasterType = field.NewString(tableName, "disaster_type")
+	_disaster.WorkCategoryID = field.NewInt64(tableName, "work_category_id")
 	_disaster.Status = field.NewString(tableName, "status")
-	_disaster.ImpactLevel = field.NewString(tableName, "impact_level")
 	_disaster.AffectedAreaSize = field.NewFloat64(tableName, "affected_area_size")
 	_disaster.EstimatedDamageAmount = field.NewFloat64(tableName, "estimated_damage_amount")
 	_disaster.Latitude = field.NewFloat64(tableName, "latitude")
@@ -46,10 +44,10 @@ func newDisaster(db *gorm.DB, opts ...gen.DOOption) disaster {
 	_disaster.CreatedAt = field.NewTime(tableName, "created_at")
 	_disaster.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_disaster.DeletedAt = field.NewField(tableName, "deleted_at")
-	_disaster.Prefecture = disasterBelongsToPrefecture{
+	_disaster.Municipality = disasterBelongsToMunicipality{
 		db: db.Session(&gorm.Session{}),
 
-		RelationField: field.NewRelation("Prefecture", "model.Prefecture"),
+		RelationField: field.NewRelation("Municipality", "model.Municipality"),
 	}
 
 	_disaster.Timelines = disasterHasManyTimelines{
@@ -64,6 +62,12 @@ func newDisaster(db *gorm.DB, opts ...gen.DOOption) disaster {
 		RelationField: field.NewRelation("DisasterDocuments", "model.DisasterDocument"),
 	}
 
+	_disaster.WorkCategory = disasterBelongsToWorkCategory{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("WorkCategory", "model.WorkCategory"),
+	}
+
 	_disaster.fillFieldMap()
 
 	return _disaster
@@ -74,14 +78,12 @@ type disaster struct {
 
 	ALL                   field.Asterisk
 	ID                    field.String  // 災害ID - 主キー
-	DisasterCode          field.String  // 災害コード - 管理用の一意識別子 (例: D2024-001)
 	Name                  field.String  // 災害名 - 災害の名称
-	PrefectureID          field.Int32   // 都道府県ID - 災害が発生した都道府県のID
+	MunicipalityID        field.Int32   // 自治体ID - 関連する自治体のID
 	OccurredAt            field.Time    // 発生日時 - 災害が発生した日時
 	Summary               field.String  // 被害概要 - 災害による被害の詳細説明
-	DisasterType          field.String  // 災害種別 - 洪水, 地滑り, 雹害, 干ばつ, 風害, 地震, 霜害, 病害虫など
+	WorkCategoryID        field.Int64   // 工種区分ID - 関連する作業カテゴリのID
 	Status                field.String  // 状態 - pending(未着手), under_review(審査中), in_progress(対応中), completed(完了)のいずれか
-	ImpactLevel           field.String  // 被害レベル - 軽微, 中程度, 深刻, 甚大などの被害度合い
 	AffectedAreaSize      field.Float64 // 被害面積 - ヘクタール (ha) 単位での被害エリアの広さ
 	EstimatedDamageAmount field.Float64 // 被害推定金額 - 円単位での被害総額
 	Latitude              field.Float64 // 緯度 - 災害発生地点の緯度座標
@@ -91,11 +93,13 @@ type disaster struct {
 	CreatedAt             field.Time    // 作成日時 - レコード作成日時
 	UpdatedAt             field.Time    // 更新日時 - レコード最終更新日時
 	DeletedAt             field.Field   // 削除日時 - 論理削除用のタイムスタンプ
-	Prefecture            disasterBelongsToPrefecture
+	Municipality          disasterBelongsToMunicipality
 
 	Timelines disasterHasManyTimelines
 
 	DisasterDocuments disasterHasManyDisasterDocuments
+
+	WorkCategory disasterBelongsToWorkCategory
 
 	fieldMap map[string]field.Expr
 }
@@ -113,14 +117,12 @@ func (d disaster) As(alias string) *disaster {
 func (d *disaster) updateTableName(table string) *disaster {
 	d.ALL = field.NewAsterisk(table)
 	d.ID = field.NewString(table, "id")
-	d.DisasterCode = field.NewString(table, "disaster_code")
 	d.Name = field.NewString(table, "name")
-	d.PrefectureID = field.NewInt32(table, "prefecture_id")
+	d.MunicipalityID = field.NewInt32(table, "municipality_id")
 	d.OccurredAt = field.NewTime(table, "occurred_at")
 	d.Summary = field.NewString(table, "summary")
-	d.DisasterType = field.NewString(table, "disaster_type")
+	d.WorkCategoryID = field.NewInt64(table, "work_category_id")
 	d.Status = field.NewString(table, "status")
-	d.ImpactLevel = field.NewString(table, "impact_level")
 	d.AffectedAreaSize = field.NewFloat64(table, "affected_area_size")
 	d.EstimatedDamageAmount = field.NewFloat64(table, "estimated_damage_amount")
 	d.Latitude = field.NewFloat64(table, "latitude")
@@ -146,16 +148,14 @@ func (d *disaster) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (d *disaster) fillFieldMap() {
-	d.fieldMap = make(map[string]field.Expr, 21)
+	d.fieldMap = make(map[string]field.Expr, 20)
 	d.fieldMap["id"] = d.ID
-	d.fieldMap["disaster_code"] = d.DisasterCode
 	d.fieldMap["name"] = d.Name
-	d.fieldMap["prefecture_id"] = d.PrefectureID
+	d.fieldMap["municipality_id"] = d.MunicipalityID
 	d.fieldMap["occurred_at"] = d.OccurredAt
 	d.fieldMap["summary"] = d.Summary
-	d.fieldMap["disaster_type"] = d.DisasterType
+	d.fieldMap["work_category_id"] = d.WorkCategoryID
 	d.fieldMap["status"] = d.Status
-	d.fieldMap["impact_level"] = d.ImpactLevel
 	d.fieldMap["affected_area_size"] = d.AffectedAreaSize
 	d.fieldMap["estimated_damage_amount"] = d.EstimatedDamageAmount
 	d.fieldMap["latitude"] = d.Latitude
@@ -170,30 +170,33 @@ func (d *disaster) fillFieldMap() {
 
 func (d disaster) clone(db *gorm.DB) disaster {
 	d.disasterDo.ReplaceConnPool(db.Statement.ConnPool)
-	d.Prefecture.db = db.Session(&gorm.Session{Initialized: true})
-	d.Prefecture.db.Statement.ConnPool = db.Statement.ConnPool
+	d.Municipality.db = db.Session(&gorm.Session{Initialized: true})
+	d.Municipality.db.Statement.ConnPool = db.Statement.ConnPool
 	d.Timelines.db = db.Session(&gorm.Session{Initialized: true})
 	d.Timelines.db.Statement.ConnPool = db.Statement.ConnPool
 	d.DisasterDocuments.db = db.Session(&gorm.Session{Initialized: true})
 	d.DisasterDocuments.db.Statement.ConnPool = db.Statement.ConnPool
+	d.WorkCategory.db = db.Session(&gorm.Session{Initialized: true})
+	d.WorkCategory.db.Statement.ConnPool = db.Statement.ConnPool
 	return d
 }
 
 func (d disaster) replaceDB(db *gorm.DB) disaster {
 	d.disasterDo.ReplaceDB(db)
-	d.Prefecture.db = db.Session(&gorm.Session{})
+	d.Municipality.db = db.Session(&gorm.Session{})
 	d.Timelines.db = db.Session(&gorm.Session{})
 	d.DisasterDocuments.db = db.Session(&gorm.Session{})
+	d.WorkCategory.db = db.Session(&gorm.Session{})
 	return d
 }
 
-type disasterBelongsToPrefecture struct {
+type disasterBelongsToMunicipality struct {
 	db *gorm.DB
 
 	field.RelationField
 }
 
-func (a disasterBelongsToPrefecture) Where(conds ...field.Expr) *disasterBelongsToPrefecture {
+func (a disasterBelongsToMunicipality) Where(conds ...field.Expr) *disasterBelongsToMunicipality {
 	if len(conds) == 0 {
 		return &a
 	}
@@ -206,32 +209,32 @@ func (a disasterBelongsToPrefecture) Where(conds ...field.Expr) *disasterBelongs
 	return &a
 }
 
-func (a disasterBelongsToPrefecture) WithContext(ctx context.Context) *disasterBelongsToPrefecture {
+func (a disasterBelongsToMunicipality) WithContext(ctx context.Context) *disasterBelongsToMunicipality {
 	a.db = a.db.WithContext(ctx)
 	return &a
 }
 
-func (a disasterBelongsToPrefecture) Session(session *gorm.Session) *disasterBelongsToPrefecture {
+func (a disasterBelongsToMunicipality) Session(session *gorm.Session) *disasterBelongsToMunicipality {
 	a.db = a.db.Session(session)
 	return &a
 }
 
-func (a disasterBelongsToPrefecture) Model(m *model.Disaster) *disasterBelongsToPrefectureTx {
-	return &disasterBelongsToPrefectureTx{a.db.Model(m).Association(a.Name())}
+func (a disasterBelongsToMunicipality) Model(m *model.Disaster) *disasterBelongsToMunicipalityTx {
+	return &disasterBelongsToMunicipalityTx{a.db.Model(m).Association(a.Name())}
 }
 
-func (a disasterBelongsToPrefecture) Unscoped() *disasterBelongsToPrefecture {
+func (a disasterBelongsToMunicipality) Unscoped() *disasterBelongsToMunicipality {
 	a.db = a.db.Unscoped()
 	return &a
 }
 
-type disasterBelongsToPrefectureTx struct{ tx *gorm.Association }
+type disasterBelongsToMunicipalityTx struct{ tx *gorm.Association }
 
-func (a disasterBelongsToPrefectureTx) Find() (result *model.Prefecture, err error) {
+func (a disasterBelongsToMunicipalityTx) Find() (result *model.Municipality, err error) {
 	return result, a.tx.Find(&result)
 }
 
-func (a disasterBelongsToPrefectureTx) Append(values ...*model.Prefecture) (err error) {
+func (a disasterBelongsToMunicipalityTx) Append(values ...*model.Municipality) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -239,7 +242,7 @@ func (a disasterBelongsToPrefectureTx) Append(values ...*model.Prefecture) (err 
 	return a.tx.Append(targetValues...)
 }
 
-func (a disasterBelongsToPrefectureTx) Replace(values ...*model.Prefecture) (err error) {
+func (a disasterBelongsToMunicipalityTx) Replace(values ...*model.Municipality) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -247,7 +250,7 @@ func (a disasterBelongsToPrefectureTx) Replace(values ...*model.Prefecture) (err
 	return a.tx.Replace(targetValues...)
 }
 
-func (a disasterBelongsToPrefectureTx) Delete(values ...*model.Prefecture) (err error) {
+func (a disasterBelongsToMunicipalityTx) Delete(values ...*model.Municipality) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -255,15 +258,15 @@ func (a disasterBelongsToPrefectureTx) Delete(values ...*model.Prefecture) (err 
 	return a.tx.Delete(targetValues...)
 }
 
-func (a disasterBelongsToPrefectureTx) Clear() error {
+func (a disasterBelongsToMunicipalityTx) Clear() error {
 	return a.tx.Clear()
 }
 
-func (a disasterBelongsToPrefectureTx) Count() int64 {
+func (a disasterBelongsToMunicipalityTx) Count() int64 {
 	return a.tx.Count()
 }
 
-func (a disasterBelongsToPrefectureTx) Unscoped() *disasterBelongsToPrefectureTx {
+func (a disasterBelongsToMunicipalityTx) Unscoped() *disasterBelongsToMunicipalityTx {
 	a.tx = a.tx.Unscoped()
 	return &a
 }
@@ -426,6 +429,87 @@ func (a disasterHasManyDisasterDocumentsTx) Count() int64 {
 }
 
 func (a disasterHasManyDisasterDocumentsTx) Unscoped() *disasterHasManyDisasterDocumentsTx {
+	a.tx = a.tx.Unscoped()
+	return &a
+}
+
+type disasterBelongsToWorkCategory struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a disasterBelongsToWorkCategory) Where(conds ...field.Expr) *disasterBelongsToWorkCategory {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a disasterBelongsToWorkCategory) WithContext(ctx context.Context) *disasterBelongsToWorkCategory {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a disasterBelongsToWorkCategory) Session(session *gorm.Session) *disasterBelongsToWorkCategory {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a disasterBelongsToWorkCategory) Model(m *model.Disaster) *disasterBelongsToWorkCategoryTx {
+	return &disasterBelongsToWorkCategoryTx{a.db.Model(m).Association(a.Name())}
+}
+
+func (a disasterBelongsToWorkCategory) Unscoped() *disasterBelongsToWorkCategory {
+	a.db = a.db.Unscoped()
+	return &a
+}
+
+type disasterBelongsToWorkCategoryTx struct{ tx *gorm.Association }
+
+func (a disasterBelongsToWorkCategoryTx) Find() (result *model.WorkCategory, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a disasterBelongsToWorkCategoryTx) Append(values ...*model.WorkCategory) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a disasterBelongsToWorkCategoryTx) Replace(values ...*model.WorkCategory) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a disasterBelongsToWorkCategoryTx) Delete(values ...*model.WorkCategory) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a disasterBelongsToWorkCategoryTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a disasterBelongsToWorkCategoryTx) Count() int64 {
+	return a.tx.Count()
+}
+
+func (a disasterBelongsToWorkCategoryTx) Unscoped() *disasterBelongsToWorkCategoryTx {
 	a.tx = a.tx.Unscoped()
 	return &a
 }
