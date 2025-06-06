@@ -161,12 +161,12 @@ func ProvideSupportApplicationHandler(l *logger.Logger, usecase usecase.SupportA
 }
 
 // ProvideDamageLevelRepository creates a new damage level repository
-func ProvideDamageLevelRepository(dbClient db.Client) datastore.DamageLevelRepository {
+func ProvideDamageLevelRepository(dbClient db.Client) domain.DamageLevelRepository {
 	return datastore.NewDamageLevelRepository(context.Background(), dbClient)
 }
 
 // ProvideDamageLevelUseCase creates a new damage level usecase
-func ProvideDamageLevelUseCase(repo datastore.DamageLevelRepository) usecase.DamageLevelUseCase {
+func ProvideDamageLevelUseCase(repo domain.DamageLevelRepository) usecase.DamageLevelUseCase {
 	return usecase.NewDamageLevelUseCase(repo)
 }
 

@@ -10,6 +10,7 @@
 package mock_usecase
 
 import (
+	context "context"
 	reflect "reflect"
 
 	model "github.com/AI1411/fullstack-react-go/internal/domain/model"
@@ -55,46 +56,16 @@ func (mr *MockAuthUsecaseMockRecorder) GenerateToken(user any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateToken", reflect.TypeOf((*MockAuthUsecase)(nil).GenerateToken), user)
 }
 
-// Register mocks base method.
-func (m *MockAuthUsecase) Register(email, password string) (string, error) {
+// ValidateEmailVarificationToken mocks base method.
+func (m *MockAuthUsecase) ValidateEmailVarificationToken(ctx context.Context, token string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Register", email, password)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Register indicates an expected call of Register.
-func (mr *MockAuthUsecaseMockRecorder) Register(email, password any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockAuthUsecase)(nil).Register), email, password)
-}
-
-// ValidateToken mocks base method.
-func (m *MockAuthUsecase) ValidateToken(token string) (*model.Claims, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ValidateToken", token)
-	ret0, _ := ret[0].(*model.Claims)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ValidateToken indicates an expected call of ValidateToken.
-func (mr *MockAuthUsecaseMockRecorder) ValidateToken(token any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateToken", reflect.TypeOf((*MockAuthUsecase)(nil).ValidateToken), token)
-}
-
-// VerifyEmail mocks base method.
-func (m *MockAuthUsecase) VerifyEmail(token string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "VerifyEmail", token)
+	ret := m.ctrl.Call(m, "ValidateEmailVarificationToken", ctx, token)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// VerifyEmail indicates an expected call of VerifyEmail.
-func (mr *MockAuthUsecaseMockRecorder) VerifyEmail(token any) *gomock.Call {
+// ValidateEmailVarificationToken indicates an expected call of ValidateEmailVarificationToken.
+func (mr *MockAuthUsecaseMockRecorder) ValidateEmailVarificationToken(ctx, token any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VerifyEmail", reflect.TypeOf((*MockAuthUsecase)(nil).VerifyEmail), token)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateEmailVarificationToken", reflect.TypeOf((*MockAuthUsecase)(nil).ValidateEmailVarificationToken), ctx, token)
 }

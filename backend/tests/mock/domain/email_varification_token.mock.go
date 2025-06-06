@@ -51,7 +51,7 @@ func (m *MockEmailVarificationTokenRepository) FindByToken(ctx context.Context, 
 }
 
 // FindByToken indicates an expected call of FindByToken.
-func (mr *MockEmailVarificationTokenRepositoryMockRecorder) FindByTokenAndUserID(ctx, token any) *gomock.Call {
+func (mr *MockEmailVarificationTokenRepositoryMockRecorder) FindByToken(ctx, token any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByToken", reflect.TypeOf((*MockEmailVarificationTokenRepository)(nil).FindByToken), ctx, token)
 }

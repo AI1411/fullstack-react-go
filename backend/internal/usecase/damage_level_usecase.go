@@ -5,7 +5,7 @@ import (
 	"context"
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
-	"github.com/AI1411/fullstack-react-go/internal/infra/datastore"
+	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
 )
 
 type DamageLevelUseCase interface {
@@ -17,11 +17,11 @@ type DamageLevelUseCase interface {
 }
 
 type damageLevelUseCase struct {
-	damageLevelRepository datastore.DamageLevelRepository
+	damageLevelRepository domain.DamageLevelRepository
 }
 
 func NewDamageLevelUseCase(
-	damageLevelRepository datastore.DamageLevelRepository,
+	damageLevelRepository domain.DamageLevelRepository,
 ) DamageLevelUseCase {
 	return &damageLevelUseCase{
 		damageLevelRepository: damageLevelRepository,
