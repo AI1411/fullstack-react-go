@@ -5,7 +5,7 @@ import (
 	"context"
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
-	"github.com/AI1411/fullstack-react-go/internal/infra/datastore"
+	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
 )
 
 type FacilityEquipmentUseCase interface {
@@ -17,11 +17,11 @@ type FacilityEquipmentUseCase interface {
 }
 
 type facilityEquipmentUseCase struct {
-	facilityEquipmentRepository datastore.FacilityEquipmentRepository
+	facilityEquipmentRepository domain.FacilityEquipmentRepository
 }
 
 func NewFacilityEquipmentUseCase(
-	facilityEquipmentRepository datastore.FacilityEquipmentRepository,
+	facilityEquipmentRepository domain.FacilityEquipmentRepository,
 ) FacilityEquipmentUseCase {
 	return &facilityEquipmentUseCase{
 		facilityEquipmentRepository: facilityEquipmentRepository,

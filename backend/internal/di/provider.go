@@ -176,12 +176,12 @@ func ProvideDamageLevelHandler(l *logger.Logger, usecase usecase.DamageLevelUseC
 }
 
 // ProvideFacilityEquipmentRepository creates a new facility equipment repository
-func ProvideFacilityEquipmentRepository(dbClient db.Client) datastore.FacilityEquipmentRepository {
+func ProvideFacilityEquipmentRepository(dbClient db.Client) domain.FacilityEquipmentRepository {
 	return datastore.NewFacilityEquipmentRepository(context.Background(), dbClient)
 }
 
 // ProvideFacilityEquipmentUseCase creates a new facility equipment use case
-func ProvideFacilityEquipmentUseCase(repo datastore.FacilityEquipmentRepository) usecase.FacilityEquipmentUseCase {
+func ProvideFacilityEquipmentUseCase(repo domain.FacilityEquipmentRepository) usecase.FacilityEquipmentUseCase {
 	return usecase.NewFacilityEquipmentUseCase(repo)
 }
 

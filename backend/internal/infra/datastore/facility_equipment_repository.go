@@ -5,27 +5,23 @@ import (
 	"context"
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
+	"github.com/AI1411/fullstack-react-go/internal/domain/query"
+	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
 	"github.com/AI1411/fullstack-react-go/internal/infra/db"
 )
 
-type FacilityEquipmentRepository interface {
-	Find(ctx context.Context) ([]*model.FacilityEquipment, error)
-	FindByID(ctx context.Context, id int32) (*model.FacilityEquipment, error)
-	Create(ctx context.Context, facilityEquipment *model.FacilityEquipment) error
-	Update(ctx context.Context, facilityEquipment *model.FacilityEquipment) error
-	Delete(ctx context.Context, id int32) error
-}
-
 type facilityEquipmentRepository struct {
 	client db.Client
+	query  *query.Query
 }
 
 func NewFacilityEquipmentRepository(
 	ctx context.Context,
 	client db.Client,
-) FacilityEquipmentRepository {
+) domain.FacilityEquipmentRepository {
 	return &facilityEquipmentRepository{
 		client: client,
+		query:  query.Use(client.Conn(ctx)),
 	}
 }
 
