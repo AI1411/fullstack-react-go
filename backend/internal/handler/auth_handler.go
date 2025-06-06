@@ -15,7 +15,6 @@ import (
 	"github.com/AI1411/fullstack-react-go/internal/env"
 	"github.com/AI1411/fullstack-react-go/internal/infra/logger"
 	"github.com/AI1411/fullstack-react-go/internal/usecase"
-	"github.com/AI1411/fullstack-react-go/internal/utils"
 )
 
 // Auth interface defines the methods for authentication
@@ -285,36 +284,6 @@ func (h *authHandler) Register(c *gin.Context) {
 	if err := h.userUseCase.CreateUser(ctx, user); err != nil {
 		h.logger.Error("Failed to create user", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
-		return
-	}
-
-	// ユーザのIDを取得する
-	user, err = h.userUseCase.GetUserByEmail(ctx, req.Email)
-	if err != nil {
-		h.logger.Error("Failed to retrieve user after creation", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve user"})
-		return
-	}
-
-	// メールアドレス確認トークンを生成
-	tokenGenerator := utils.NewTokenGenerator()
-	token, err := tokenGenerator.GenerateEmailVerificationToken()
-	if err != nil {
-		h.logger.Error("Failed to generate email verification token", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate email verification token"})
-		return
-	}
-
-	// トークンを保存
-	err = h.emailVarificationTokenUsecase.SaveEmailVarificationToken(ctx, &model.EmailVerificationToken{
-		UserID:    user.ID,
-		Token:     token,
-		Email:     user.Email,
-		ExpiresAt: time.Now().Add(time.Hour * 2),
-	})
-	if err != nil {
-		h.logger.Error("Failed to generate email verification token", "error", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate email verification token"})
 		return
 	}
 
