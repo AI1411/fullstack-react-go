@@ -27,13 +27,13 @@ type UserUseCase interface {
 
 type userUseCase struct {
 	userRepository                   datastore.UserRepository
-	emailHistoryRepository           datastore.EmailHistoryRepository
+	emailHistoryRepository           domain.EmailHistoryRepository
 	emailVarificationTokenRepository domain.EmailVarificationTokenRepository
 }
 
 func NewUserUseCase(
 	userRepository datastore.UserRepository,
-	emailHistoryRepository datastore.EmailHistoryRepository,
+	emailHistoryRepository domain.EmailHistoryRepository,
 	emailVarificationTokenRepository domain.EmailVarificationTokenRepository,
 ) UserUseCase {
 	return &userUseCase{

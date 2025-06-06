@@ -228,13 +228,13 @@ func ProvideUserRepository(client db.Client) datastore.UserRepository {
 }
 
 // ProvideEmailHistoryRepository creates a new email history repository
-func ProvideEmailHistoryRepository(client db.Client) datastore.EmailHistoryRepository {
+func ProvideEmailHistoryRepository(client db.Client) domain.EmailHistoryRepository {
 	ctx := context.Background()
 	return datastore.NewEmailHistoryRepository(ctx, client)
 }
 
 // ProvideUserUseCase creates a new user usecase
-func ProvideUserUseCase(repo datastore.UserRepository, emailRepo datastore.EmailHistoryRepository, emailVarificationTokenRepo domain.EmailVarificationTokenRepository) usecase.UserUseCase {
+func ProvideUserUseCase(repo datastore.UserRepository, emailRepo domain.EmailHistoryRepository, emailVarificationTokenRepo domain.EmailVarificationTokenRepository) usecase.UserUseCase {
 	return usecase.NewUserUseCase(repo, emailRepo, emailVarificationTokenRepo)
 }
 
