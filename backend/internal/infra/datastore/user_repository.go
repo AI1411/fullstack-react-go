@@ -6,17 +6,9 @@ import (
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
 	"github.com/AI1411/fullstack-react-go/internal/domain/query"
+	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
 	"github.com/AI1411/fullstack-react-go/internal/infra/db"
 )
-
-type UserRepository interface {
-	Find(ctx context.Context) ([]*model.User, error)
-	FindByID(ctx context.Context, id string) (*model.User, error)
-	FindByEmail(ctx context.Context, email string) (*model.User, error)
-	Create(ctx context.Context, user *model.User) error
-	Update(ctx context.Context, user *model.User) error
-	Delete(ctx context.Context, id int32) error
-}
 
 type userRepository struct {
 	client db.Client
@@ -26,7 +18,7 @@ type userRepository struct {
 func NewUserRepository(
 	ctx context.Context,
 	client db.Client,
-) UserRepository {
+) domain.UserRepository {
 	return &userRepository{
 		client: client,
 		query:  query.Use(client.Conn(ctx)),

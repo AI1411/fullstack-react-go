@@ -11,7 +11,6 @@ import (
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
 	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
-	"github.com/AI1411/fullstack-react-go/internal/infra/datastore"
 	"github.com/AI1411/fullstack-react-go/internal/utils"
 )
 
@@ -26,13 +25,13 @@ type UserUseCase interface {
 }
 
 type userUseCase struct {
-	userRepository                   datastore.UserRepository
+	userRepository                   domain.UserRepository
 	emailHistoryRepository           domain.EmailHistoryRepository
 	emailVarificationTokenRepository domain.EmailVarificationTokenRepository
 }
 
 func NewUserUseCase(
-	userRepository datastore.UserRepository,
+	userRepository domain.UserRepository,
 	emailHistoryRepository domain.EmailHistoryRepository,
 	emailVarificationTokenRepository domain.EmailVarificationTokenRepository,
 ) UserUseCase {

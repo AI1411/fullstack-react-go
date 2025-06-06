@@ -222,7 +222,7 @@ func ProvideOrganizationHandler(l *logger.Logger, usecase usecase.OrganizationUs
 }
 
 // ProvideUserRepository creates a new user repository
-func ProvideUserRepository(client db.Client) datastore.UserRepository {
+func ProvideUserRepository(client db.Client) domain.UserRepository {
 	ctx := context.Background()
 	return datastore.NewUserRepository(ctx, client)
 }
@@ -234,7 +234,7 @@ func ProvideEmailHistoryRepository(client db.Client) domain.EmailHistoryReposito
 }
 
 // ProvideUserUseCase creates a new user usecase
-func ProvideUserUseCase(repo datastore.UserRepository, emailRepo domain.EmailHistoryRepository, emailVarificationTokenRepo domain.EmailVarificationTokenRepository) usecase.UserUseCase {
+func ProvideUserUseCase(repo domain.UserRepository, emailRepo domain.EmailHistoryRepository, emailVarificationTokenRepo domain.EmailVarificationTokenRepository) usecase.UserUseCase {
 	return usecase.NewUserUseCase(repo, emailRepo, emailVarificationTokenRepo)
 }
 
