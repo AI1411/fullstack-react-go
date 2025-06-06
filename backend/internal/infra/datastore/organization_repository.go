@@ -6,16 +6,9 @@ import (
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
 	"github.com/AI1411/fullstack-react-go/internal/domain/query"
+	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
 	"github.com/AI1411/fullstack-react-go/internal/infra/db"
 )
-
-type OrganizationRepository interface {
-	Find(ctx context.Context) ([]*model.Organization, error)
-	FindByID(ctx context.Context, id int64) (*model.Organization, error)
-	Create(ctx context.Context, organization *model.Organization) error
-	Update(ctx context.Context, organization *model.Organization) error
-	Delete(ctx context.Context, id int64) error
-}
 
 type organizationRepository struct {
 	client db.Client
@@ -25,7 +18,7 @@ type organizationRepository struct {
 func NewOrganizationRepository(
 	ctx context.Context,
 	client db.Client,
-) OrganizationRepository {
+) domain.OrganizationRepository {
 	return &organizationRepository{
 		client: client,
 		query:  query.Use(client.Conn(ctx)),

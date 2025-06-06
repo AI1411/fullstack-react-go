@@ -206,13 +206,13 @@ func ProvideNotificationHandler(l *logger.Logger, usecase usecase.NotificationUs
 }
 
 // ProvideOrganizationRepository creates a new organization repository
-func ProvideOrganizationRepository(client db.Client) datastore.OrganizationRepository {
+func ProvideOrganizationRepository(client db.Client) domain.OrganizationRepository {
 	ctx := context.Background()
 	return datastore.NewOrganizationRepository(ctx, client)
 }
 
 // ProvideOrganizationUseCase creates a new organization usecase
-func ProvideOrganizationUseCase(repo datastore.OrganizationRepository) usecase.OrganizationUseCase {
+func ProvideOrganizationUseCase(repo domain.OrganizationRepository) usecase.OrganizationUseCase {
 	return usecase.NewOrganizationUseCase(repo)
 }
 

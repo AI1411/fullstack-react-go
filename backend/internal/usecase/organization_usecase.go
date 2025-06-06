@@ -5,7 +5,7 @@ import (
 	"context"
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
-	"github.com/AI1411/fullstack-react-go/internal/infra/datastore"
+	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
 )
 
 type OrganizationUseCase interface {
@@ -17,11 +17,11 @@ type OrganizationUseCase interface {
 }
 
 type organizationUseCase struct {
-	organizationRepository datastore.OrganizationRepository
+	organizationRepository domain.OrganizationRepository
 }
 
 func NewOrganizationUseCase(
-	organizationRepository datastore.OrganizationRepository,
+	organizationRepository domain.OrganizationRepository,
 ) OrganizationUseCase {
 	return &organizationUseCase{
 		organizationRepository: organizationRepository,
