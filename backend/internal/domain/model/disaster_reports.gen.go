@@ -13,7 +13,7 @@ const TableNameDisasterReport = "disaster_reports"
 // DisasterReport mapped from table <disaster_reports>
 type DisasterReport struct {
 	ID          int32      `gorm:"column:id;type:integer;primaryKey;autoIncrement:true" json:"id"`
-	Title       *string    `gorm:"column:title;type:character varying(255);index:idx_disaster_reports_title_bigm,priority:1;index:idx_disaster_reports_title_trgm,priority:1" json:"title"`
+	Title       *string    `gorm:"column:title;type:character varying(255);index:idx_disaster_reports_title_trgm,priority:1;index:idx_disaster_reports_title_bigm,priority:1" json:"title"`
 	Description *string    `gorm:"column:description;type:text;index:idx_disaster_reports_description_bigm,priority:1;index:idx_disaster_reports_description_trgm,priority:1" json:"description"`
 	Location    *string    `gorm:"column:location;type:character varying(100)" json:"location"`
 	CreatedAt   *time.Time `gorm:"column:created_at;type:timestamp without time zone;default:CURRENT_TIMESTAMP" json:"created_at"`

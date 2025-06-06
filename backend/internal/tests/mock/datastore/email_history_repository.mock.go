@@ -17,32 +17,32 @@ import (
 	gomock "go.uber.org/mock/gomock"
 )
 
-// MockEmailRepository is a mock of EmailRepository interface.
-type MockEmailRepository struct {
+// MockEmailHistoryRepository is a mock of EmailHistoryRepository interface.
+type MockEmailHistoryRepository struct {
 	ctrl     *gomock.Controller
-	recorder *MockEmailRepositoryMockRecorder
+	recorder *MockEmailHistoryRepositoryMockRecorder
 	isgomock struct{}
 }
 
-// MockEmailRepositoryMockRecorder is the mock recorder for MockEmailRepository.
-type MockEmailRepositoryMockRecorder struct {
-	mock *MockEmailRepository
+// MockEmailHistoryRepositoryMockRecorder is the mock recorder for MockEmailHistoryRepository.
+type MockEmailHistoryRepositoryMockRecorder struct {
+	mock *MockEmailHistoryRepository
 }
 
-// NewMockEmailRepository creates a new mock instance.
-func NewMockEmailRepository(ctrl *gomock.Controller) *MockEmailRepository {
-	mock := &MockEmailRepository{ctrl: ctrl}
-	mock.recorder = &MockEmailRepositoryMockRecorder{mock}
+// NewMockEmailHistoryRepository creates a new mock instance.
+func NewMockEmailHistoryRepository(ctrl *gomock.Controller) *MockEmailHistoryRepository {
+	mock := &MockEmailHistoryRepository{ctrl: ctrl}
+	mock.recorder = &MockEmailHistoryRepositoryMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockEmailRepository) EXPECT() *MockEmailRepositoryMockRecorder {
+func (m *MockEmailHistoryRepository) EXPECT() *MockEmailHistoryRepositoryMockRecorder {
 	return m.recorder
 }
 
 // ListEmailHistoriesByUserID mocks base method.
-func (m *MockEmailRepository) ListEmailHistoriesByUserID(ctx context.Context, userID string) ([]*model.EmailHistory, error) {
+func (m *MockEmailHistoryRepository) ListEmailHistoriesByUserID(ctx context.Context, userID string) ([]*model.EmailHistory, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListEmailHistoriesByUserID", ctx, userID)
 	ret0, _ := ret[0].([]*model.EmailHistory)
@@ -51,13 +51,13 @@ func (m *MockEmailRepository) ListEmailHistoriesByUserID(ctx context.Context, us
 }
 
 // ListEmailHistoriesByUserID indicates an expected call of ListEmailHistoriesByUserID.
-func (mr *MockEmailRepositoryMockRecorder) ListEmailHistoriesByUserID(ctx, userID any) *gomock.Call {
+func (mr *MockEmailHistoryRepositoryMockRecorder) ListEmailHistoriesByUserID(ctx, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListEmailHistoriesByUserID", reflect.TypeOf((*MockEmailRepository)(nil).ListEmailHistoriesByUserID), ctx, userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListEmailHistoriesByUserID", reflect.TypeOf((*MockEmailHistoryRepository)(nil).ListEmailHistoriesByUserID), ctx, userID)
 }
 
 // SaveEmailHistory mocks base method.
-func (m *MockEmailRepository) SaveEmailHistory(ctx context.Context, email *model.EmailHistory) error {
+func (m *MockEmailHistoryRepository) SaveEmailHistory(ctx context.Context, email *model.EmailHistory) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SaveEmailHistory", ctx, email)
 	ret0, _ := ret[0].(error)
@@ -65,7 +65,7 @@ func (m *MockEmailRepository) SaveEmailHistory(ctx context.Context, email *model
 }
 
 // SaveEmailHistory indicates an expected call of SaveEmailHistory.
-func (mr *MockEmailRepositoryMockRecorder) SaveEmailHistory(ctx, email any) *gomock.Call {
+func (mr *MockEmailHistoryRepositoryMockRecorder) SaveEmailHistory(ctx, email any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveEmailHistory", reflect.TypeOf((*MockEmailRepository)(nil).SaveEmailHistory), ctx, email)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveEmailHistory", reflect.TypeOf((*MockEmailHistoryRepository)(nil).SaveEmailHistory), ctx, email)
 }

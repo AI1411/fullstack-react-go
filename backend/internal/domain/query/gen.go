@@ -16,26 +16,27 @@ import (
 )
 
 var (
-	Q                  = new(Query)
-	Assessment         *assessment
-	AssessmentComment  *assessmentComment
-	AssessmentItem     *assessmentItem
-	DamageLevel        *damageLevel
-	Disaster           *disaster
-	DisasterDocument   *disasterDocument
-	EmailHistory       *emailHistory
-	FacilityEquipment  *facilityEquipment
-	FacilityType       *facilityType
-	GisDatum           *gisDatum
-	Municipality       *municipality
-	Notification       *notification
-	Organization       *organization
-	Prefecture         *prefecture
-	Role               *role
-	SupportApplication *supportApplication
-	Timeline           *timeline
-	User               *user
-	UserOrganization   *userOrganization
+	Q                      = new(Query)
+	Assessment             *assessment
+	AssessmentComment      *assessmentComment
+	AssessmentItem         *assessmentItem
+	DamageLevel            *damageLevel
+	Disaster               *disaster
+	DisasterDocument       *disasterDocument
+	EmailHistory           *emailHistory
+	EmailVerificationToken *emailVerificationToken
+	FacilityEquipment      *facilityEquipment
+	FacilityType           *facilityType
+	GisDatum               *gisDatum
+	Municipality           *municipality
+	Notification           *notification
+	Organization           *organization
+	Prefecture             *prefecture
+	Role                   *role
+	SupportApplication     *supportApplication
+	Timeline               *timeline
+	User                   *user
+	UserOrganization       *userOrganization
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
@@ -47,6 +48,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	Disaster = &Q.Disaster
 	DisasterDocument = &Q.DisasterDocument
 	EmailHistory = &Q.EmailHistory
+	EmailVerificationToken = &Q.EmailVerificationToken
 	FacilityEquipment = &Q.FacilityEquipment
 	FacilityType = &Q.FacilityType
 	GisDatum = &Q.GisDatum
@@ -63,77 +65,80 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:                 db,
-		Assessment:         newAssessment(db, opts...),
-		AssessmentComment:  newAssessmentComment(db, opts...),
-		AssessmentItem:     newAssessmentItem(db, opts...),
-		DamageLevel:        newDamageLevel(db, opts...),
-		Disaster:           newDisaster(db, opts...),
-		DisasterDocument:   newDisasterDocument(db, opts...),
-		EmailHistory:       newEmailHistory(db, opts...),
-		FacilityEquipment:  newFacilityEquipment(db, opts...),
-		FacilityType:       newFacilityType(db, opts...),
-		GisDatum:           newGisDatum(db, opts...),
-		Municipality:       newMunicipality(db, opts...),
-		Notification:       newNotification(db, opts...),
-		Organization:       newOrganization(db, opts...),
-		Prefecture:         newPrefecture(db, opts...),
-		Role:               newRole(db, opts...),
-		SupportApplication: newSupportApplication(db, opts...),
-		Timeline:           newTimeline(db, opts...),
-		User:               newUser(db, opts...),
-		UserOrganization:   newUserOrganization(db, opts...),
+		db:                     db,
+		Assessment:             newAssessment(db, opts...),
+		AssessmentComment:      newAssessmentComment(db, opts...),
+		AssessmentItem:         newAssessmentItem(db, opts...),
+		DamageLevel:            newDamageLevel(db, opts...),
+		Disaster:               newDisaster(db, opts...),
+		DisasterDocument:       newDisasterDocument(db, opts...),
+		EmailHistory:           newEmailHistory(db, opts...),
+		EmailVerificationToken: newEmailVerificationToken(db, opts...),
+		FacilityEquipment:      newFacilityEquipment(db, opts...),
+		FacilityType:           newFacilityType(db, opts...),
+		GisDatum:               newGisDatum(db, opts...),
+		Municipality:           newMunicipality(db, opts...),
+		Notification:           newNotification(db, opts...),
+		Organization:           newOrganization(db, opts...),
+		Prefecture:             newPrefecture(db, opts...),
+		Role:                   newRole(db, opts...),
+		SupportApplication:     newSupportApplication(db, opts...),
+		Timeline:               newTimeline(db, opts...),
+		User:                   newUser(db, opts...),
+		UserOrganization:       newUserOrganization(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	Assessment         assessment
-	AssessmentComment  assessmentComment
-	AssessmentItem     assessmentItem
-	DamageLevel        damageLevel
-	Disaster           disaster
-	DisasterDocument   disasterDocument
-	EmailHistory       emailHistory
-	FacilityEquipment  facilityEquipment
-	FacilityType       facilityType
-	GisDatum           gisDatum
-	Municipality       municipality
-	Notification       notification
-	Organization       organization
-	Prefecture         prefecture
-	Role               role
-	SupportApplication supportApplication
-	Timeline           timeline
-	User               user
-	UserOrganization   userOrganization
+	Assessment             assessment
+	AssessmentComment      assessmentComment
+	AssessmentItem         assessmentItem
+	DamageLevel            damageLevel
+	Disaster               disaster
+	DisasterDocument       disasterDocument
+	EmailHistory           emailHistory
+	EmailVerificationToken emailVerificationToken
+	FacilityEquipment      facilityEquipment
+	FacilityType           facilityType
+	GisDatum               gisDatum
+	Municipality           municipality
+	Notification           notification
+	Organization           organization
+	Prefecture             prefecture
+	Role                   role
+	SupportApplication     supportApplication
+	Timeline               timeline
+	User                   user
+	UserOrganization       userOrganization
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:                 db,
-		Assessment:         q.Assessment.clone(db),
-		AssessmentComment:  q.AssessmentComment.clone(db),
-		AssessmentItem:     q.AssessmentItem.clone(db),
-		DamageLevel:        q.DamageLevel.clone(db),
-		Disaster:           q.Disaster.clone(db),
-		DisasterDocument:   q.DisasterDocument.clone(db),
-		EmailHistory:       q.EmailHistory.clone(db),
-		FacilityEquipment:  q.FacilityEquipment.clone(db),
-		FacilityType:       q.FacilityType.clone(db),
-		GisDatum:           q.GisDatum.clone(db),
-		Municipality:       q.Municipality.clone(db),
-		Notification:       q.Notification.clone(db),
-		Organization:       q.Organization.clone(db),
-		Prefecture:         q.Prefecture.clone(db),
-		Role:               q.Role.clone(db),
-		SupportApplication: q.SupportApplication.clone(db),
-		Timeline:           q.Timeline.clone(db),
-		User:               q.User.clone(db),
-		UserOrganization:   q.UserOrganization.clone(db),
+		db:                     db,
+		Assessment:             q.Assessment.clone(db),
+		AssessmentComment:      q.AssessmentComment.clone(db),
+		AssessmentItem:         q.AssessmentItem.clone(db),
+		DamageLevel:            q.DamageLevel.clone(db),
+		Disaster:               q.Disaster.clone(db),
+		DisasterDocument:       q.DisasterDocument.clone(db),
+		EmailHistory:           q.EmailHistory.clone(db),
+		EmailVerificationToken: q.EmailVerificationToken.clone(db),
+		FacilityEquipment:      q.FacilityEquipment.clone(db),
+		FacilityType:           q.FacilityType.clone(db),
+		GisDatum:               q.GisDatum.clone(db),
+		Municipality:           q.Municipality.clone(db),
+		Notification:           q.Notification.clone(db),
+		Organization:           q.Organization.clone(db),
+		Prefecture:             q.Prefecture.clone(db),
+		Role:                   q.Role.clone(db),
+		SupportApplication:     q.SupportApplication.clone(db),
+		Timeline:               q.Timeline.clone(db),
+		User:                   q.User.clone(db),
+		UserOrganization:       q.UserOrganization.clone(db),
 	}
 }
 
@@ -147,72 +152,75 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:                 db,
-		Assessment:         q.Assessment.replaceDB(db),
-		AssessmentComment:  q.AssessmentComment.replaceDB(db),
-		AssessmentItem:     q.AssessmentItem.replaceDB(db),
-		DamageLevel:        q.DamageLevel.replaceDB(db),
-		Disaster:           q.Disaster.replaceDB(db),
-		DisasterDocument:   q.DisasterDocument.replaceDB(db),
-		EmailHistory:       q.EmailHistory.replaceDB(db),
-		FacilityEquipment:  q.FacilityEquipment.replaceDB(db),
-		FacilityType:       q.FacilityType.replaceDB(db),
-		GisDatum:           q.GisDatum.replaceDB(db),
-		Municipality:       q.Municipality.replaceDB(db),
-		Notification:       q.Notification.replaceDB(db),
-		Organization:       q.Organization.replaceDB(db),
-		Prefecture:         q.Prefecture.replaceDB(db),
-		Role:               q.Role.replaceDB(db),
-		SupportApplication: q.SupportApplication.replaceDB(db),
-		Timeline:           q.Timeline.replaceDB(db),
-		User:               q.User.replaceDB(db),
-		UserOrganization:   q.UserOrganization.replaceDB(db),
+		db:                     db,
+		Assessment:             q.Assessment.replaceDB(db),
+		AssessmentComment:      q.AssessmentComment.replaceDB(db),
+		AssessmentItem:         q.AssessmentItem.replaceDB(db),
+		DamageLevel:            q.DamageLevel.replaceDB(db),
+		Disaster:               q.Disaster.replaceDB(db),
+		DisasterDocument:       q.DisasterDocument.replaceDB(db),
+		EmailHistory:           q.EmailHistory.replaceDB(db),
+		EmailVerificationToken: q.EmailVerificationToken.replaceDB(db),
+		FacilityEquipment:      q.FacilityEquipment.replaceDB(db),
+		FacilityType:           q.FacilityType.replaceDB(db),
+		GisDatum:               q.GisDatum.replaceDB(db),
+		Municipality:           q.Municipality.replaceDB(db),
+		Notification:           q.Notification.replaceDB(db),
+		Organization:           q.Organization.replaceDB(db),
+		Prefecture:             q.Prefecture.replaceDB(db),
+		Role:                   q.Role.replaceDB(db),
+		SupportApplication:     q.SupportApplication.replaceDB(db),
+		Timeline:               q.Timeline.replaceDB(db),
+		User:                   q.User.replaceDB(db),
+		UserOrganization:       q.UserOrganization.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	Assessment         IAssessmentDo
-	AssessmentComment  IAssessmentCommentDo
-	AssessmentItem     IAssessmentItemDo
-	DamageLevel        IDamageLevelDo
-	Disaster           IDisasterDo
-	DisasterDocument   IDisasterDocumentDo
-	EmailHistory       IEmailHistoryDo
-	FacilityEquipment  IFacilityEquipmentDo
-	FacilityType       IFacilityTypeDo
-	GisDatum           IGisDatumDo
-	Municipality       IMunicipalityDo
-	Notification       INotificationDo
-	Organization       IOrganizationDo
-	Prefecture         IPrefectureDo
-	Role               IRoleDo
-	SupportApplication ISupportApplicationDo
-	Timeline           ITimelineDo
-	User               IUserDo
-	UserOrganization   IUserOrganizationDo
+	Assessment             IAssessmentDo
+	AssessmentComment      IAssessmentCommentDo
+	AssessmentItem         IAssessmentItemDo
+	DamageLevel            IDamageLevelDo
+	Disaster               IDisasterDo
+	DisasterDocument       IDisasterDocumentDo
+	EmailHistory           IEmailHistoryDo
+	EmailVerificationToken IEmailVerificationTokenDo
+	FacilityEquipment      IFacilityEquipmentDo
+	FacilityType           IFacilityTypeDo
+	GisDatum               IGisDatumDo
+	Municipality           IMunicipalityDo
+	Notification           INotificationDo
+	Organization           IOrganizationDo
+	Prefecture             IPrefectureDo
+	Role                   IRoleDo
+	SupportApplication     ISupportApplicationDo
+	Timeline               ITimelineDo
+	User                   IUserDo
+	UserOrganization       IUserOrganizationDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		Assessment:         q.Assessment.WithContext(ctx),
-		AssessmentComment:  q.AssessmentComment.WithContext(ctx),
-		AssessmentItem:     q.AssessmentItem.WithContext(ctx),
-		DamageLevel:        q.DamageLevel.WithContext(ctx),
-		Disaster:           q.Disaster.WithContext(ctx),
-		DisasterDocument:   q.DisasterDocument.WithContext(ctx),
-		EmailHistory:       q.EmailHistory.WithContext(ctx),
-		FacilityEquipment:  q.FacilityEquipment.WithContext(ctx),
-		FacilityType:       q.FacilityType.WithContext(ctx),
-		GisDatum:           q.GisDatum.WithContext(ctx),
-		Municipality:       q.Municipality.WithContext(ctx),
-		Notification:       q.Notification.WithContext(ctx),
-		Organization:       q.Organization.WithContext(ctx),
-		Prefecture:         q.Prefecture.WithContext(ctx),
-		Role:               q.Role.WithContext(ctx),
-		SupportApplication: q.SupportApplication.WithContext(ctx),
-		Timeline:           q.Timeline.WithContext(ctx),
-		User:               q.User.WithContext(ctx),
-		UserOrganization:   q.UserOrganization.WithContext(ctx),
+		Assessment:             q.Assessment.WithContext(ctx),
+		AssessmentComment:      q.AssessmentComment.WithContext(ctx),
+		AssessmentItem:         q.AssessmentItem.WithContext(ctx),
+		DamageLevel:            q.DamageLevel.WithContext(ctx),
+		Disaster:               q.Disaster.WithContext(ctx),
+		DisasterDocument:       q.DisasterDocument.WithContext(ctx),
+		EmailHistory:           q.EmailHistory.WithContext(ctx),
+		EmailVerificationToken: q.EmailVerificationToken.WithContext(ctx),
+		FacilityEquipment:      q.FacilityEquipment.WithContext(ctx),
+		FacilityType:           q.FacilityType.WithContext(ctx),
+		GisDatum:               q.GisDatum.WithContext(ctx),
+		Municipality:           q.Municipality.WithContext(ctx),
+		Notification:           q.Notification.WithContext(ctx),
+		Organization:           q.Organization.WithContext(ctx),
+		Prefecture:             q.Prefecture.WithContext(ctx),
+		Role:                   q.Role.WithContext(ctx),
+		SupportApplication:     q.SupportApplication.WithContext(ctx),
+		Timeline:               q.Timeline.WithContext(ctx),
+		User:                   q.User.WithContext(ctx),
+		UserOrganization:       q.UserOrganization.WithContext(ctx),
 	}
 }
 

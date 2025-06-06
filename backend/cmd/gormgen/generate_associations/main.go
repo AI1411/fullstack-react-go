@@ -125,6 +125,9 @@ func main() {
 			model.TableNameEmailHistory,
 			gen.FieldRelateModel(field.BelongsTo, "User", model.User{}, nil),
 		),
+		g.GenerateModel(
+			model.TableNameEmailVerificationToken,
+		),
 	}
 
 	g.ApplyBasic(allModels...)
