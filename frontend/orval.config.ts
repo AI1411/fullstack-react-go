@@ -13,7 +13,7 @@ export default {
       },
     },
     input: {
-      target: "../backend/docs/swagger.yaml", // OpenAPI仕様ファイル
+      target: "../backend/docs/api/swagger.yaml", // OpenAPI仕様ファイル
     },
   },
 }

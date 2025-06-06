@@ -408,7 +408,7 @@ func RegisterRoutes(
 	// Swagger JSON エンドポイント
 	r.GET("/docs", func(c *gin.Context) {
 		c.Header("Content-Type", "application/json")
-		c.File("./docs/swagger.json")
+		c.File("./docs/api/swagger.json")
 	})
 
 	// Register lifecycle hooks for the HTTP server

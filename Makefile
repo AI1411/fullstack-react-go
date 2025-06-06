@@ -62,7 +62,7 @@ exec-schema: ## sqlファイルをコンテナに流す
 
 .PHONY: swag
 swag: ## swagger更新
-	@docker compose exec gen-api swag init -g ./cmd/api/main.go
+	@docker compose exec gen-api swag init -g ./cmd/api/main.go --output ./docs/api
 	@cd frontend && pnpm generate
 fmt: ## コードを自動整形（ツールチェイン使用）
 	@cd backend && go run mvdan.cc/gofumpt@latest -l -w .
