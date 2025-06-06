@@ -6,12 +6,9 @@ import (
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
 	"github.com/AI1411/fullstack-react-go/internal/domain/query"
+	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
 	"github.com/AI1411/fullstack-react-go/internal/infra/db"
 )
-
-type TimelineRepository interface {
-	FindByDisasterID(ctx context.Context, disasterID string) ([]*model.Timeline, error)
-}
 
 type timelineRepository struct {
 	client db.Client
@@ -21,7 +18,7 @@ type timelineRepository struct {
 func NewTimelineRepository(
 	ctx context.Context,
 	client db.Client,
-) TimelineRepository {
+) domain.TimelineRepository {
 	return &timelineRepository{
 		client: client,
 		query:  query.Use(client.Conn(ctx)),

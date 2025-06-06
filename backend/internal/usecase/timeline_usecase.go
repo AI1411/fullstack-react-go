@@ -5,7 +5,7 @@ import (
 	"context"
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
-	"github.com/AI1411/fullstack-react-go/internal/infra/datastore"
+	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
 )
 
 type TimelineUseCase interface {
@@ -13,11 +13,11 @@ type TimelineUseCase interface {
 }
 
 type timelineUseCase struct {
-	timelineRepository datastore.TimelineRepository
+	timelineRepository domain.TimelineRepository
 }
 
 func NewTimelineUseCase(
-	timelineRepository datastore.TimelineRepository,
+	timelineRepository domain.TimelineRepository,
 ) TimelineUseCase {
 	return &timelineUseCase{
 		timelineRepository: timelineRepository,

@@ -99,7 +99,7 @@ func ProvidePrefectureRepository(dbClient db.Client) domain.PrefectureRepository
 }
 
 // ProvideTimelineRepository creates a new timeline repository
-func ProvideTimelineRepository(dbClient db.Client) datastore.TimelineRepository {
+func ProvideTimelineRepository(dbClient db.Client) domain.TimelineRepository {
 	ctx := context.Background()
 	return datastore.NewTimelineRepository(ctx, dbClient)
 }
@@ -126,7 +126,7 @@ func ProvidePrefectureUseCase(repo domain.PrefectureRepository) usecase.Prefectu
 }
 
 // ProvideTimelineUseCase creates a new timeline use case
-func ProvideTimelineUseCase(repo datastore.TimelineRepository) usecase.TimelineUseCase {
+func ProvideTimelineUseCase(repo domain.TimelineRepository) usecase.TimelineUseCase {
 	return usecase.NewTimelineUseCase(repo)
 }
 
