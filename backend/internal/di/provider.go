@@ -191,12 +191,12 @@ func ProvideFacilityEquipmentHandler(l *logger.Logger, usecase usecase.FacilityE
 }
 
 // ProvideNotificationRepository creates a new notification repository
-func ProvideNotificationRepository(dbClient db.Client) datastore.NotificationRepository {
+func ProvideNotificationRepository(dbClient db.Client) domain.NotificationRepository {
 	return datastore.NewNotificationRepository(context.Background(), dbClient)
 }
 
 // ProvideNotificationUseCase creates a new notification use case
-func ProvideNotificationUseCase(repo datastore.NotificationRepository) usecase.NotificationUseCase {
+func ProvideNotificationUseCase(repo domain.NotificationRepository) usecase.NotificationUseCase {
 	return usecase.NewNotificationUseCase(repo)
 }
 

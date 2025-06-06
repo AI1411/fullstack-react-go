@@ -5,7 +5,7 @@ import (
 	"context"
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
-	"github.com/AI1411/fullstack-react-go/internal/infra/datastore"
+	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
 )
 
 type NotificationUseCase interface {
@@ -19,11 +19,11 @@ type NotificationUseCase interface {
 }
 
 type notificationUseCase struct {
-	notificationRepository datastore.NotificationRepository
+	notificationRepository domain.NotificationRepository
 }
 
 func NewNotificationUseCase(
-	notificationRepository datastore.NotificationRepository,
+	notificationRepository domain.NotificationRepository,
 ) NotificationUseCase {
 	return &notificationUseCase{
 		notificationRepository: notificationRepository,
