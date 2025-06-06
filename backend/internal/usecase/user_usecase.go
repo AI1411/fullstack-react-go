@@ -10,7 +10,9 @@ import (
 	"github.com/aws/smithy-go/ptr"
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
+	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
 	"github.com/AI1411/fullstack-react-go/internal/infra/datastore"
+	"github.com/AI1411/fullstack-react-go/internal/utils"
 )
 
 type UserUseCase interface {
@@ -24,17 +26,20 @@ type UserUseCase interface {
 }
 
 type userUseCase struct {
-	userRepository         datastore.UserRepository
-	emailHistoryRepository datastore.EmailHistoryRepository
+	userRepository                   datastore.UserRepository
+	emailHistoryRepository           datastore.EmailHistoryRepository
+	emailVarificationTokenRepository domain.EmailVarificationTokenRepository
 }
 
 func NewUserUseCase(
 	userRepository datastore.UserRepository,
 	emailHistoryRepository datastore.EmailHistoryRepository,
+	emailVarificationTokenRepository domain.EmailVarificationTokenRepository,
 ) UserUseCase {
 	return &userUseCase{
-		userRepository:         userRepository,
-		emailHistoryRepository: emailHistoryRepository,
+		userRepository:                   userRepository,
+		emailHistoryRepository:           emailHistoryRepository,
+		emailVarificationTokenRepository: emailVarificationTokenRepository,
 	}
 }
 
@@ -61,8 +66,32 @@ func (u *userUseCase) CreateUser(ctx context.Context, user *model.User) error {
 		return err
 	}
 
-	// ユーザー作成後にウェルカムメールを送信
-	if err := u.sendWelcomeEmail(ctx, user); err != nil {
+	// ユーザのIDを取得する
+	user, err := u.GetUserByEmail(ctx, user.Email)
+	if err != nil {
+		return fmt.Errorf("failed to get user by email: %w", err)
+	}
+
+	// メールアドレス確認トークンを生成
+	tokenGenerator := utils.NewTokenGenerator()
+	token, err := tokenGenerator.GenerateEmailVerificationToken()
+	if err != nil {
+		return fmt.Errorf("failed to generate email verification token: %w", err)
+	}
+
+	// トークンを保存
+	err = u.emailVarificationTokenRepository.Save(ctx, &model.EmailVerificationToken{
+		UserID:    user.ID,
+		Token:     token,
+		Email:     user.Email,
+		ExpiresAt: time.Now().Add(time.Hour * 2),
+	})
+	if err != nil {
+		return fmt.Errorf("failed to save email verification token: %w", err)
+	}
+
+	// ユーザー作成後に認証用メールを送信
+	if err := u.sendWelcomeEmail(ctx, user, token); err != nil {
 		// メール送信エラーはログに記録するが、ユーザー作成は成功として扱う
 		fmt.Printf("ウェルカムメール送信に失敗しました: %v\n", err)
 	}
@@ -99,9 +128,9 @@ var (
 )
 
 // sendWelcomeEmail はウェルカムメールを送信する
-func (u *userUseCase) sendWelcomeEmail(ctx context.Context, user *model.User) error {
+func (u *userUseCase) sendWelcomeEmail(ctx context.Context, user *model.User, token string) error {
 	subject := "農業災害支援システムへようこそ"
-	body := u.generateWelcomeEmailBody(user.Name)
+	body := u.generateWelcomeEmailBody(user.Name, token)
 
 	// SMTPサーバーのアドレス
 	smtpServer := fmt.Sprintf("%s:%d", smtpHost, smtpPort)
@@ -153,7 +182,7 @@ func (u *userUseCase) sendWelcomeEmail(ctx context.Context, user *model.User) er
 }
 
 // generateWelcomeEmailBody はウェルカムメールの本文を生成する
-func (u *userUseCase) generateWelcomeEmailBody(userName string) string {
+func (u *userUseCase) generateWelcomeEmailBody(userName string, token string) string {
 	return fmt.Sprintf(`
 <!-- templates/email/verification.html -->
 <!DOCTYPE html>
@@ -204,7 +233,7 @@ func (u *userUseCase) generateWelcomeEmailBody(userName string) string {
         下記のボタンをクリックしてメールアドレスの認証を完了してください。</p>
 
         <div style="text-align: center;">
-            <a href="{{.VerificationURL}}" class="button">認証を完了する</a>
+            <a href="%s" class="button">認証を完了する</a>
         </div>
 
         <div class="info">
@@ -218,7 +247,7 @@ func (u *userUseCase) generateWelcomeEmailBody(userName string) string {
     </div>
 </body>
 </html>
-	`, userName)
+	`, userName, fmt.Sprintf("http://localhost:3000/verify/%s", token))
 }
 
 func (u *userUseCase) VerifyEmail(ctx context.Context, token string) error {

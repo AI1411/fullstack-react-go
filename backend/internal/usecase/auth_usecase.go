@@ -1,3 +1,4 @@
+//go:generate mockgen -source=auth_usecase.go -destination=../../tests/mock/usecase/auth_usecase.mock.go
 package usecase
 
 import (

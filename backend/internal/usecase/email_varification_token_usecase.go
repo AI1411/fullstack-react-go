@@ -8,7 +8,7 @@ import (
 )
 
 type EmailVarificationTokenUsecase interface {
-	CreateEmailVarificationToken(ctx context.Context, token *model.EmailVerificationToken) error
+	SaveEmailVarificationToken(ctx context.Context, token *model.EmailVerificationToken) error
 	FindEmailVarificationTokenByTokenAndUserID(ctx context.Context, token string) (*model.EmailVerificationToken, error)
 	MarkEmailVarificationTokenAsUsed(ctx context.Context, tokenID string) error
 }
@@ -17,7 +17,7 @@ type emailVarificationTokenUsecase struct {
 	emailVarificationTokenRepo domain.EmailVarificationTokenRepository
 }
 
-func NewEmailVarificationTokenRepository(
+func NewEmailVarificationTokenUsecase(
 	emailVarificationTokenRepo domain.EmailVarificationTokenRepository,
 ) EmailVarificationTokenUsecase {
 	return &emailVarificationTokenUsecase{
@@ -25,7 +25,7 @@ func NewEmailVarificationTokenRepository(
 	}
 }
 
-func (e emailVarificationTokenUsecase) CreateEmailVarificationToken(ctx context.Context, token *model.EmailVerificationToken) error {
+func (e *emailVarificationTokenUsecase) SaveEmailVarificationToken(ctx context.Context, token *model.EmailVerificationToken) error {
 	if err := e.emailVarificationTokenRepo.Save(ctx, token); err != nil {
 		return err
 	}
@@ -33,7 +33,7 @@ func (e emailVarificationTokenUsecase) CreateEmailVarificationToken(ctx context.
 	return nil
 }
 
-func (e emailVarificationTokenUsecase) FindEmailVarificationTokenByTokenAndUserID(ctx context.Context, token string) (*model.EmailVerificationToken, error) {
+func (e *emailVarificationTokenUsecase) FindEmailVarificationTokenByTokenAndUserID(ctx context.Context, token string) (*model.EmailVerificationToken, error) {
 	verificationToken, err := e.emailVarificationTokenRepo.FindByTokenAndUserID(ctx, token)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (e emailVarificationTokenUsecase) FindEmailVarificationTokenByTokenAndUserI
 	return verificationToken, nil
 }
 
-func (e emailVarificationTokenUsecase) MarkEmailVarificationTokenAsUsed(ctx context.Context, tokenID string) error {
+func (e *emailVarificationTokenUsecase) MarkEmailVarificationTokenAsUsed(ctx context.Context, tokenID string) error {
 	if err := e.emailVarificationTokenRepo.MarkAsUsed(ctx, tokenID); err != nil {
 		return err
 	}

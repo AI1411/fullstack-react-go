@@ -55,7 +55,7 @@ func (r *userRepository) FindByID(ctx context.Context, id string) (*model.User, 
 }
 
 func (r *userRepository) Create(ctx context.Context, user *model.User) error {
-	return r.client.Conn(ctx).Create(user).Error
+	return r.query.User.Create(user)
 }
 
 func (r *userRepository) Update(ctx context.Context, user *model.User) error {

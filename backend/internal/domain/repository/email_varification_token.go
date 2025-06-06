@@ -1,4 +1,4 @@
-//go:generate mockgen -source=email_varification__token.go -destination=../../../tests/mock/domain/email_varification__token.mock.go
+//go:generate mockgen -source=email_varification_token.go -destination=../../../tests/mock/domain/email_varification_token.mock.go
 package domain
 
 import (

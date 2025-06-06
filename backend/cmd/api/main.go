@@ -173,6 +173,11 @@ func ProvideSupportApplicationRepository(dbClient db.Client) datastore.SupportAp
 	return datastore.NewSupportApplicationRepository(ctx, dbClient)
 }
 
+// ProvideEmailVarificationTokenRepository creates a new email verification token repository
+func ProvideEmailVarificationTokenRepository(ctx context.Context, dbClient db.Client) domain.EmailVarificationTokenRepository {
+	return datastore.NewEmailVarificationTokenRepository(ctx, dbClient)
+}
+
 // ProvideDisasterUseCase creates a new disaster use case
 func ProvideDisasterUseCase(repo datastore.DisasterRepository) usecase.DisasterUseCase {
 	return usecase.NewDisasterUseCase(repo)
@@ -191,6 +196,11 @@ func ProvideTimelineUseCase(repo datastore.TimelineRepository) usecase.TimelineU
 // ProvideSupportApplicationUseCase creates a new support application use case
 func ProvideSupportApplicationUseCase(repo datastore.SupportApplicationRepository) usecase.SupportApplicationUseCase {
 	return usecase.NewSupportApplicationUseCase(repo)
+}
+
+// ProvideEmailVarificationTokenUseCase creates a new support application use case
+func ProvideEmailVarificationTokenUseCase(repo domain.EmailVarificationTokenRepository) usecase.EmailVarificationTokenUsecase {
+	return usecase.NewEmailVarificationTokenUsecase(repo)
 }
 
 // ProvideDisasterHandler creates a new disaster handler
@@ -287,8 +297,8 @@ func ProvideEmailHistoryRepository(client db.Client) datastore.EmailHistoryRepos
 }
 
 // ProvideUserUseCase creates a new user usecase
-func ProvideUserUseCase(repo datastore.UserRepository, emailRepo datastore.EmailHistoryRepository) usecase.UserUseCase {
-	return usecase.NewUserUseCase(repo, emailRepo)
+func ProvideUserUseCase(repo datastore.UserRepository, emailRepo datastore.EmailHistoryRepository, emailVarificationTokenRepo domain.EmailVarificationTokenRepository) usecase.UserUseCase {
+	return usecase.NewUserUseCase(repo, emailRepo, emailVarificationTokenRepo)
 }
 
 // ProvideUserHandler creates a new user handler
@@ -302,8 +312,8 @@ func ProvideAuthUsecase(jwtClient domain.JWT) usecase.AuthUsecase {
 }
 
 // ProvideAuthHandler creates a new auth handler
-func ProvideAuthHandler(ctx context.Context, l *logger.Logger, userUseCase usecase.UserUseCase, authUsecase usecase.AuthUsecase, env *env.Values) (handler.Auth, error) {
-	return handler.NewAuthHandler(ctx, l, userUseCase, authUsecase, env)
+func ProvideAuthHandler(l *logger.Logger, env *env.Values, userUseCase usecase.UserUseCase, authUsecase usecase.AuthUsecase, emailVarificationTokenUsecase usecase.EmailVarificationTokenUsecase) (handler.Auth, error) {
+	return handler.NewAuthHandler(l, env, userUseCase, authUsecase, emailVarificationTokenUsecase)
 }
 
 // RegisterRoutes registers all HTTP routes
@@ -475,6 +485,8 @@ func main() {
 			ProvideJWTClient,
 			ProvideAuthUsecase,
 			ProvideAuthHandler,
+			ProvideEmailVarificationTokenRepository,
+			ProvideEmailVarificationTokenUseCase,
 		),
 		// Register the lifecycle hooks
 		fx.Invoke(RegisterRoutes),

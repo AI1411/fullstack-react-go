@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"context"
 	"crypto/rand"
 	"encoding/base64"
 	"net/http"
@@ -16,6 +15,7 @@ import (
 	"github.com/AI1411/fullstack-react-go/internal/env"
 	"github.com/AI1411/fullstack-react-go/internal/infra/logger"
 	"github.com/AI1411/fullstack-react-go/internal/usecase"
+	"github.com/AI1411/fullstack-react-go/internal/utils"
 )
 
 // Auth interface defines the methods for authentication
@@ -28,28 +28,30 @@ type Auth interface {
 }
 
 type authHandler struct {
-	logger       *logger.Logger
-	userUseCase  usecase.UserUseCase
-	authUsecase  usecase.AuthUsecase
-	env          *env.Values
-	provider     *oidc.Provider
-	oauth2Config oauth2.Config
-	verifier     *oidc.IDTokenVerifier
+	logger                        *logger.Logger
+	userUseCase                   usecase.UserUseCase
+	authUsecase                   usecase.AuthUsecase
+	emailVarificationTokenUsecase usecase.EmailVarificationTokenUsecase
+	env                           *env.Values
+	provider                      *oidc.Provider
+	oauth2Config                  oauth2.Config
+	verifier                      *oidc.IDTokenVerifier
 }
 
 // NewAuthHandler creates a new auth handler
 func NewAuthHandler(
-	ctx context.Context,
 	l *logger.Logger,
+	env *env.Values,
 	userUseCase usecase.UserUseCase,
 	authUsecase usecase.AuthUsecase,
-	env *env.Values,
+	emailVarificationTokenUsecase usecase.EmailVarificationTokenUsecase,
 ) (Auth, error) {
 	return &authHandler{
-		logger:      l,
-		userUseCase: userUseCase,
-		authUsecase: authUsecase,
-		env:         env,
+		logger:                        l,
+		env:                           env,
+		userUseCase:                   userUseCase,
+		authUsecase:                   authUsecase,
+		emailVarificationTokenUsecase: emailVarificationTokenUsecase,
 	}, nil
 }
 
@@ -273,7 +275,7 @@ func (h *authHandler) Register(c *gin.Context) {
 		Name:          req.Name,
 		Email:         req.Email,
 		Password:      string(hashedPassword),
-		IsActive:      true,
+		IsActive:      false,
 		EmailVerified: false,
 		RoleID:        1, // Default role
 		CreatedAt:     &now,
@@ -283,6 +285,36 @@ func (h *authHandler) Register(c *gin.Context) {
 	if err := h.userUseCase.CreateUser(ctx, user); err != nil {
 		h.logger.Error("Failed to create user", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
+		return
+	}
+
+	// ユーザのIDを取得する
+	user, err = h.userUseCase.GetUserByEmail(ctx, req.Email)
+	if err != nil {
+		h.logger.Error("Failed to retrieve user after creation", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve user"})
+		return
+	}
+
+	// メールアドレス確認トークンを生成
+	tokenGenerator := utils.NewTokenGenerator()
+	token, err := tokenGenerator.GenerateEmailVerificationToken()
+	if err != nil {
+		h.logger.Error("Failed to generate email verification token", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate email verification token"})
+		return
+	}
+
+	// トークンを保存
+	err = h.emailVarificationTokenUsecase.SaveEmailVarificationToken(ctx, &model.EmailVerificationToken{
+		UserID:    user.ID,
+		Token:     token,
+		Email:     user.Email,
+		ExpiresAt: time.Now().Add(time.Hour * 2),
+	})
+	if err != nil {
+		h.logger.Error("Failed to generate email verification token", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate email verification token"})
 		return
 	}
 
