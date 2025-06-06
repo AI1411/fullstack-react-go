@@ -5,7 +5,7 @@ import (
 	"context"
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
-	"github.com/AI1411/fullstack-react-go/internal/infra/datastore"
+	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
 )
 
 type PrefectureUseCase interface {
@@ -14,11 +14,11 @@ type PrefectureUseCase interface {
 }
 
 type prefectureUseCase struct {
-	prefectureRepository datastore.PrefectureRepository
+	prefectureRepository domain.PrefectureRepository
 }
 
 func NewPrefectureUseCase(
-	prefectureRepository datastore.PrefectureRepository,
+	prefectureRepository domain.PrefectureRepository,
 ) PrefectureUseCase {
 	return &prefectureUseCase{
 		prefectureRepository: prefectureRepository,

@@ -9,14 +9,10 @@ import (
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
 	"github.com/AI1411/fullstack-react-go/internal/domain/query"
+	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
 	myerrors "github.com/AI1411/fullstack-react-go/internal/errors"
 	"github.com/AI1411/fullstack-react-go/internal/infra/db"
 )
-
-type PrefectureRepository interface {
-	Find(ctx context.Context) ([]*model.Prefecture, error)
-	FindByID(ctx context.Context, code string) (*model.Prefecture, error)
-}
 
 type prefectureRepository struct {
 	client db.Client
@@ -26,7 +22,7 @@ type prefectureRepository struct {
 func NewPrefectureRepository(
 	ctx context.Context,
 	client db.Client,
-) PrefectureRepository {
+) domain.PrefectureRepository {
 	return &prefectureRepository{
 		client: client,
 		query:  query.Use(client.Conn(ctx)),

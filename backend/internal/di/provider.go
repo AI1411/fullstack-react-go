@@ -93,7 +93,7 @@ func ProvideDisasterRepository(dbClient db.Client) datastore.DisasterRepository 
 }
 
 // ProvidePrefectureRepository creates a new prefecture repository
-func ProvidePrefectureRepository(dbClient db.Client) datastore.PrefectureRepository {
+func ProvidePrefectureRepository(dbClient db.Client) domain.PrefectureRepository {
 	ctx := context.Background()
 	return datastore.NewPrefectureRepository(ctx, dbClient)
 }
@@ -121,7 +121,7 @@ func ProvideDisasterUseCase(repo datastore.DisasterRepository) usecase.DisasterU
 }
 
 // ProvidePrefectureUseCase creates a new prefecture use case
-func ProvidePrefectureUseCase(repo datastore.PrefectureRepository) usecase.PrefectureUseCase {
+func ProvidePrefectureUseCase(repo domain.PrefectureRepository) usecase.PrefectureUseCase {
 	return usecase.NewPrefectureUseCase(repo)
 }
 
