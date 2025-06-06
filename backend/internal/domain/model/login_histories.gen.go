@@ -8,13 +8,13 @@ import (
 	"time"
 )
 
-const TableNameLoginHistory = "login_history"
+const TableNameLoginHistory = "login_histories"
 
-// LoginHistory mapped from table <login_history>
+// LoginHistory mapped from table <login_histories>
 type LoginHistory struct {
 	ID            int64      `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;comment:ログイン履歴ID（主キー、自動掲番）" json:"id"`                                                          // ログイン履歴ID（主キー、自動掲番）
-	UserID        *string    `gorm:"column:user_id;type:uuid;index:idx_login_history_user_id,priority:1;comment:ユーザーID（外部キー、ユーザーテーブルのID）" json:"user_id"`                               // ユーザーID（外部キー、ユーザーテーブルのID）
-	Username      *string    `gorm:"column:username;type:character varying(100);index:idx_login_history_username,priority:1;comment:ユーザー名（ユーザーが削除されても履歴を残すため）" json:"username"`         // ユーザー名（ユーザーが削除されても履歴を残すため）
+	UserID        *string    `gorm:"column:user_id;type:uuid;index:idx_login_histories_user_id,priority:1;comment:ユーザーID（外部キー、ユーザーテーブルのID）" json:"user_id"`                             // ユーザーID（外部キー、ユーザーテーブルのID）
+	Username      *string    `gorm:"column:username;type:character varying(100);index:idx_login_histories_username,priority:1;comment:ユーザー名（ユーザーが削除されても履歴を残すため）" json:"username"`       // ユーザー名（ユーザーが削除されても履歴を残すため）
 	LoginType     string     `gorm:"column:login_type;type:character varying(50);not null;comment:ログインタイプ（成功: success、失敗: failed、ロック: locked、多要素認証必要: mfa_required）" json:"login_type"` // ログインタイプ（成功: success、失敗: failed、ロック: locked、多要素認証必要: mfa_required）
 	IPAddress     *string    `gorm:"column:ip_address;type:inet;comment:ユーザーのIPアドレス" json:"ip_address"`                                                                                 // ユーザーのIPアドレス
 	UserAgent     *string    `gorm:"column:user_agent;type:text;comment:ユーザーエージェント情報（ブラウザやデバイス情報）" json:"user_agent"`                                                                   // ユーザーエージェント情報（ブラウザやデバイス情報）

@@ -260,8 +260,8 @@ COMMENT ON COLUMN user_sessions.expires_at IS 'セッションの有効期限';
 COMMENT ON COLUMN user_sessions.last_activity IS '最後のアクティビティ日時（セッションの最終アクティビティ）';
 COMMENT ON COLUMN user_sessions.created_at IS 'セッション作成日時';
 
-DROP TABLE IF EXISTS login_history CASCADE;
-CREATE TABLE login_history
+DROP TABLE IF EXISTS login_histories CASCADE;
+CREATE TABLE login_histories
 (
     id             BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id        UUID REFERENCES users (id),
@@ -273,17 +273,17 @@ CREATE TABLE login_history
     created_at     TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX IF NOT EXISTS idx_login_history_user_id ON login_history (user_id);
-CREATE INDEX IF NOT EXISTS idx_login_history_username ON login_history (username);
-COMMENT ON TABLE login_history IS 'ログイン履歴テーブル - ユーザーのログイン履歴を管理';
-COMMENT ON COLUMN login_history.id IS 'ログイン履歴ID（主キー、自動掲番）';
-COMMENT ON COLUMN login_history.user_id IS 'ユーザーID（外部キー、ユーザーテーブルのID）';
-COMMENT ON COLUMN login_history.username IS 'ユーザー名（ユーザーが削除されても履歴を残すため）';
-COMMENT ON COLUMN login_history.login_type IS 'ログインタイプ（成功: success、失敗: failed、ロック: locked、多要素認証必要: mfa_required）';
-COMMENT ON COLUMN login_history.ip_address IS 'ユーザーのIPアドレス';
-COMMENT ON COLUMN login_history.user_agent IS 'ユーザーエージェント情報（ブラウザやデバイス情報）';
-COMMENT ON COLUMN login_history.failure_reason IS 'ログイン失敗理由（失敗時のみ）';
-COMMENT ON COLUMN login_history.created_at IS 'ログイン履歴の作成日時';
+CREATE INDEX IF NOT EXISTS idx_login_histories_user_id ON login_histories (user_id);
+CREATE INDEX IF NOT EXISTS idx_login_histories_username ON login_histories (username);
+COMMENT ON TABLE login_histories IS 'ログイン履歴テーブル - ユーザーのログイン履歴を管理';
+COMMENT ON COLUMN login_histories.id IS 'ログイン履歴ID（主キー、自動掲番）';
+COMMENT ON COLUMN login_histories.user_id IS 'ユーザーID（外部キー、ユーザーテーブルのID）';
+COMMENT ON COLUMN login_histories.username IS 'ユーザー名（ユーザーが削除されても履歴を残すため）';
+COMMENT ON COLUMN login_histories.login_type IS 'ログインタイプ（成功: success、失敗: failed、ロック: locked、多要素認証必要: mfa_required）';
+COMMENT ON COLUMN login_histories.ip_address IS 'ユーザーのIPアドレス';
+COMMENT ON COLUMN login_histories.user_agent IS 'ユーザーエージェント情報（ブラウザやデバイス情報）';
+COMMENT ON COLUMN login_histories.failure_reason IS 'ログイン失敗理由（失敗時のみ）';
+COMMENT ON COLUMN login_histories.created_at IS 'ログイン履歴の作成日時';
 
 DROP TABLE IF EXISTS operation_logs CASCADE;
 CREATE TABLE operation_logs
