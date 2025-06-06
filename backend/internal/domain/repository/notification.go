@@ -1,4 +1,4 @@
-//go:generate mockgen -source=notification_repository.go -destination=../../../tests/mock/datastore/notification_repository.mock.go
+//go:generate mockgen -source=notification.go -destination=../../../tests/mock/domain/notification.mock.go
 package domain
 
 import (

@@ -1,4 +1,4 @@
-//go:generate mockgen -source=facility_equipment_repository.go -destination=../../../tests/mock/datastore/facility_equipment_repository.mock.go
+//go:generate mockgen -source=facility_equipment.go -destination=../../../tests/mock/domain/facility_equipment.mock.go
 package domain
 
 import (

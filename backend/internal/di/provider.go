@@ -105,7 +105,7 @@ func ProvideTimelineRepository(dbClient db.Client) datastore.TimelineRepository 
 }
 
 // ProvideSupportApplicationRepository creates a new support application repository
-func ProvideSupportApplicationRepository(dbClient db.Client) datastore.SupportApplicationRepository {
+func ProvideSupportApplicationRepository(dbClient db.Client) domain.SupportApplicationRepository {
 	ctx := context.Background()
 	return datastore.NewSupportApplicationRepository(ctx, dbClient)
 }
@@ -131,7 +131,7 @@ func ProvideTimelineUseCase(repo datastore.TimelineRepository) usecase.TimelineU
 }
 
 // ProvideSupportApplicationUseCase creates a new support application use case
-func ProvideSupportApplicationUseCase(repo datastore.SupportApplicationRepository) usecase.SupportApplicationUseCase {
+func ProvideSupportApplicationUseCase(repo domain.SupportApplicationRepository) usecase.SupportApplicationUseCase {
 	return usecase.NewSupportApplicationUseCase(repo)
 }
 

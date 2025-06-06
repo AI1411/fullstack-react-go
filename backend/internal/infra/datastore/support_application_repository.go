@@ -6,14 +6,9 @@ import (
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
 	"github.com/AI1411/fullstack-react-go/internal/domain/query"
+	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
 	"github.com/AI1411/fullstack-react-go/internal/infra/db"
 )
-
-type SupportApplicationRepository interface {
-	Find(ctx context.Context) ([]*model.SupportApplication, error)
-	FindByID(ctx context.Context, id string) (*model.SupportApplication, error)
-	Create(ctx context.Context, supportApplication *model.SupportApplication) error
-}
 
 type supportApplicationRepository struct {
 	client db.Client
@@ -23,7 +18,7 @@ type supportApplicationRepository struct {
 func NewSupportApplicationRepository(
 	ctx context.Context,
 	client db.Client,
-) SupportApplicationRepository {
+) domain.SupportApplicationRepository {
 	return &supportApplicationRepository{
 		client: client,
 		query:  query.Use(client.Conn(ctx)),

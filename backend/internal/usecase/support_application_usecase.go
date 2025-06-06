@@ -5,7 +5,7 @@ import (
 	"context"
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
-	"github.com/AI1411/fullstack-react-go/internal/infra/datastore"
+	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
 )
 
 type SupportApplicationUseCase interface {
@@ -15,11 +15,11 @@ type SupportApplicationUseCase interface {
 }
 
 type supportApplicationUseCase struct {
-	supportApplicationRepository datastore.SupportApplicationRepository
+	supportApplicationRepository domain.SupportApplicationRepository
 }
 
 func NewSupportApplicationUseCase(
-	supportApplicationRepository datastore.SupportApplicationRepository,
+	supportApplicationRepository domain.SupportApplicationRepository,
 ) SupportApplicationUseCase {
 	return &supportApplicationUseCase{
 		supportApplicationRepository: supportApplicationRepository,

@@ -1,4 +1,4 @@
-//go:generate mockgen -source=prefecture_repository.go -destination=../../../tests/mock/datastore/prefecture_repository.mock.go
+//go:generate mockgen -source=prefecture.go -destination=../../../tests/mock/domain/prefecture.mock.go
 package domain
 
 import (
