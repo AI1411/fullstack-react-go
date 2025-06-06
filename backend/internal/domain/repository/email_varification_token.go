@@ -9,6 +9,6 @@ import (
 
 type EmailVarificationTokenRepository interface {
 	Save(ctx context.Context, token *model.EmailVerificationToken) error
-	FindByTokenAndUserID(ctx context.Context, token string) (*model.EmailVerificationToken, error)
+	FindByToken(ctx context.Context, token string) (*model.EmailVerificationToken, error)
 	MarkAsUsed(ctx context.Context, tokenID string) error
 }

@@ -34,7 +34,7 @@ func (e *emailVarificationTokenUsecase) SaveEmailVarificationToken(ctx context.C
 }
 
 func (e *emailVarificationTokenUsecase) FindEmailVarificationTokenByTokenAndUserID(ctx context.Context, token string) (*model.EmailVerificationToken, error) {
-	verificationToken, err := e.emailVarificationTokenRepo.FindByTokenAndUserID(ctx, token)
+	verificationToken, err := e.emailVarificationTokenRepo.FindByToken(ctx, token)
 	if err != nil {
 		return nil, err
 	}

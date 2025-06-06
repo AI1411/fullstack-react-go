@@ -41,19 +41,19 @@ func (m *MockEmailVarificationTokenRepository) EXPECT() *MockEmailVarificationTo
 	return m.recorder
 }
 
-// FindByTokenAndUserID mocks base method.
-func (m *MockEmailVarificationTokenRepository) FindByTokenAndUserID(ctx context.Context, token string) (*model.EmailVerificationToken, error) {
+// FindByToken mocks base method.
+func (m *MockEmailVarificationTokenRepository) FindByToken(ctx context.Context, token string) (*model.EmailVerificationToken, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByTokenAndUserID", ctx, token)
+	ret := m.ctrl.Call(m, "FindByToken", ctx, token)
 	ret0, _ := ret[0].(*model.EmailVerificationToken)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FindByTokenAndUserID indicates an expected call of FindByTokenAndUserID.
+// FindByToken indicates an expected call of FindByToken.
 func (mr *MockEmailVarificationTokenRepositoryMockRecorder) FindByTokenAndUserID(ctx, token any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByTokenAndUserID", reflect.TypeOf((*MockEmailVarificationTokenRepository)(nil).FindByTokenAndUserID), ctx, token)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByToken", reflect.TypeOf((*MockEmailVarificationTokenRepository)(nil).FindByToken), ctx, token)
 }
 
 // MarkAsUsed mocks base method.

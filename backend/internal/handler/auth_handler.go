@@ -310,19 +310,18 @@ func (h *authHandler) Register(c *gin.Context) {
 }
 
 type VerifyEmailRequest struct {
-	Token string `json:"token" binding:"required"`
+	Token string `json:"query" binding:"required"`
 }
 
 func (h *authHandler) VerifyEmail(c *gin.Context) {
 	var req VerifyEmailRequest
-
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBindQuery(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "無効なリクエストです"})
 		return
 	}
 
 	// Use auth usecase to verify email
-	err := h.authUsecase.VerifyEmail(req.Token)
+	err := h.authUsecase.ValidateEmailVarificationToken(c.Request.Context(), req.Token)
 	if err != nil {
 		h.logger.Error("Failed to verify email", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "メールアドレスの確認に失敗しました"})

@@ -35,7 +35,7 @@ func (e *emailVarificationTokenRepository) Save(ctx context.Context, token *mode
 	return nil
 }
 
-func (e *emailVarificationTokenRepository) FindByTokenAndUserID(ctx context.Context, token string) (*model.EmailVerificationToken, error) {
+func (e *emailVarificationTokenRepository) FindByToken(ctx context.Context, token string) (*model.EmailVerificationToken, error) {
 	verificationToken, err := e.query.WithContext(ctx).
 		EmailVerificationToken.
 		Where(

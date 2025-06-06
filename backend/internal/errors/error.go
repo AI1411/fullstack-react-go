@@ -6,10 +6,11 @@ type ErrorCode string
 type ErrorMessage string
 
 const (
-	SystemError                    ErrorCode = "E100000" // システムエラー
-	ValidationError                ErrorCode = "E100001" // バリデーションエラー
-	PrefectureNotFoundError        ErrorCode = "E100002" // 都道府県が存在しないエラー
-	EmailVarificationTokenNotFound ErrorCode = "E100003" // メール認証トークンが存在しないエラー
+	SystemError                     ErrorCode = "E100000" // システムエラー
+	ValidationError                 ErrorCode = "E100001" // バリデーションエラー
+	PrefectureNotFoundError         ErrorCode = "E100002" // 都道府県が存在しないエラー
+	EmailVarificationTokenNotFound  ErrorCode = "E100003" // メール認証トークンが存在しないエラー
+	EmailVarificationTokenUsedError ErrorCode = "E100004" // メール認証トークンが使用済みエラー
 )
 
 const (
@@ -17,6 +18,7 @@ const (
 	ValidationErrorMessage                     ErrorMessage = "入力値に誤りがあります"
 	PrefectureNotFoundErrorMessage             ErrorMessage = "都道府県は存在しません"
 	EmailVarificationTokenNotFoundErrorMessage ErrorMessage = "メール認証トークンが存在しません"
+	EmailVarificationTokenUsedErrorMessage     ErrorMessage = "メール認証トークンは使用済みです"
 )
 
 func NewAPIError(code ErrorCode, msg ErrorMessage, originalErr error, internalMsg string) *APIError {

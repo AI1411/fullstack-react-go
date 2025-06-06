@@ -6,41 +6,58 @@ import (
 
 	"github.com/AI1411/fullstack-react-go/internal/domain/model"
 	domain "github.com/AI1411/fullstack-react-go/internal/domain/repository"
+	myerrors "github.com/AI1411/fullstack-react-go/internal/errors"
 )
 
 type AuthUsecase interface {
-	Register(email string, password string) (string, error)
-	VerifyEmail(token string) error
-	ValidateToken(token string) (*model.Claims, error)
+	ValidateEmailVarificationToken(ctx context.Context, token string) error
 	GenerateToken(user *model.User) (string, error)
 }
 
 type authUsecase struct {
-	jwtClient domain.JWT
+	jwtClient                  domain.JWT
+	emailVarificationTokenRepo domain.EmailVarificationTokenRepository
 }
 
-func NewAuthUsecase(jwtClient domain.JWT) AuthUsecase {
+func NewAuthUsecase(
+	jwtClient domain.JWT,
+	emailVarificationTokenRepo domain.EmailVarificationTokenRepository,
+) AuthUsecase {
 	return &authUsecase{
-		jwtClient: jwtClient,
+		jwtClient:                  jwtClient,
+		emailVarificationTokenRepo: emailVarificationTokenRepo,
 	}
 }
 
-func (a authUsecase) Register(email string, password string) (string, error) {
-	// This method would typically create a user and generate a token
-	// But since user creation is handled in the handler, we'll just return an empty string
-	// In a real implementation, this would create the user and generate a token
-	return "", nil
-}
+func (a authUsecase) ValidateEmailVarificationToken(ctx context.Context, token string) error {
+	emailToken, err := a.emailVarificationTokenRepo.FindByToken(ctx, token)
+	if err != nil {
+		return err
+	}
 
-func (a authUsecase) VerifyEmail(token string) error {
-	// Validate the token
-	_, err := a.ValidateToken(token)
-	return err
-}
+	if emailToken == nil {
+		return myerrors.APIError{
+			Code:    myerrors.EmailVarificationTokenNotFound,
+			Message: myerrors.EmailVarificationTokenNotFoundErrorMessage,
+		}
+	}
 
-func (a authUsecase) ValidateToken(token string) (*model.Claims, error) {
-	// Use the JWT client to validate the token
-	return a.jwtClient.ValidateToken(context.Background(), token)
+	if emailToken.IsUsed {
+		return myerrors.APIError{
+			Code:    myerrors.EmailVarificationTokenUsedError,
+			Message: myerrors.EmailVarificationTokenUsedErrorMessage,
+		}
+	}
+
+	// Mark the token as used
+	if err := a.emailVarificationTokenRepo.MarkAsUsed(ctx, emailToken.ID); err != nil {
+		return myerrors.APIError{
+			Code:    myerrors.SystemError,
+			Message: myerrors.SystemErrorMessage,
+		}
+	}
+
+	return nil
 }
 
 func (a authUsecase) GenerateToken(user *model.User) (string, error) {
